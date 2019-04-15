@@ -114,12 +114,21 @@
   }
 
   function checkCollision(group, shape, offset) {
+    if (group.children.length === 0) {
+      var posX = offset.width;
+      var posY = offset.height;
+      shape.setAttrs({
+        x: random(posX[0], posX[1]),
+        y: random(posY[0], posY[1])
+      })
+      return true;
+    }
+
     var rects = [];
     group.children.each(function(item){
       rects.push(item.attrs);
     });
-
-    var calc = function (type) {
+    var calcChoosed = function (type) {
       if (type === 'width') {
         rects.sort(function(a,b){
           return a.x - b.x;
@@ -129,11 +138,13 @@
           return a.y - b.y;
         })
       }
+      console.log(rects)
       var choosed = {};
       for (var i = 0; i < rects.length; i++) {
         if (i === 0) {
           choosed[type] = rects[i].x - offset[type][0];
-          choosed.index = i;
+          choosed.min = offset[type][0];
+          choosed.max = rects[i].x;
           continue;
         }
 
@@ -141,24 +152,36 @@
           var newx = offset[type][1] - rects[i].x - rects[i].width;
           if (choosed[type] - newx < 0) {
             choosed[type] = newx;
-            choosed.index = i;
+            choosed.min = rects[i].x + rects[i].width;
+            choosed.max = offset[type][1];
           }
           continue;
         }
         var newx = rects[i].x - rects[i - 1].x - rects[i - 1].width;
         if (choosed[type] - newx < 0) {
           choosed[type] = newx;
-          choosed.index = i;
+          choosed.min = rects[i].x;
+          choosed.max = rects[i - 1].x + rects[i - 1].width;
         }
       }
       return choosed;
     }
-    var choosed = calc('width');
-    if (choosed.width >= shape.width) {
+
+
+    var choosed = calcChoosed('width');
+    if (choosed.width >= shape.getClientRect().width) {
+      shape.setAttrs({
+        x: random(choosed.min, choosed.max),
+        y: random(offset.height[0], offset.height[1])
+      })
       return true;
     } else {
-      var choosed = calc('height');
-      if (choosed.height >= shape.height) {
+      var choosed = calcChoosed('height');
+      if (choosed.height >= shape.getClientRect().height) {
+          shape.setAttrs({
+          x: random(offset.width[0], offset.width[1]),
+          y: random(choosed.min, choosed.max)
+        })
         return true;
       }
       return false;
@@ -171,25 +194,27 @@
     data.forEach(function (item, index) {
       var points = item.points;
       var pos = offset(points);
-      var posX = pos.width;
-      var posY = pos.height;
       //console.log(posX)
       var shape = new Konva.Line({
-        x: random(posX[0], posX[1]),
-        y: random(posY[0], posY[1]),
+        // x: random(posX[0], posX[1]),
+        // y: random(posY[0], posY[1]),
         points: points,
         fill: '#8498d1',
         stroke: '#617bb5',
         strokeWidth: 2,
         closed: true,
       });
-      
-      group.add(shape)
-      console.log(checkCollision(group,shape,pos))
+      //checkCollision(group,shape,pos) ? group.add(shape) : void(0);
+      //console.log(group.children.length)
+      var checkPass = checkCollision(group,shape,pos);
+      console.log(checkPass);
+      if (checkPass){
+        group.add(shape)
+      }
+      //group.add(shape)
+     
     });
-    group.children.each(function(item){
-      console.log(item)
-    })
+    
     stage.add(layer);
     layer.add(group);
     layer.draw();
