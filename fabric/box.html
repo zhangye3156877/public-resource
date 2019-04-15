@@ -83,10 +83,10 @@
     height: 600
   }
   var stage = new Konva.Stage({
-      container: stageOptions.container,
-      width: stageOptions.width,
-      height: stageOptions.height
-    });
+    container: stageOptions.container,
+    width: stageOptions.width,
+    height: stageOptions.height
+  });
 
   var layer = new Konva.Layer();
 
@@ -96,84 +96,104 @@
 
   function offset(points) {
     var maxX = 0, maxY = 0, minX = 0, minY = 0;
-    points.forEach(function(item, index) {
+    points.forEach(function (item, index) {
       if (index % 2 === 0) {
         maxX = Math.max(item, maxX);
         minX = Math.min(item, minX);
       } else {
         maxY = Math.max(item, maxY);
         minY = Math.min(item, minY);
-      } 
+      }
     })
     var offsetX = [-minX, stageOptions.width - maxX];
     var offsetY = [-minY, stageOptions.height - maxY];
     return {
-      offsetX:offsetX, 
-      offsetY:offsetY
-    };  
+      width: offsetX,
+      height: offsetY
+    };
   }
-  
+
   function checkCollision(group, shape, offset) {
-    var times = 0;
-    var calc = function(r1, r2) {
-      var bol = (r2.x > r1.x + r1.width ||
-          r2.x + r2.width < r1.x ||
-          r2.y > r1.y + r1.height ||
-          r2.y + r2.height < r1.y);
-      if (bol) {
-        times = 0;
-        return true;
-      } else {
-        times++;
-        if (times > 1000000) {
-          return false;
-        }
-        var posX = offset.offsetX;
-        var posY = offset.offsetY;
-        var newX = random(posX[0], posX[1]);
-        var newY = random(posY[0], posY[1]);
-        shape.setAttrs({
-          x: newX,
-          y: newY,
+    var rects = [];
+    group.children.each(function(item){
+      rects.push(item.attrs);
+    });
+
+    var calc = function (type) {
+      if (type === 'width') {
+        rects.sort(function(a,b){
+          return a.x - b.x;
         })
-        calc(r1, r2);
+      } else {
+        rects.sort(function(a,b){
+          return a.y - b.y;
+        })
       }
+      var choosed = {};
+      for (var i = 0; i < rects.length; i++) {
+        if (i === 0) {
+          choosed[type] = rects[i].x - offset[type][0];
+          choosed.index = i;
+          continue;
+        }
+
+        if (i === rects.length - 1) {
+          var newx = offset[type][1] - rects[i].x - rects[i].width;
+          if (choosed[type] - newx < 0) {
+            choosed[type] = newx;
+            choosed.index = i;
+          }
+          continue;
+        }
+        var newx = rects[i].x - rects[i - 1].x - rects[i - 1].width;
+        if (choosed[type] - newx < 0) {
+          choosed[type] = newx;
+          choosed.index = i;
+        }
+      }
+      return choosed;
     }
-    
-   for(var i = 0;i < group.length;i++) {
-     if (!calc(group[i], shape)){
-       return false;
-     };
-     return true;
-   }
-      
+    var choosed = calc('width');
+    if (choosed.width >= shape.width) {
+      return true;
+    } else {
+      var choosed = calc('height');
+      if (choosed.height >= shape.height) {
+        return true;
+      }
+      return false;
+    }
+
   }
 
   function draw(data) {
     var group = new Konva.Group();
-    data.forEach(function(item, index) {
-    var points = item.points;
-    var pos = offset(points);
-    var posX = pos.offsetX;
-    var posY = pos.offsetY;
-    console.log(posX)
-    var shape = new Konva.Line({
-      x: random(posX[0], posX[1]),
-      y: random(posY[0], posY[1]),
-      points: points,
-      fill: '#8498d1',
-      stroke: '#617bb5',
-      strokeWidth: 2,
-      closed: true,
+    data.forEach(function (item, index) {
+      var points = item.points;
+      var pos = offset(points);
+      var posX = pos.width;
+      var posY = pos.height;
+      //console.log(posX)
+      var shape = new Konva.Line({
+        x: random(posX[0], posX[1]),
+        y: random(posY[0], posY[1]),
+        points: points,
+        fill: '#8498d1',
+        stroke: '#617bb5',
+        strokeWidth: 2,
+        closed: true,
+      });
+      
+      group.add(shape)
+      console.log(checkCollision(group,shape,pos))
     });
-    checkCollision(group,shape,pos) ? group.add(shape) : '';
-    //console.log(shape.getClientRect())
-   });
-   console.log(group.children.length)
-   stage.add(layer);
-   layer.add(group);
-   layer.draw();
-   
+    group.children.each(function(item){
+      console.log(item)
+    })
+    stage.add(layer);
+    layer.add(group);
+    layer.draw();
+
   }
 
 
