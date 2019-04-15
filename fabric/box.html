@@ -121,7 +121,9 @@
     if (group.children.length === 0) {
       shape.setAttrs({
         x: random(posX[0], posX[1]),
-        y: random(posY[0], posY[1])
+        y: random(posY[0], posY[1]),
+        width: shape.getClientRect().width,
+        height: shape.getClientRect().height
       })
       return true;
     }
@@ -132,39 +134,57 @@
       rects.push(item.attrs);
     });
     var calcChoosed = function (type) { 
+      var keyMin,keyMax;
       if (type === 'width') {
         rects.sort(function(a,b){
           return a.x - b.x;
         })
+        keyMin = 'minx';
+        keyMax = 'maxx';
       } else {
         rects.sort(function(a,b){
           return a.y - b.y;
         })
+        keyMin = 'miny';
+        keyMax = 'maxy';
       }
-      console.log(rects)
       var choosed = {};
       for (var i = 0; i < rects.length; i++) {
+        if (rects.length === 1) {
+          var left = rects[i].x - rects[i][keyMin];
+          var right = stageOptions.width - rects[i].x + rects[i][keyMin] - rects[i].width;
+          if (left >= right) {
+            choosed[type] = left;
+            choosed.min = offset[type][0];
+            choosed.max = (rects[i].x - rects[i][keyMin]) - shapeInfo.width + offset[type][0];
+          } else {
+            choosed[type] = right;
+            choosed.min = rects[i].x - rects[i][keyMin] + rects[i].width + offset[type][0];
+            choosed.max = offset[type][1];
+          }
+          break;
+        }
         if (i === 0) {
-          choosed[type] = rects[i].x - offset[type][0];
+          choosed[type] = rects[i].x - rects[i][keyMin];
           choosed.min = offset[type][0];
-          choosed.max = rects[i].x - shapeInfo.width - offset[type][0];
+          choosed.max = (rects[i].x - rects[i][keyMin]) - shapeInfo.width + offset[type][0];
           continue;
         }
 
         if (i === rects.length - 1) {
-          var newx = offset[type][1] - rects[i].x - rects[i].width;
+          var newx = stageOptions.width - rects[i].x + rects[i][keyMin] - rects[i].width;
           if (choosed[type] - newx < 0) {
             choosed[type] = newx;
-            choosed.min = rects[i].x + rects[i].width;
+            choosed.min = rects[i].x - rects[i][keyMin] + rects[i].width + offset[type][0];
             choosed.max = offset[type][1];
           }
           continue;
         }
-        var newx = (rects[i].x - rects[i].minx) - (rects[i - 1].x - rects[i - 1].minx + rects[i - 1][type]);
+        var newx = (rects[i].x - rects[i][keyMin]) - (rects[i - 1].x - rects[i - 1][keyMin] + rects[i - 1][type]);
         if (choosed[type] - newx < 0) {
           choosed[type] = newx;
-          choosed.min = rects[i].x;
-          choosed.max = (rects[i - 1].x - ) + rects[i - 1].width;
+          choosed.min = rects[i - 1].x - rects[i - 1][keyMin] + rects[i][type] + offset[type][0];
+          choosed.max = rects[i].x - rects[i][keyMin] - shapeInfo.width + offset[type][1];
         }
       }
       return choosed;
@@ -177,7 +197,9 @@
       //console.log(choosed)
       shape.setAttrs({
         x: random(choosed.min, choosed.max),
-        y: random(posY[0], posY[1])
+        y: random(posY[0], posY[1]),
+        width:shapeInfo.width,
+        height: shapeInfo.height
       })
       return true;
     } else {
@@ -186,7 +208,9 @@
       if (choosed.height >= shapeInfo.height) {
           shape.setAttrs({
           x: random(posX[0], posX[1]),
-          y: random(choosed.min, choosed.max)
+          y: random(choosed.min, choosed.max),
+          width:shapeInfo.width,
+          height: shapeInfo.height
         })
         return true;
       }
@@ -202,10 +226,10 @@
       var pos = offset(points);
       //console.log(posX)
       var shape = new Konva.Line({
-        minx: posX[0], 
-        maxx:posX[1],
-        miny: posY[0], 
-        maxy:posY[1],
+        minx: pos.width[0], 
+        maxx:pos.width[1],
+        miny: pos.height[0], 
+        maxy:pos.height[1],
         points: points,
         fill: '#8498d1',
         stroke: '#617bb5',
@@ -214,11 +238,11 @@
       });
       
       var checkPass = checkCollision(group,shape,pos);
-      //console.log(checkPass);
+      
       if (checkPass){
         group.add(shape)
       }
-      //group.add(shape)
+      console.log(group.children);
      
     });
     
