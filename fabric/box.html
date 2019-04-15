@@ -114,9 +114,11 @@
   }
 
   function checkCollision(group, shape, offset) {
+    //console.log(shape)
+    var posX = offset.width;
+    var posY = offset.height;
+
     if (group.children.length === 0) {
-      var posX = offset.width;
-      var posY = offset.height;
       shape.setAttrs({
         x: random(posX[0], posX[1]),
         y: random(posY[0], posY[1])
@@ -125,10 +127,11 @@
     }
 
     var rects = [];
+    var shapeInfo = shape.getClientRect();
     group.children.each(function(item){
       rects.push(item.attrs);
     });
-    var calcChoosed = function (type) {
+    var calcChoosed = function (type) { 
       if (type === 'width') {
         rects.sort(function(a,b){
           return a.x - b.x;
@@ -144,7 +147,7 @@
         if (i === 0) {
           choosed[type] = rects[i].x - offset[type][0];
           choosed.min = offset[type][0];
-          choosed.max = rects[i].x;
+          choosed.max = rects[i].x - shapeInfo.width - offset[type][0];
           continue;
         }
 
@@ -157,11 +160,11 @@
           }
           continue;
         }
-        var newx = rects[i].x - rects[i - 1].x - rects[i - 1].width;
+        var newx = (rects[i].x - rects[i].minx) - (rects[i - 1].x - rects[i - 1].minx + rects[i - 1][type]);
         if (choosed[type] - newx < 0) {
           choosed[type] = newx;
           choosed.min = rects[i].x;
-          choosed.max = rects[i - 1].x + rects[i - 1].width;
+          choosed.max = (rects[i - 1].x - ) + rects[i - 1].width;
         }
       }
       return choosed;
@@ -169,17 +172,20 @@
 
 
     var choosed = calcChoosed('width');
-    if (choosed.width >= shape.getClientRect().width) {
+    console.log(choosed, shapeInfo)
+    if (choosed.width >= shapeInfo.width) {
+      //console.log(choosed)
       shape.setAttrs({
         x: random(choosed.min, choosed.max),
-        y: random(offset.height[0], offset.height[1])
+        y: random(posY[0], posY[1])
       })
       return true;
     } else {
       var choosed = calcChoosed('height');
-      if (choosed.height >= shape.getClientRect().height) {
+      //console.log(choosed)
+      if (choosed.height >= shapeInfo.height) {
           shape.setAttrs({
-          x: random(offset.width[0], offset.width[1]),
+          x: random(posX[0], posX[1]),
           y: random(choosed.min, choosed.max)
         })
         return true;
@@ -196,18 +202,19 @@
       var pos = offset(points);
       //console.log(posX)
       var shape = new Konva.Line({
-        // x: random(posX[0], posX[1]),
-        // y: random(posY[0], posY[1]),
+        minx: posX[0], 
+        maxx:posX[1],
+        miny: posY[0], 
+        maxy:posY[1],
         points: points,
         fill: '#8498d1',
         stroke: '#617bb5',
         strokeWidth: 2,
         closed: true,
       });
-      //checkCollision(group,shape,pos) ? group.add(shape) : void(0);
-      //console.log(group.children.length)
+      
       var checkPass = checkCollision(group,shape,pos);
-      console.log(checkPass);
+      //console.log(checkPass);
       if (checkPass){
         group.add(shape)
       }
