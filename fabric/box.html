@@ -14,17 +14,58 @@
       overflow: hidden;
       background-color: #f0f0f0;
     }
-
+    #control{
+      margin: 20px auto 0;
+      width: fit-content;
+    }
     #container {
       margin: 100px auto;
       width: 800px;
       height: 600px;
       border: 1px solid green;
     }
+    input[type='text']{
+      width:100px;
+    }
   </style>
 </head>
 
 <body>
+  <div id="control">
+    <table>
+      <tr>
+        <th>零件类型</th>
+        <th>零件数目</th>
+      </tr>
+      <tr>
+        <td>square</td>
+        <td>
+          <input type="text" id="square" value="0">
+        </td>
+      </tr>
+      <tr>
+        <td>rectangle</td>
+        <td>
+          <input type="text" id="rectangle" value="0">
+        </td>
+      </tr>
+      <tr>
+        <td>echelo1</td>
+        <td>
+          <input type="text" id="echelo1" value="0">
+        </td>
+      </tr>
+      <tr>
+        <td>echelo2</td>
+        <td>
+          <input type="text" id="echelo2" value="0">
+        </td>
+      </tr>
+    </table>
+    <div>
+      <button id="btn">确认修改</button>
+    </div>
+  </div>
   <div id="container"></div>
 </body>
 <script>
@@ -76,6 +117,11 @@
       }
     ]
   }
+  var btn =document.getElementById('btn');
+  var dsquare = document.getElementById('square');
+  var drectangle = document.getElementById('rectangle');
+  var dechelo1 = document.getElementById('echelo1');
+  var dechelo2 = document.getElementById('echelo2');
 
   var stageOptions = {
     container: 'container',
@@ -114,116 +160,7 @@
     };
   }
 
-  // function checkCollision(group, shape, offset, strokeWidth) {
-  //   //console.log(shape)
-  //   var posX = offset.width;
-  //   var posY = offset.height;
-  //   var shapeInfo = shape.getClientRect();
-  //   if (group.children.length === 0) {
-  //     shape.setAttrs({
-  //       x: random(posX[0], posX[1]),
-  //       y: random(posY[0], posY[1]),
-  //       width: shapeInfo.width,
-  //       height: shapeInfo.height
-  //     })
-  //     return true;
-  //   }
 
-  //   var rects = [];
-  //   group.children.each(function(item){
-  //     rects.push(item.attrs);
-  //   });
-  //   var calcChoosed = function (type) { 
-  //     var keyMin,keyMax;
-  //     var keyPos;
-  //     if (type === 'width') {
-  //       rects.sort(function(a,b){
-  //         return a.x - b.x;
-  //       })
-  //       keyMin = 'minx';
-  //       keyMax = 'maxx';
-  //       keyPos = 'x';
-  //     } else {
-  //       rects.sort(function(a,b){
-  //         return a.y - b.y;
-  //       })
-  //       keyMin = 'miny';
-  //       keyMax = 'maxy';
-  //       keyPos = 'y';
-  //     }
-  //     var choosed = {};
-
-  //     for (var i = 0; i < rects.length; i++) {
-  //       if (rects.length === 1) {
-  //         var left = rects[i][keyPos] - rects[i][keyMin];
-  //         var right = stageOptions[type] - rects[i][keyPos] + rects[i][keyMin] - rects[i][type];
-  //         if (left >= right) {
-  //           choosed[type] = left;
-  //           choosed.min = offset[type][0];
-  //           choosed.max = (rects[i][keyPos] - rects[i][keyMin]) - shapeInfo[type] + offset[type][0];
-  //         } else {
-  //           choosed[type] = right;
-  //           choosed.min = rects[i][keyPos] - rects[i][keyMin] + rects[i][type] + offset[type][0];
-  //           choosed.max = offset[type][1];
-  //         }
-  //         break;
-  //       }
-  //       if (i === 0) {
-  //         choosed[type] = rects[i][keyPos] - rects[i][keyMin];
-  //         choosed.min = offset[type][0];
-  //         choosed.max = (rects[i][keyPos] - rects[i][keyMin]) - shapeInfo[type] + offset[type][0];
-  //         //console.log('left', choosed);
-  //         continue;
-  //       }
-
-  //       if (i === rects.length - 1) {
-  //         var newx = stageOptions[type] - rects[i][keyPos] + rects[i][keyMin] - rects[i][type];
-  //         if (choosed[type] - newx < 0) {
-  //           choosed[type] = newx;
-  //           choosed.min = rects[i][keyPos] - rects[i][keyMin] + rects[i][type] + offset[type][0];
-  //           choosed.max = offset[type][1];
-  //           //console.log('right', choosed);
-  //         }
-  //         continue;
-  //       }
-  //       var newx = (rects[i][keyPos] - rects[i][keyMin]) - (rects[i - 1][keyPos] - rects[i - 1][keyMin] + rects[i - 1][type]);
-  //       if (choosed[type] - newx < 0) {
-  //         choosed[type] = newx;
-  //         choosed.min = rects[i - 1][keyPos] - rects[i - 1][keyMin] + rects[i - 1][type] + offset[type][0];
-  //         choosed.max = rects[i][keyPos] - rects[i][keyMin] - shapeInfo[type] + offset[type][0];
-  //         //console.log('middle', choosed);
-  //       }
-  //     }
-  //     return choosed;
-  //   }
-
-  //   var choosed = calcChoosed('width');
-  //   console.log(choosed, shapeInfo)
-  //   if (choosed.width >= shapeInfo.width) {
-  //     //console.log(choosed)
-  //     shape.setAttrs({
-  //       x: random(choosed.min, choosed.max),
-  //       y: random(posY[0], posY[1]),
-  //       width:shapeInfo.width,
-  //       height: shapeInfo.height
-  //     })
-  //     return true;
-  //   } else {
-  //     var choosed = calcChoosed('height');
-  //     //console.log(choosed)
-  //     if (choosed.height >= shapeInfo.height) {
-  //         shape.setAttrs({
-  //         x: random(posX[0], posX[1]),
-  //         y: random(choosed.min, choosed.max),
-  //         width:shapeInfo.width,
-  //         height: shapeInfo.height
-  //       })
-  //       return true;
-  //     }
-  //     return false;
-  //   }
-
-  // }
   function checkCollision(group, shape, offset) {
     var shapeInfo = shape.getClientRect();
     //console.log(shapeInfo,shape)
@@ -266,17 +203,17 @@
     }
     //console.log(x,y)
     shape.setAttrs({
-        x: x,
-        y: y,
-        width: shapeInfo.width,
-        height: shapeInfo.height
-      })
+      x: x,
+      y: y,
+      width: shapeInfo.width,
+      height: shapeInfo.height
+    })
     return true;
   }
 
   function draw(data) {
     var group = new Konva.Group();
-    data = [...data, ...data, ...data, ...data, ...data, ...data,...data, ...data, ...data, ...data, ...data, ...data,...data, ...data, ...data, ...data,...data,...data, ...data,...data,...data, ...data,];
+    data = [...data, ...data, ...data, ...data, ...data, ...data, ...data, ...data, ...data, ...data, ...data, ...data, ...data, ...data, ...data, ...data, ...data, ...data, ...data, ...data, ...data, ...data,];
     console.log(data.length);
     data.forEach(function (item, index) {
       var points = item.points;
@@ -285,8 +222,8 @@
       var shape = new Konva.Line({
         x: random(pos.width[0], pos.width[1]),
         y: random(pos.height[0], pos.height[1]),
-        minx:pos.width[0],
-        miny:pos.height[0],
+        minx: pos.width[0],
+        miny: pos.height[0],
         points: points,
         //fill: '#8498d1',
         stroke: '#617bb5',
@@ -295,7 +232,7 @@
       });
 
       var checkPass = checkCollision(group, shape, pos);
-     
+
       if (checkPass) {
         group.add(shape)
       }
@@ -309,7 +246,15 @@
     layer.draw();
 
   }
-
+  btn.addEventListener('click', function() {
+    var value = {
+      a:dsquare.value,
+      b: drectangle.value,
+      c: dechelo1.value,
+      d:dechelo2.value
+    }
+    console.log(value)
+  })
 
   draw(json.parts);
 </script>
