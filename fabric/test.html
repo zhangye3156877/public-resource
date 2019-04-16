@@ -5,9 +5,56 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Document</title>
+  <style>
+     body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background-color: #f0f0f0;
+    }
+
+    #container {
+      margin: 100px auto;
+      width: 800px;
+      height: 600px;
+      border: 1px solid green;
+    }
+  </style>
 </head>
 <body>
-  
+  <div id="container"></div>
 </body>
-<script src="./a.js"></script>
+<script src="./kanva.min.js"></script>
+<script>
+
+
+  var stageOptions = {
+    container: 'container',
+    width: 800,
+    height: 600
+  }
+  var stage = new Konva.Stage({
+    container: stageOptions.container,
+    width: stageOptions.width,
+    height: stageOptions.height
+  });
+  var shape = new Konva.Line({
+    points: [0,0,20,0,20,20,0,20],
+    x:50,
+    y:50,
+    fill:'red',
+    closed: true,
+    strokeWidth: 3,
+    stroke:'green'
+  })
+  var layer = new Konva.Layer();
+  
+ 
+  layer.add(shape);
+  stage.add(layer);
+  console.log(shape.getClientRect({
+    skipShadow:true,
+  }))
+ // layer.draw();
+</script>
 </html>

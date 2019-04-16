@@ -94,15 +94,16 @@
     return parseInt(Math.random() * (max - min) + 1) + min;
   }
 
-  function offset(points) {
+  function offset(points, strokeWidth) {
     var maxX = 0, maxY = 0, minX = 0, minY = 0;
+    strokeWidth += 1;
     points.forEach(function (item, index) {
       if (index % 2 === 0) {
-        maxX = Math.max(item, maxX);
-        minX = Math.min(item, minX);
+        maxX = Math.max(item - strokeWidth, maxX);
+        minX = Math.min(item + strokeWidth, minX);
       } else {
-        maxY = Math.max(item, maxY);
-        minY = Math.min(item, minY);
+        maxY = Math.max(item - strokeWidth, maxY);
+        minY = Math.min(item + strokeWidth, minY);
       }
     })
     var offsetX = [-minX, stageOptions.width - maxX];
@@ -113,78 +114,84 @@
     };
   }
 
-  function checkCollision(group, shape, offset) {
+  function checkCollision(group, shape, offset, strokeWidth) {
     //console.log(shape)
     var posX = offset.width;
     var posY = offset.height;
-
+    var shapeInfo = shape.getClientRect();
     if (group.children.length === 0) {
       shape.setAttrs({
         x: random(posX[0], posX[1]),
         y: random(posY[0], posY[1]),
-        width: shape.getClientRect().width,
-        height: shape.getClientRect().height
+        width: shapeInfo.width,
+        height: shapeInfo.height
       })
       return true;
     }
 
     var rects = [];
-    var shapeInfo = shape.getClientRect();
     group.children.each(function(item){
       rects.push(item.attrs);
     });
     var calcChoosed = function (type) { 
       var keyMin,keyMax;
+      var keyPos;
       if (type === 'width') {
         rects.sort(function(a,b){
           return a.x - b.x;
         })
         keyMin = 'minx';
         keyMax = 'maxx';
+        keyPos = 'x';
       } else {
         rects.sort(function(a,b){
           return a.y - b.y;
         })
         keyMin = 'miny';
         keyMax = 'maxy';
+        keyPos = 'y';
       }
       var choosed = {};
+      
       for (var i = 0; i < rects.length; i++) {
         if (rects.length === 1) {
-          var left = rects[i].x - rects[i][keyMin];
-          var right = stageOptions.width - rects[i].x + rects[i][keyMin] - rects[i].width;
+          var left = rects[i][keyPos] - rects[i][keyMin];
+          var right = stageOptions[type] - rects[i][keyPos] + rects[i][keyMin] - rects[i][type];
           if (left >= right) {
             choosed[type] = left;
             choosed.min = offset[type][0];
-            choosed.max = (rects[i].x - rects[i][keyMin]) - shapeInfo.width + offset[type][0];
+            choosed.max = (rects[i][keyPos] - rects[i][keyMin]) - shapeInfo[type] + offset[type][0];
           } else {
             choosed[type] = right;
-            choosed.min = rects[i].x - rects[i][keyMin] + rects[i].width + offset[type][0];
+            choosed.min = rects[i][keyPos] - rects[i][keyMin] + rects[i][type] + offset[type][0];
             choosed.max = offset[type][1];
           }
           break;
         }
         if (i === 0) {
-          choosed[type] = rects[i].x - rects[i][keyMin];
+          choosed[type] = rects[i][keyPos] - rects[i][keyMin];
           choosed.min = offset[type][0];
-          choosed.max = (rects[i].x - rects[i][keyMin]) - shapeInfo.width + offset[type][0];
+          choosed.max = (rects[i][keyPos] - rects[i][keyMin]) - shapeInfo[type] + offset[type][0];
+          console.log('left', choosed);
           continue;
         }
 
         if (i === rects.length - 1) {
-          var newx = stageOptions.width - rects[i].x + rects[i][keyMin] - rects[i].width;
+          var newx = stageOptions[type] - rects[i][keyPos] + rects[i][keyMin] - rects[i][type];
           if (choosed[type] - newx < 0) {
             choosed[type] = newx;
-            choosed.min = rects[i].x - rects[i][keyMin] + rects[i].width + offset[type][0];
+            choosed.min = rects[i][keyPos] - rects[i][keyMin] + rects[i][type] + offset[type][0];
             choosed.max = offset[type][1];
+            console.log('right', choosed);
           }
           continue;
         }
-        var newx = (rects[i].x - rects[i][keyMin]) - (rects[i - 1].x - rects[i - 1][keyMin] + rects[i - 1][type]);
+        var newx = (rects[i][keyPos] - rects[i][keyMin]) - (rects[i - 1][keyPos] - rects[i - 1][keyMin] + rects[i - 1][type]);
         if (choosed[type] - newx < 0) {
           choosed[type] = newx;
-          choosed.min = rects[i - 1].x - rects[i - 1][keyMin] + rects[i][type] + offset[type][0];
-          choosed.max = rects[i].x - rects[i][keyMin] - shapeInfo.width + offset[type][1];
+          choosed.min = rects[i - 1][keyPos] - rects[i - 1][keyMin] + rects[i - 1][type] + offset[type][0];
+          choosed.max = rects[i][keyPos] - rects[i][keyMin] - shapeInfo[type] + offset[type][0];
+          console.log('middle', choosed);
         }
       }
       return choosed;
@@ -221,9 +228,10 @@
 
   function draw(data) {
     var group = new Konva.Group();
+    data = [...data,...data,...data,...data,...data,...data,...data];
     data.forEach(function (item, index) {
       var points = item.points;
-      var pos = offset(points);
+      var pos = offset(points, 2);
       //console.log(posX)
       var shape = new Konva.Line({
         minx: pos.width[0], 
@@ -231,9 +239,9 @@
         miny: pos.height[0], 
         maxy:pos.height[1],
         points: points,
-        fill: '#8498d1',
+        //fill: '#8498d1',
         stroke: '#617bb5',
-        strokeWidth: 2,
+        strokeWidth: 1,
         closed: true,
       });
       
@@ -242,7 +250,7 @@
       if (checkPass){
         group.add(shape)
       }
-      console.log(group.children);
+      //console.log(group.children);
      
     });
     

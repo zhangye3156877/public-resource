@@ -30,30 +30,34 @@
 
   var maxx = 600
   var minx = 50;
-  var choosed,shape;
-
-  var choosedx = {};
+  var shape = {
+    width:100,
+    height:100
+  };
+  var choosed = {};
 
   for(var i = 0;i < rects.length; i++) {
     if (i === 0) {
-      choosedx.width = rects[i].x - minx;
-      choosedx.index = i;
+      choosed.width = rects[i].x - minx;
+      choosed.index = i;
       continue;
     }
 
     if (i === rects.length - 1) {
       var newx = maxx - rects[i].x - rects[i].width;
-      if (choosedx.width - newx < 0) {
-        choosedx.width = newx;
-        choosedx.index = i;
+      if (choosed.width - newx < 0) {
+        choosed.width = newx;
+        choosed.index = i;
       } 
       continue;
     }
     var newx = rects[i].x - rects[i - 1].x - rects[i - 1].width;
-    if (choosedx.width - newx < 0) {
-      choosedx.width = newx;
-      choosedx.index = i;
+    if (choosed.width - newx < 0) {
+      choosed.width = newx;
+      choosed.index = i;
     } 
-    
   }
-  console.log(choosedx)
+  if (choosed.width >= shape.width) {
+
+  }
+  console.log(choosed)
