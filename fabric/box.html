@@ -152,7 +152,7 @@
   //       keyPos = 'y';
   //     }
   //     var choosed = {};
-      
+
   //     for (var i = 0; i < rects.length; i++) {
   //       if (rects.length === 1) {
   //         var left = rects[i][keyPos] - rects[i][keyMin];
@@ -196,67 +196,114 @@
   //     }
   //     return choosed;
   //   }
-    function checkCollision(group, shape, offset) {
-      
-    }
 
-    var choosed = calcChoosed('width');
-    console.log(choosed, shapeInfo)
-    if (choosed.width >= shapeInfo.width) {
-      //console.log(choosed)
+  //   var choosed = calcChoosed('width');
+  //   console.log(choosed, shapeInfo)
+  //   if (choosed.width >= shapeInfo.width) {
+  //     //console.log(choosed)
+  //     shape.setAttrs({
+  //       x: random(choosed.min, choosed.max),
+  //       y: random(posY[0], posY[1]),
+  //       width:shapeInfo.width,
+  //       height: shapeInfo.height
+  //     })
+  //     return true;
+  //   } else {
+  //     var choosed = calcChoosed('height');
+  //     //console.log(choosed)
+  //     if (choosed.height >= shapeInfo.height) {
+  //         shape.setAttrs({
+  //         x: random(posX[0], posX[1]),
+  //         y: random(choosed.min, choosed.max),
+  //         width:shapeInfo.width,
+  //         height: shapeInfo.height
+  //       })
+  //       return true;
+  //     }
+  //     return false;
+  //   }
+
+  // }
+  function checkCollision(group, shape, offset) {
+    var shapeInfo = shape.getClientRect();
+    //console.log(shapeInfo,shape)
+    var posX = offset.width;
+    var posY = offset.height;
+    if (group.children.length === 0) {
       shape.setAttrs({
-        x: random(choosed.min, choosed.max),
-        y: random(posY[0], posY[1]),
-        width:shapeInfo.width,
+        width: shapeInfo.width,
         height: shapeInfo.height
       })
       return true;
-    } else {
-      var choosed = calcChoosed('height');
-      //console.log(choosed)
-      if (choosed.height >= shapeInfo.height) {
-          shape.setAttrs({
-          x: random(posX[0], posX[1]),
-          y: random(choosed.min, choosed.max),
-          width:shapeInfo.width,
-          height: shapeInfo.height
-        })
-        return true;
-      }
-      return false;
     }
 
+    var rects = [];
+    group.children.each(function (item) {
+      rects.push(item.attrs);
+    });
+    var times = 0;
+    var n = 0;
+    var x = shape.attrs.x;
+    var y = shape.attrs.y;
+    //console.log(x,y)
+    while (n < rects.length) {
+      times++;
+      if (times >= 10000) {
+        console.log('终止循环');
+        return false;
+        //break;
+      }
+      var bol = !((x - posX[0]) > (rects[n].x + rects[n].width - rects[n].minx) || (x + shapeInfo.width - posX[0]) < (rects[n].x - rects[n].minx)
+        || (y - posY[0]) > (rects[n].y + rects[n].height - rects[n].miny) || (y + shapeInfo.height - posY[0]) < (rects[n].y - rects[n].miny))
+      //console.log(bol)
+      if (bol) {
+        x = random(posX[0], posX[1]);
+        y = random(posY[0], posY[1]);
+        n = 0;
+      } else {
+        n++;
+      }
+    }
+    //console.log(x,y)
+    shape.setAttrs({
+        x: x,
+        y: y,
+        width: shapeInfo.width,
+        height: shapeInfo.height
+      })
+    return true;
   }
 
   function draw(data) {
     var group = new Konva.Group();
-    data = [...data,...data,...data,...data,...data,...data,...data,...data,...data,...data,...data,...data,...data,...data];
+    data = [...data, ...data, ...data, ...data, ...data, ...data,...data, ...data, ...data, ...data, ...data, ...data,...data, ...data, ...data, ...data,...data,...data, ...data,...data,...data, ...data,];
     console.log(data.length);
     data.forEach(function (item, index) {
       var points = item.points;
       var pos = offset(points, 1);
       //console.log(posX)
       var shape = new Konva.Line({
-        minx: pos.width[0], 
-        maxx:pos.width[1],
-        miny: pos.height[0], 
-        maxy:pos.height[1],
+        x: random(pos.width[0], pos.width[1]),
+        y: random(pos.height[0], pos.height[1]),
+        minx:pos.width[0],
+        miny:pos.height[0],
         points: points,
         //fill: '#8498d1',
         stroke: '#617bb5',
         strokeWidth: 1,
         closed: true,
       });
-      
-      var checkPass = checkCollision(group,shape,pos);
-      
-      if (checkPass){
+
+      var checkPass = checkCollision(group, shape, pos);
+     
+      if (checkPass) {
         group.add(shape)
       }
+      //group.add(shape)
       //console.log(group.children);
-     
+
     });
-    
+
     stage.add(layer);
     layer.add(group);
     layer.draw();

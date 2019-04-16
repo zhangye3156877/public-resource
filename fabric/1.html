@@ -12,14 +12,13 @@
 <script>
 var a = 0;
 var b = 0;
-while(a < 10){
-  a++;
-  while( b < 10){
-    console.log(b)
-    b++;
+for(a = 0; a < 10;a++){
+  console.log(a)
+  for(b = 0;b < 10;b++) {
     break
+    console.log(b);
+   
   }
-  b = 0
 }
 </script>
 </html>
