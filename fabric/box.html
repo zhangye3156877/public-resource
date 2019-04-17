@@ -13,7 +13,7 @@
       margin: 0;
       padding: 0;
       overflow: hidden;
-      background-color: #f0f0f0;
+      
     }
 
     #control {
@@ -250,9 +250,9 @@
         minx: pos.width[0],
         miny: pos.height[0],
         points: points,
-        //fill: '#8498d1',
-        stroke: '#617bb5',
-        strokeWidth: 1,
+        fill: '#8498d1',
+        // stroke: '#617bb5',
+        // strokeWidth: 1,
         closed: true,
       });
 
@@ -265,7 +265,6 @@
       //console.log(group.children);
 
     });
-
 
     layer.draw();
 
@@ -285,6 +284,7 @@
       group.add(rect);
       item.parts.forEach(function (i,n) {
         var shape = new Konva.Line({
+          y: item.height * index,
           points: i.points,
           //fill: '#8498d1',
           stroke: '#617bb5',
@@ -295,9 +295,6 @@
       })
 
     })
-
-
-
 
     layer.draw();
   }
