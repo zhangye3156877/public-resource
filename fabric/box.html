@@ -7,6 +7,7 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Document</title>
   <script src="./kanva.min.js"></script>
+  <script src="./axios.min.js"></script>
   <style>
     body {
       margin: 0;
@@ -14,18 +15,21 @@
       overflow: hidden;
       background-color: #f0f0f0;
     }
-    #control{
+
+    #control {
       margin: 20px auto 0;
       width: fit-content;
     }
+
     #container {
       margin: 100px auto;
       width: 800px;
       height: 600px;
-      border: 1px solid green;
+      /* border: 1px solid green; */
     }
-    input[type='text']{
-      width:100px;
+
+    input[type='text'] {
+      width: 100px;
     }
   </style>
 </head>
@@ -36,11 +40,19 @@
       <tr>
         <th>零件类型</th>
         <th>零件数目</th>
+        <th>板材宽度</th>
+        <th>板材高度</th>
       </tr>
       <tr>
         <td>square</td>
         <td>
           <input type="text" id="square" value="0">
+        </td>
+        <td>
+          <input type="text" id="width" value="250">
+        </td>
+        <td>
+          <input type="text" id="height" value="210">
         </td>
       </tr>
       <tr>
@@ -64,12 +76,17 @@
     </table>
     <div>
       <button id="btn">确认修改</button>
+      <button id="btn2">计算排列</button>
     </div>
   </div>
   <div id="container"></div>
 </body>
 <script>
   var json = {
+    "sheet": {
+      "width": 250,
+      "height": 210,
+    },
     "parts": [
       {
         "name": "square",
@@ -117,11 +134,14 @@
       }
     ]
   }
-  var btn =document.getElementById('btn');
+  var btn = document.getElementById('btn');
+  var btn2 = document.getElementById('btn2');
   var dsquare = document.getElementById('square');
   var drectangle = document.getElementById('rectangle');
   var dechelo1 = document.getElementById('echelo1');
   var dechelo2 = document.getElementById('echelo2');
+  var dwidth = document.getElementById('width');
+  var dheight = document.getElementById('height');
 
   var stageOptions = {
     container: 'container',
@@ -136,7 +156,8 @@
 
   var layer = new Konva.Layer();
   var group = new Konva.Group();
-
+  stage.add(layer);
+  layer.add(group);
   function random(min, max) {
     return parseInt(Math.random() * (max - min) + 1) + min;
   }
@@ -214,12 +235,12 @@
 
   function draw(data) {
     group.destroyChildren();
-    var all = data.map(function(item) {
+    var all = data.map(function (item) {
       return Array(item.num).fill(item)
     })
     all = all.flat();
     console.log(all);
-    all.forEach(function(item, index) {
+    all.forEach(function (item, index) {
       var points = item.points;
       var pos = offset(points, 1);
       //console.log(posX)
@@ -245,28 +266,77 @@
 
     });
 
-    stage.add(layer);
-    layer.add(group);
+
     layer.draw();
 
   }
-  btn.addEventListener('click', function() {
+
+  function drawResult(data) {
+    group.destroyChildren();
+    data.forEach(function (item, index) {
+      var rect = new Konva.Rect({
+        x: 0,
+        y: item.height * index,
+        width: item.width,
+        height: item.height,
+        //fill: 'gray',
+        stroke: 'gray'
+      });
+      group.add(rect);
+      item.parts.forEach(function (i,n) {
+        var shape = new Konva.Line({
+          points: i.points,
+          //fill: '#8498d1',
+          stroke: '#617bb5',
+          strokeWidth: 1,
+          closed: true,
+        })
+        group.add(shape);
+      })
+
+    })
+
+
+
+
+    layer.draw();
+  }
+  btn.addEventListener('click', function () {
     var value = {
-      square:dsquare.value,
+      square: dsquare.value,
       rectangle: drectangle.value,
       echelo1: dechelo1.value,
-      echelo2:dechelo2.value
+      echelo2: dechelo2.value,
+      width: dwidth.value,
+      height: dheight.value
     }
     var parts = json.parts;
-    parts.forEach(function(item) {
+    parts.forEach(function (item) {
       console.log(item)
       item.num = Number(value[item.name]);
     })
-    
+    json.sheet.width = Number(value.width);
+    json.sheet.height = Number(value.height);
     draw(json.parts);
     console.log(json.parts)
   })
 
+  btn2.addEventListener('click', function () {
+
+    console.log(json)
+
+    axios.post('http://192.168.1.136:8000/nest', {
+      json
+    })
+      .then(function (res) {
+        console.log(res.data);
+        drawResult(res.data.Sheets);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+
+  })
   // draw(json.parts);
 </script>
 
