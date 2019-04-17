@@ -80,7 +80,7 @@
           -20, 20,
           20, 20
         ],
-        "num": 50
+        "num": 0
       },
       {
         "name": "rectangle",
@@ -91,7 +91,7 @@
           -20, 10,
           20, 10
         ],
-        "num": 50
+        "num": 0
       },
       {
         "name": "echelo1",
@@ -102,7 +102,7 @@
           -20, 20,
           20, 20
         ],
-        "num": 50
+        "num": 0
       },
       {
         "name": "echelo2",
@@ -113,7 +113,7 @@
           -20, 20,
           20, 20
         ],
-        "num": 50
+        "num": 0
       }
     ]
   }
@@ -135,6 +135,7 @@
   });
 
   var layer = new Konva.Layer();
+  var group = new Konva.Group();
 
   function random(min, max) {
     return parseInt(Math.random() * (max - min) + 1) + min;
@@ -212,10 +213,13 @@
   }
 
   function draw(data) {
-    var group = new Konva.Group();
-    data = [...data, ...data, ...data, ...data, ...data, ...data, ...data, ...data, ...data, ...data, ...data, ...data, ...data, ...data, ...data, ...data, ...data, ...data, ...data, ...data, ...data, ...data,];
-    console.log(data.length);
-    data.forEach(function (item, index) {
+    group.destroyChildren();
+    var all = data.map(function(item) {
+      return Array(item.num).fill(item)
+    })
+    all = all.flat();
+    console.log(all);
+    all.forEach(function(item, index) {
       var points = item.points;
       var pos = offset(points, 1);
       //console.log(posX)
@@ -248,15 +252,22 @@
   }
   btn.addEventListener('click', function() {
     var value = {
-      a:dsquare.value,
-      b: drectangle.value,
-      c: dechelo1.value,
-      d:dechelo2.value
+      square:dsquare.value,
+      rectangle: drectangle.value,
+      echelo1: dechelo1.value,
+      echelo2:dechelo2.value
     }
-    console.log(value)
+    var parts = json.parts;
+    parts.forEach(function(item) {
+      console.log(item)
+      item.num = Number(value[item.name]);
+    })
+    
+    draw(json.parts);
+    console.log(json.parts)
   })
 
-  draw(json.parts);
+  // draw(json.parts);
 </script>
 
 </html>
