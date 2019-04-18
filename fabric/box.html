@@ -11,38 +11,39 @@
   <style>
     body {
       margin: 0;
-      padding: 0;
-      overflow: hidden;
+      padding-top: 10px;
+    }
 
-    }
-    #title{
+    #title {
       text-align: center;
-      margin-top: 20px;
     }
+
     #title img {
       width: 90px;
       vertical-align: middle;
     }
+
     #title span {
       font-size: 30px;
       font-weight: bold;
-      color:#399FB8;
+      color: #399FB8;
     }
+
     #control {
-      margin: 20px auto 0;
+      margin: 10px auto 0;
       width: fit-content;
     }
 
     #container {
-      margin: 50px auto 0;
-      width: 800px;
-      height: 600px;
-      /* border: 1px solid green; */
+      width: fit-content;
+      margin: 10px auto 0;
+      border: 1px solid #617bb5;
     }
-
-    table {
+    .table-wrap{
       float: left;
-      margin-right:15px; 
+    }
+    table {
+      margin-right: 15px;
       font-family: verdana, arial, sans-serif;
       font-size: 11px;
       color: #333333;
@@ -72,28 +73,29 @@
       width: 100px;
       text-align: center;
     }
-    button{
+
+    button {
       border-radius: 20px;
       padding: 12px 23px;
       background-color: #409eff;
       display: inline-block;
       color: #fff;
-    line-height: 1;
-    white-space: nowrap;
-    cursor: pointer;
-    border: 1px solid #409eff;
+      line-height: 1;
+      white-space: nowrap;
+      cursor: pointer;
+      border: 1px solid #409eff;
 
-    -webkit-appearance: none;
-    text-align: center;
-    box-sizing: border-box;
-    outline: none;
-    margin: 0;
-    transition: .1s;
-    font-weight: 500;
-    -moz-user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
-    font-size: 14px;
+      -webkit-appearance: none;
+      text-align: center;
+      box-sizing: border-box;
+      outline: none;
+      margin: 0;
+      transition: .1s;
+      font-weight: 500;
+      -moz-user-select: none;
+      -webkit-user-select: none;
+      -ms-user-select: none;
+      font-size: 14px;
     }
   </style>
 </head>
@@ -104,50 +106,64 @@
     <span>套料系统</span>
   </div>
   <div id="control">
-    <table>
-      <tr>
-        <th>零件类型</th>
-        <th>零件数目</th>
-      </tr>
-      <tr>
-        <td>square</td>
-        <td>
-          <input type="text" id="square" value="0">
-        </td>
-      </tr>
-      <tr>
-        <td>rectangle</td>
-        <td>
-          <input type="text" id="rectangle" value="0">
-        </td>
-      </tr>
-      <tr>
-        <td>echelo1</td>
-        <td>
-          <input type="text" id="echelo1" value="0">
-        </td>
-      </tr>
-      <tr>
-        <td>echelo2</td>
-        <td>
-          <input type="text" id="echelo2" value="0">
-        </td>
-      </tr>
-    </table>
-    <table>
-      <tr>
-        <th>板材宽度</th>
-        <th>板材高度</th>
-      </tr>
-      <tr>
-        <td>
-          <input type="text" id="width" value="250">
-        </td>
-        <td>
-          <input type="text" id="height" value="210">
-        </td>
-      </tr>
-    </table>
+    <div class='table-wrap'>
+        <table>
+            <tr>
+              <th>零件类型</th>
+              <th>零件数目</th>
+            </tr>
+            <tr>
+              <td>square</td>
+              <td>
+                <input type="text" id="square" value="0">
+              </td>
+            </tr>
+            <tr>
+              <td>rectangle</td>
+              <td>
+                <input type="text" id="rectangle" value="0">
+              </td>
+            </tr>
+            <tr>
+              <td>echelo1</td>
+              <td>
+                <input type="text" id="echelo1" value="0">
+              </td>
+            </tr>
+            <tr>
+              <td>echelo2</td>
+              <td>
+                <input type="text" id="echelo2" value="0">
+              </td>
+            </tr>
+          </table>
+    </div>
+    <div class="table-wrap">
+        <table>
+            <tr>
+              <th>板材宽度</th>
+              <th>板材高度</th>
+            </tr>
+            <tr>
+              <td>
+                <input type="text" id="width" value="250">
+              </td>
+              <td>
+                <input type="text" id="height" value="210">
+              </td>
+            </tr>
+          </table>
+          <table style="margin-top:40px">
+              <tr>
+                <th>总体利用率</th>
+              </tr>
+              <tr>
+                <td>
+                  <input type="text" id="availability" value="">
+                </td>
+              </tr>
+            </table>
+    </div>
     <div style="clear:both"></div>
     <div style="margin-top:10px;padding: 0 20px;">
       <button id="btn">修改零件</button>
@@ -221,10 +237,12 @@
 
   var stageOptions = {
     container: 'container',
-    width: 800,
-    height: 600,
-    left: 20,
-    top: 20
+    width: 1000,
+    height: 550,
+    iw: 400,
+    left: 0,
+    top: 50,
+    font: 30
   }
   var stage = new Konva.Stage({
     container: stageOptions.container,
@@ -317,7 +335,7 @@
       return Array(item.num > 20 ? 20 : item.num).fill(item);
     })
     all = all.flat();
-    console.log(all);
+    //console.log(all);
     all.forEach(function (item, index) {
       var points = item.points;
       var pos = offset(points, 1);
@@ -345,25 +363,55 @@
     });
 
     layer.draw();
-
   }
 
   function drawResult(data) {
     group.destroyChildren();
+    // 每行最大放置数
+    var bx = Math.floor(stageOptions.width / stageOptions.iw);
+    var bh = Math.round(data.length / bx);
+    var margins = (stageOptions.width - stageOptions.iw * bx) / (bx + 1);
+    //适配的框高
+    var ratio = json.sheet.width / json.sheet.height;
+    var width = stageOptions.iw;
+    var height = stageOptions.iw / ratio;
+    var newH = bh * height + (bh + 1) * stageOptions.top;
+    //console.log(newH,stageOptions.height,height,bh)
+    if (newH > stageOptions.height) {
+      stage.size({
+        width: stageOptions.width,
+        height: newH
+      })
+    }
+
+    stageOptions.left = margins;
+    //console.log(stageOptions.left,)
     data.forEach(function (item, index) {
-      var ytimes = Math.floor((stageOptions.left + item.width) * (index + 1) / stageOptions.width);
-      var xtimes = (index + 1) % Math.floor(stageOptions.width / (stageOptions.left + item.width));
-      var offsetX = stageOptions.left * xtimes + item.width * xtimes;
-      var offsetY = stageOptions.top * (ytimes + 1) + item.height * ytimes;
+      var ytimes = Math.floor(index / bx);
+      var offsetX = stageOptions.left * (index % bx + 1) + width * (index % bx);
+      var offsetY = stageOptions.top * (ytimes + 1) + height * ytimes;
+      var showFont = `${item.name}-利用率:${stageOptions.font}`
+      //var offsetFont = offsetX + (width - stageOptions.font * showFont.length) / 2;
+      console.log(stageOptions.font * showFont.length)
+      var text = new Konva.Text({
+        x: offsetX + 10,
+        y: offsetY - 30,
+        text: showFont,
+        fontSize: stageOptions.font,
+        fontFamily: 'Calibri',
+        fill: 'green'
+      });
+      
       var rect = new Konva.Rect({
         x: offsetX,
         y: offsetY,
-        width: item.width,
-        height: item.height,
+        width,
+        height,
+        //height: item.height,
         //fill: 'gray',
         stroke: '#617bb5'
       });
-      group.add(rect);
+      group.add(rect,text);
       item.parts.forEach(function (i, n) {
         var shape = new Konva.Line({
           x: offsetX,
@@ -374,6 +422,10 @@
           strokeWidth: 1,
           closed: true,
         })
+        shape.scale({
+          x: width / item.width,
+          y: height / item.height
+        });
         group.add(shape);
       })
 
@@ -381,6 +433,35 @@
 
     layer.draw();
   }
+
+  // document.addEventListener('DOMContentLoaded',function() {
+  //   console.log('文档载入完毕哦');
+  //   stageOptions.width = window.innerWidth * .8;
+  //   stageOptions.height = window.innerWidth * .8 / 1.19;
+  //   stage.size({
+  //     width: stageOptions.width,
+  //     height: stageOptions.height
+  //   })
+  // })
+
+  // window.addEventListener('resize',function() {
+  //   console.log(stage)
+  //   var oldWidth = stageOptions.width;
+  //   var oldHeight = stageOptions.height;
+  //   stageOptions.width = window.innerWidth * .8;
+  //   stageOptions.height = window.innerWidth * .8 / 1.5;
+  //   stage.size({
+  //     width: stageOptions.width,
+  //     height: stageOptions.height
+  //   })
+
+  //   layer.scale({
+  //     x: 2,
+  //     y:2
+  //   })
+  //   layer.draw();
+  // })
+
   control.addEventListener('focus', function (e) {
     var id = e.target.id;
     if (id === 'square' || id === 'rectangle' || id === 'echelo1' || id === 'echelo2' || id === 'width' || id === 'height') {
@@ -390,6 +471,19 @@
   }, {
       capture: true
     })
+
+  width.addEventListener('change', function (e) {
+    if (e.target.value > 1000) {
+      e.target.value = '1000';
+    }
+  })
+
+  height.addEventListener('change', function (e) {
+    if (e.target.value > 550) {
+      e.target.value = '550';
+    }
+  })
+
   btn.addEventListener('click', function () {
     var value = {
       square: dsquare.value,
