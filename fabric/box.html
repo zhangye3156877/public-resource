@@ -13,46 +13,106 @@
       margin: 0;
       padding: 0;
       overflow: hidden;
-      
-    }
 
+    }
+    #title{
+      text-align: center;
+      margin-top: 20px;
+    }
+    #title img {
+      width: 90px;
+      vertical-align: middle;
+    }
+    #title span {
+      font-size: 30px;
+      font-weight: bold;
+      color:#399FB8;
+    }
     #control {
       margin: 20px auto 0;
       width: fit-content;
     }
 
     #container {
-      margin: 100px auto;
+      margin: 50px auto 0;
       width: 800px;
       height: 600px;
       /* border: 1px solid green; */
     }
 
+    table {
+      float: left;
+      margin-right:15px; 
+      font-family: verdana, arial, sans-serif;
+      font-size: 11px;
+      color: #333333;
+      border-width: 1px;
+      border-color: #666666;
+      border-collapse: collapse;
+    }
+
+    table th {
+      width: 100px;
+      border-width: 1px;
+      padding: 8px;
+      border-style: solid;
+      border-color: #666666;
+      background-color: #dedede;
+    }
+
+    table td {
+      width: 100px;
+      border-width: 1px;
+      padding: 8px;
+      border-style: solid;
+      border-color: #666666;
+    }
+
     input[type='text'] {
       width: 100px;
+      text-align: center;
+    }
+    button{
+      border-radius: 20px;
+      padding: 12px 23px;
+      background-color: #409eff;
+      display: inline-block;
+      color: #fff;
+    line-height: 1;
+    white-space: nowrap;
+    cursor: pointer;
+    border: 1px solid #409eff;
+
+    -webkit-appearance: none;
+    text-align: center;
+    box-sizing: border-box;
+    outline: none;
+    margin: 0;
+    transition: .1s;
+    font-weight: 500;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    font-size: 14px;
     }
   </style>
 </head>
 
 <body>
+  <div id="title">
+    <img src="./img/logo.png" alt="">
+    <span>套料系统</span>
+  </div>
   <div id="control">
     <table>
       <tr>
         <th>零件类型</th>
         <th>零件数目</th>
-        <th>板材宽度</th>
-        <th>板材高度</th>
       </tr>
       <tr>
         <td>square</td>
         <td>
           <input type="text" id="square" value="0">
-        </td>
-        <td>
-          <input type="text" id="width" value="250">
-        </td>
-        <td>
-          <input type="text" id="height" value="210">
         </td>
       </tr>
       <tr>
@@ -74,8 +134,23 @@
         </td>
       </tr>
     </table>
-    <div>
-      <button id="btn">确认修改</button>
+    <table>
+      <tr>
+        <th>板材宽度</th>
+        <th>板材高度</th>
+      </tr>
+      <tr>
+        <td>
+          <input type="text" id="width" value="250">
+        </td>
+        <td>
+          <input type="text" id="height" value="210">
+        </td>
+      </tr>
+    </table>
+    <div style="clear:both"></div>
+    <div style="margin-top:10px;padding: 0 20px;">
+      <button id="btn">修改零件</button>
       <button id="btn2">计算排列</button>
     </div>
   </div>
@@ -134,6 +209,7 @@
       }
     ]
   }
+  var inputs = document.querySelectorAll('input[type="text"]');
   var btn = document.getElementById('btn');
   var btn2 = document.getElementById('btn2');
   var dsquare = document.getElementById('square');
@@ -146,7 +222,9 @@
   var stageOptions = {
     container: 'container',
     width: 800,
-    height: 600
+    height: 600,
+    left: 20,
+    top: 20
   }
   var stage = new Konva.Stage({
     container: stageOptions.container,
@@ -236,7 +314,7 @@
   function draw(data) {
     group.destroyChildren();
     var all = data.map(function (item) {
-      return Array(item.num).fill(item)
+      return Array(item.num > 20 ? 20 : item.num).fill(item);
     })
     all = all.flat();
     console.log(all);
@@ -251,8 +329,8 @@
         miny: pos.height[0],
         points: points,
         fill: '#8498d1',
-        // stroke: '#617bb5',
-        // strokeWidth: 1,
+        stroke: '#617bb5',
+        strokeWidth: 1,
         closed: true,
       });
 
@@ -273,20 +351,25 @@
   function drawResult(data) {
     group.destroyChildren();
     data.forEach(function (item, index) {
+      var ytimes = Math.floor((stageOptions.left + item.width) * (index + 1) / stageOptions.width);
+      var xtimes = (index + 1) % Math.floor(stageOptions.width / (stageOptions.left + item.width));
+      var offsetX = stageOptions.left * xtimes + item.width * xtimes;
+      var offsetY = stageOptions.top * (ytimes + 1) + item.height * ytimes;
       var rect = new Konva.Rect({
-        x: 0,
-        y: item.height * index,
+        x: offsetX,
+        y: offsetY,
         width: item.width,
         height: item.height,
         //fill: 'gray',
-        stroke: 'gray'
+        stroke: '#617bb5'
       });
       group.add(rect);
-      item.parts.forEach(function (i,n) {
+      item.parts.forEach(function (i, n) {
         var shape = new Konva.Line({
-          y: item.height * index,
+          x: offsetX,
+          y: offsetY,
           points: i.points,
-          //fill: '#8498d1',
+          fill: '#8498d1',
           stroke: '#617bb5',
           strokeWidth: 1,
           closed: true,
@@ -298,6 +381,15 @@
 
     layer.draw();
   }
+  control.addEventListener('focus', function (e) {
+    var id = e.target.id;
+    if (id === 'square' || id === 'rectangle' || id === 'echelo1' || id === 'echelo2' || id === 'width' || id === 'height') {
+      console.log(e.target.value)
+      e.target.value = '';
+    }
+  }, {
+      capture: true
+    })
   btn.addEventListener('click', function () {
     var value = {
       square: dsquare.value,
