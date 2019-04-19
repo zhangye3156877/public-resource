@@ -508,8 +508,8 @@
   btn2.addEventListener('click', function () {
 
     console.log(json)
-
-    axios.post('http://192.168.1.136:8000/nest', {
+    axios.post('http://192.168.1.136:8000/nest',{
+    // axios.post('http://redmine.deepsingularity.net:18000/nest', {
       json
     })
       .then(function (res) {
