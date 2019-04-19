@@ -5,8 +5,8 @@ module.exports = {
 
   mode: "production",
 
-  entry: ['@babel/polyfill', './index.js'],
-
+  //entry: ['@babel/polyfill', './js/index.js'],
+  entry: ['./js/index.js'],
   output: {
 
     path: path.resolve(__dirname, 'dist'),
@@ -20,16 +20,16 @@ module.exports = {
     rules: [{
 
       test: /\.js$/,
-
+      use: {
+        loader: 'babel-loader'
+      },
       include: [
 
-        path.resolve(__dirname, 'src')
+        path.resolve(__dirname, './js')
 
       ],
 
-      exclude: /(node_modules|bower_components)/,
-
-      loader: "babel-loader",
+      exclude: /node_modules/
 
     }]
 

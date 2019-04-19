@@ -157,10 +157,13 @@ function checkCollision(group, shape, offset) {
 
 function draw(data) {
   group.destroyChildren();
-  var all = data.map(function (item) {
+  var flats = data.map(function (item) {
     return Array(item.num > 20 ? 20 : item.num).fill(item);
   })
-  all = all.flat();
+  var all = [];
+  flats.forEach((item) => {
+    all.push(...item);
+  })
   //console.log(all);
   all.forEach(function (item, index) {
     var points = item.points;
