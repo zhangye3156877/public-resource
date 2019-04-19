@@ -159,7 +159,7 @@
               </tr>
               <tr>
                 <td>
-                  <input type="text" id="availability" value="">
+                  <input type="text" id="allutil" value="">
                 </td>
               </tr>
             </table>
@@ -234,6 +234,7 @@
   var dechelo2 = document.getElementById('echelo2');
   var dwidth = document.getElementById('width');
   var dheight = document.getElementById('height');
+  var dallutil = document.getElementById('allutil');
 
   var stageOptions = {
     container: 'container',
@@ -390,7 +391,7 @@
       var ytimes = Math.floor(index / bx);
       var offsetX = stageOptions.left * (index % bx + 1) + width * (index % bx);
       var offsetY = stageOptions.top * (ytimes + 1) + height * ytimes;
-      var showFont = `${item.name}-利用率:${stageOptions.font}`
+      var showFont = `${item.name}-利用率:${(item.util.toFixed(4) * 100).toString().substr(0,5)}%`
       //var offsetFont = offsetX + (width - stageOptions.font * showFont.length) / 2;
       console.log(stageOptions.font * showFont.length)
       var text = new Konva.Text({
@@ -513,6 +514,9 @@
     })
       .then(function (res) {
         console.log(res.data);
+        
+        var str = (res.data.allutil.toFixed(4) * 100).toString().substr(0,5) + '%';
+        dallutil.value = str;
         drawResult(res.data.Sheets);
       })
       .catch(function (error) {
