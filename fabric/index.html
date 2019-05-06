@@ -6,17 +6,47 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Document</title>
-  <script src="./kanva.min.js"></script>
-  <script src="./axios.min.js"></script>
+  <script src="./js/kanva.min.js"></script>
+  <script src="./js/axios.min.js"></script>
   <style>
-    body {
-      width:100%;
+    body,
+    div,
+    dl,
+    dt,
+    dd,
+    ul,
+    ol,
+    li,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    pre,
+    code,
+    form,
+    fieldset,
+    legend,
+    input,
+    textarea,
+    p,
+    blockquote,
+    th,
+    td {
       margin: 0;
-      padding-top: 10px;
+      padding: 0;
     }
+
+    table {
+      border-collapse: collapse;
+      border-spacing: 0;
+    }
+
 
     #title {
       text-align: center;
+      margin-top: 10px;
     }
 
     #title img {
@@ -33,7 +63,7 @@
     #control {
       margin: 10px auto 0;
       /* width: fit-content; */
-      width: 518px;
+      width: 580px;
     }
 
     #container {
@@ -42,11 +72,13 @@
       margin: 10px auto 0;
       border: 1px solid #617bb5;
     }
-    .table-wrap{
+
+    .table-wrap {
       float: left;
-    }
-    table {
       margin-right: 15px;
+    }
+
+    table {
       font-family: verdana, arial, sans-serif;
       font-size: 11px;
       color: #333333;
@@ -109,62 +141,62 @@
   </div>
   <div id="control">
     <div class='table-wrap'>
-        <table>
-            <tr>
-              <th>零件类型</th>
-              <th>零件数目</th>
-            </tr>
-            <tr>
-              <td>square</td>
-              <td>
-                <input type="text" id="square" value="0">
-              </td>
-            </tr>
-            <tr>
-              <td>rectangle</td>
-              <td>
-                <input type="text" id="rectangle" value="0">
-              </td>
-            </tr>
-            <tr>
-              <td>echelo1</td>
-              <td>
-                <input type="text" id="echelo1" value="0">
-              </td>
-            </tr>
-            <tr>
-              <td>echelo2</td>
-              <td>
-                <input type="text" id="echelo2" value="0">
-              </td>
-            </tr>
-          </table>
+      <table>
+        <tr>
+          <th>零件类型</th>
+          <th>零件数目</th>
+        </tr>
+        <tr>
+          <td>square</td>
+          <td>
+            <input type="text" id="square" value="0">
+          </td>
+        </tr>
+        <tr>
+          <td>rectangle</td>
+          <td>
+            <input type="text" id="rectangle" value="0">
+          </td>
+        </tr>
+        <tr>
+          <td>echelo1</td>
+          <td>
+            <input type="text" id="echelo1" value="0">
+          </td>
+        </tr>
+        <tr>
+          <td>echelo2</td>
+          <td>
+            <input type="text" id="echelo2" value="0">
+          </td>
+        </tr>
+      </table>
     </div>
     <div class="table-wrap">
-        <table>
-            <tr>
-              <th>板材宽度</th>
-              <th>板材高度</th>
-            </tr>
-            <tr>
-              <td>
-                <input type="text" id="width" value="250">
-              </td>
-              <td>
-                <input type="text" id="height" value="210">
-              </td>
-            </tr>
-          </table>
-          <table style="margin-top:40px">
-              <tr>
-                <th>总体利用率</th>
-              </tr>
-              <tr>
-                <td>
-                  <input type="text" id="allutil" value="">
-                </td>
-              </tr>
-            </table>
+      <table>
+        <tr>
+          <th>板材宽度</th>
+          <th>板材高度</th>
+        </tr>
+        <tr>
+          <td>
+            <input type="text" id="width" value="250">
+          </td>
+          <td>
+            <input type="text" id="height" value="210">
+          </td>
+        </tr>
+      </table>
+      <table style="margin-top:40px">
+        <tr>
+          <th>总体利用率</th>
+        </tr>
+        <tr>
+          <td>
+            <input type="text" id="allutil" value="">
+          </td>
+        </tr>
+      </table>
     </div>
     <div style="clear:both"></div>
     <div style="margin-top:10px;padding: 0 20px;">
@@ -176,7 +208,7 @@
 </body>
 <!-- <script src='./index.js'> -->
 <script src="./dist/main.bundle.js"></script>
-  
+
 </script>
 
 </html>

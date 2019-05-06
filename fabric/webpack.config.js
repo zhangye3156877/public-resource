@@ -6,7 +6,7 @@ module.exports = {
   mode: "production",
 
   //entry: ['@babel/polyfill', './js/index.js'],
-  entry: ['./js/index.js'],
+  entry: ['./js/index.js', './js/new.js'],
   output: {
 
     path: path.resolve(__dirname, 'dist'),
