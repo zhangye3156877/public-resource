@@ -37,14 +37,14 @@ body{
   /* background: rgba(42,48,157,.37) */
 }
 .charts-wrap{
+  box-sizing: border-box;
   padding: 0 10px;
   overflow: hidden;
 }
-.charts-wrap div{
+.charts-child{
   float: left;
+  border-top:1px solid  
 }
-#chart1{
-  width: 400px;
-  height: 400px;
-  background: rgba(42,48,157,.37)
+.chart-title{
+  text-align: center;
 }

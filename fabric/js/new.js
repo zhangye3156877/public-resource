@@ -10,17 +10,24 @@
   // var dwidth = document.getElementById('width');
   // var dheight = document.getElementById('height');
   // var dallutil = document.getElementById('allutil');
+  var chartdom1 = document.getElementById('chart1');
+  var chartdom2 = document.getElementById('chart2');
+  var chartdom3 = document.getElementById('chart3');
+
 
   var stageOptions = {
     container: 'container',
     width: window.innerWidth,
     height: 550,
-    ratio: 250 / 210,
+    ratio: 250 / 190,
     iw: 400,
     n: 3,
     left: 20,
-    top: 50,
-    font: 30
+    top: 30,
+    font: 30,
+    myChart1: null,
+    myChart2: null,
+    myChart3: null
   }
   var stage = new Konva.Stage({
     container: stageOptions.container,
@@ -34,7 +41,37 @@
   function random(min, max) {
     return parseInt(Math.random() * (max - min) + 1) + min;
   }
+  function resizeFn() {
+    var w = window.innerWidth;
+    stageOptions.width = w;
+    drawResult([...resultJson.Sheets, ...resultJson.Sheets, ...resultJson.Sheets]);
+    if (w / 12 * 3 > 400) {
+      chartdom1.style.width = '400px';
+      chartdom2.style.width = '533px';
+      chartdom3.style.width = '666px';
+      chartdom1.style.height = '400px';
+      chartdom2.style.height = '400px';
+      chartdom3.style.height = '400px';
+      chartdom1.style.marginLeft = (w - 400 - 540 - 667) / 4 + 'px';
+      chartdom2.style.marginLeft = (w - 400 - 540 - 667) / 4 + 'px';
+      chartdom3.style.marginLeft = (w - 400 - 540 - 667) / 4 + 'px';
+    } else {
+      chartdom1.style.width = w / 12 * 3 - 20 + 'px';
+      chartdom2.style.width = w / 12 * 4 - 20 + 'px';
+      chartdom3.style.width = w / 12 * 5 - 20 + 'px';
+      chartdom1.style.height = w / 4 - 20 + 'px';
+      chartdom2.style.height = w / 4 - 20 + 'px';
+      chartdom3.style.height = w / 4 - 20 + 'px';
+      chartdom1.style.marginLeft = '0px';
+      chartdom2.style.marginLeft = '0px';
+      chartdom3.style.marginLeft = '0px';
+    }
 
+    console.log(w)
+    stageOptions.myChart1.resize();
+    stageOptions.myChart2.resize();
+    stageOptions.myChart3.resize();
+  }
   function drawResult(data) {
     group.destroyChildren();
     console.log(data)
@@ -56,7 +93,7 @@
     // var newH = bh * height + (bh + 1) * stageOptions.top;
     stage.size({
       width: stageOptions.width,
-      height: height + 100
+      height: height + 50
     })
 
     stageOptions.left = margins;
@@ -66,7 +103,7 @@
       var offsetX = stageOptions.left * (index % bx + 1) + width * (index % bx);
       var offsetY = stageOptions.top * (ytimes + 1) + height * ytimes;
       //var showFont = `${item.name}-利用率:${(item.util.toFixed(4) * 100).toString().substr(0, 5)}%`
-      var showFont = `${item.name}`
+      var showFont = `板材${index + 1}`
       //var offsetFont = offsetX + (width - stageOptions.font * showFont.length) / 2;
       console.log(stageOptions.font * showFont.length)
       var text = new Konva.Text({
@@ -75,7 +112,7 @@
         text: showFont,
         fontSize: stageOptions.font,
         fontFamily: 'Calibri',
-        fill: 'green'
+        fill: 'white'
       });
 
       var rect = new Konva.Rect({
@@ -126,10 +163,14 @@
   }
 
   function initEcharts() {
-    var myChart = echarts.init(document.getElementById('chart1'));
-
+    stageOptions.myChart1 = echarts.init(document.getElementById('chart1'));
+    stageOptions.myChart2 = echarts.init(document.getElementById('chart2'));
+    stageOptions.myChart3 = echarts.init(document.getElementById('chart3'));
+    stageOptions.myChart1.showLoading();
+    stageOptions.myChart2.showLoading();
+    stageOptions.myChart3.showLoading();
     // 指定图表的配置项和数据
-    var option = {
+    var option1 = {
 
       tooltip: {},
       // legend: {
@@ -153,6 +194,7 @@
           { name: '零件E', max: 100 },
           { name: '零件F', max: 100 }
         ],
+
         splitArea: {
           areaStyle: {
             color: ['rgba(114, 172, 209, 0.2)',
@@ -169,32 +211,206 @@
         // areaStyle: {normal: {}},
         data: [
           {
-            value: [12, 5, 1, 18, 66, 33],
+            value: [62, 15, 99, 78, 36, 83],
             name: '零件数量',
             label: {
               normal: {
-                  show: true,
-                  formatter:function(params) {
-                      return params.value;
-                  }
+                show: true,
+                formatter: function (params) {
+                  return params.value;
+                }
+              }
+            },
+            lineStyle: {
+              normal: {
+                type: 'dashed'
               }
             }
           }
         ]
       }]
     };
+    var option2 = {
+      legend: {},
+      tooltip: {},
+      title: [
+        {
+          textAlign: 'center',
+          text: '总体利用率',
+          textStyle: {
+            fontSize: 12,
+            fontWeight: 'normal',
+            color: 'white'
+          },
+          left: '20%',
+          top: '10%'
+        },
+        {
+          textAlign: 'center',
+          text: '板材1利用率',
+          textStyle: {
+            fontSize: 12,
+            fontWeight: 'normal',
+            color: 'white'
+          },
+          left: '70%',
+          top: '10%'
+        },
+        {
+          textAlign: 'center',
+          text: '板材2利用率',
+          textStyle: {
+            fontSize: 12,
+            fontWeight: 'normal',
+            color: 'white'
+          },
+          left: '20%',
+          top: '55%'
+        },
+        {
+          textAlign: 'center',
+          text: '板材3利用率',
+          textStyle: {
+            fontSize: 12,
+            fontWeight: 'normal',
+            color: 'white'
+          },
+          left: '70%',
+          top: '55%'
+        }
+      ],
+      animationDuration: 2000,
+      dataset: {
+        source: [
+          ['%', 'all', 'sheet1', 'sheet2', 'sheet3'],
+          ['利用率', 25, 10, 20, 30],
+          ['未利用率', 75, 90, 80, 70],
+        ]
+      },
+      series: [{
+        name: 'a',
+        type: 'pie',
+        radius: 60,
+        center: ['25%', '30%'],
+        title: 'a',
+        encode: {
+          itemName: '%',
+          value: 'all'
+        }
+      }, {
+        name: 'b',
+        type: 'pie',
+        radius: 60,
+        center: ['75%', '30%'],
+        encode: {
+          itemName: '%',
+          value: 'sheet1'
+        }
+      }, {
+        type: 'pie',
+        radius: 60,
+        center: ['25%', '75%'],
+        encode: {
+          itemName: '%',
+          value: 'sheet2'
+        }
+      }, {
+        type: 'pie',
+        radius: 60,
+        center: ['75%', '75%'],
+        encode: {
+          itemName: '%',
+          value: 'sheet3'
+        }
+      }]
+    };
+    var option3 = {
+      title: [
+        {
+          textAlign: 'center',
+          text: '群智算法',
+          textStyle: {
+            fontSize: 12,
+            fontWeight: 'normal',
+            color: 'red'
+          },
+          left: '50%',
+          top: '50%'
+        },
+        {
+          textAlign: 'center',
+          text: '普通算法',
+          textStyle: {
+            fontSize: 12,
+            fontWeight: 'normal',
+            color: 'rgba(114, 172, 209, 1)'
+          },
+          left: '50%',
+          top: '75%'
+        },
+      ],
+      xAxis: {
+        type: 'category',
+        data: ['100', '200', '300', '400', '500', '600', '700'],
+        name: '计算数量',
+        nameTextStyle: {
+          fontSize: 12,
+          fontWeight: 'normal',
+          color: 'white'
+        },
+        axisLabel: {
+          fontSize: 12,
+          fontWeight: 'normal',
+          color: 'white'
+        },
+      },
+      yAxis: {
+        type: 'value',
+        name: '效率%',
+        nameTextStyle: {
+          fontSize: 12,
+          fontWeight: 'normal',
+          color: 'white'
+        },
+        axisLabel: {
+          fontSize: 12,
+          fontWeight: 'normal',
+          color: 'white'
+        },
+      },
+      series: [
+        {
+          name: 'a',
+          data: [5, 10, 20, 30, 45, 70, 100],
+          type: 'line',
+          smooth: true,
+        },
+        {
+          name: 'b',
+          data: [5, 8, 12, 15, 20, 25, 40],
+          lineStyle: {
+            color: 'rgba(114, 172, 209, 1)'
+          },
+          type: 'line',
+          smooth: true
+        }
+      ]
+    };
 
-    // 使用刚指定的配置项和数据显示图表。
-    myChart.setOption(option);
+    stageOptions.myChart1.hideLoading();
+    stageOptions.myChart2.hideLoading();
+    stageOptions.myChart3.hideLoading();
+    stageOptions.myChart1.setOption(option1);
+    stageOptions.myChart2.setOption(option2);
+    stageOptions.myChart3.setOption(option3);
   }
 
   window.addEventListener('resize', (function (timer) {
     return function () {
       timer && clearTimeout(timer);
       timer = setTimeout(() => {
-        stageOptions.width = window.innerWidth;
-        drawResult([...resultJson.Sheets, ...resultJson.Sheets, ...resultJson.Sheets]);
-      }, 500)
+        resizeFn()
+      }, 300)
     }
   }(null)))
 
@@ -202,7 +418,7 @@
     console.log('文档载入完毕哦');
     stage.add(layer);
     layer.add(group);
-    drawResult([...resultJson.Sheets, ...resultJson.Sheets, ...resultJson.Sheets]);
     initEcharts();
+    resizeFn()
   })
 }())
