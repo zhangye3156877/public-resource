@@ -14,12 +14,11 @@
   var chartdom2 = document.getElementById('chart2');
   var chartdom3 = document.getElementById('chart3');
 
-
   var stageOptions = {
     container: 'container',
     width: window.innerWidth,
     height: 550,
-    ratio: 250 / 190,
+    // ratio: 800 / 1000,
     iw: 400,
     n: 3,
     left: 20,
@@ -44,7 +43,8 @@
   function resizeFn() {
     var w = window.innerWidth;
     stageOptions.width = w;
-    drawResult([...resultJson.Sheets, ...resultJson.Sheets, ...resultJson.Sheets]);
+    var obj = [...jsonB.Sheets, ...jsonA.Sheets, ...jsonC.Sheets];
+    drawResult(obj);
     if (w / 12 * 3 > 400) {
       chartdom1.style.width = '400px';
       chartdom2.style.width = '533px';
@@ -80,32 +80,38 @@
     var bx = stageOptions.n;
     var bh = Math.round(data.length / bx);
     // var margins = (stageOptions.width - stageOptions.iw * bx) / (bx + 1);
-    var margins = stageOptions.left;
+    var margins = (window.innerWidth - (500 * 2 + 400)) / 4;
     //适配的框高
     //var ratio = json.sheet.width / json.sheet.height;
-    var ratio = stageOptions.ratio;
-    var width = (stageOptions.width - (bx + 1) * stageOptions.left) / bx;
-    if (width > 400) {
-      width = 400;
-      margins = (stageOptions.width - bx * width) / (bx + 1);
-    }
-    var height = width / ratio;
-    // var newH = bh * height + (bh + 1) * stageOptions.top;
-    stage.size({
-      width: stageOptions.width,
-      height: height + 50
-    })
+    // var ratio = stageOptions.ratio;
+    // var width = (stageOptions.width - (bx + 1) * stageOptions.left) / bx;
+    // if (width > 350) {
+    //   width = 350;
+    //   margins = (stageOptions.width - bx * width) / (bx + 1);
+    // }
+    // var height = width / ratio;
+    // // var newH = bh * height + (bh + 1) * stageOptions.top;
+    // stage.size({
+    //   width: stageOptions.width,
+    //   height: height + 50
+    // })
 
     stageOptions.left = margins;
     //console.log(stageOptions.left,)
+    var lastItem = 0;
     data.forEach(function (item, index) {
       var ytimes = Math.floor(index / bx);
-      var offsetX = stageOptions.left * (index % bx + 1) + width * (index % bx);
+      var offsetX = stageOptions.left * (index % bx + 1) + lastItem;
+      
+      lastItem += index === 1 ? item.width / 2 : item.width;
+      //var offsetX = window.innerWidth - (500 * 2 + 800) / 2 / 4;
+      var width = index === 1 ? item.width / 2 : item.width;
+      var height = index === 1 ? item.height / 2 : item.height;
       var offsetY = stageOptions.top * (ytimes + 1) + height * ytimes;
       //var showFont = `${item.name}-利用率:${(item.util.toFixed(4) * 100).toString().substr(0, 5)}%`
       var showFont = `板材${index + 1}`
       //var offsetFont = offsetX + (width - stageOptions.font * showFont.length) / 2;
-      console.log(stageOptions.font * showFont.length)
+      console.log(width)
       var text = new Konva.Text({
         x: offsetX + 10,
         y: offsetY - 30,
@@ -130,10 +136,10 @@
           x: offsetX,
           y: offsetY,
           points: i.points,
-          fill: 'red',
+          fill: index=== 1 ? 'red' : '#8498d1',
           stroke: '#617bb5',
           strokeWidth: 1,
-          opacity: 0,
+          opacity: index===1 ? 0 : 1,
           closed: true,
         })
         shape.scale({
@@ -141,20 +147,23 @@
           y: height / item.height
         });
         group.add(shape);
-        var tween = new Konva.Tween({
-          node: shape,
-          duration: .5,
-          opacity: 1,
-          easing: Konva.Easings.EaseInOut,
-          onFinish: () => {
-            shape.setAttrs({
-              fill: '#8498d1',
-            })
-          }
-        });
-        setTimeout(() => {
-          tween.play();
-        }, 500 * n)
+        if (index === 1) {
+          var tween = new Konva.Tween({
+            node: shape,
+            duration: .5,
+            opacity: 1,
+            easing: Konva.Easings.EaseInOut,
+            onFinish: () => {
+              shape.setAttrs({
+                fill: '#8498d1',
+              })
+            }
+          });
+          setTimeout(() => {
+            tween.play();
+          }, 500 * n)
+        }
+        
       })
 
     })
@@ -169,6 +178,23 @@
     stageOptions.myChart1.showLoading();
     stageOptions.myChart2.showLoading();
     stageOptions.myChart3.showLoading();
+    var arrAll = [...jsonA.Sheets, ...jsonB.Sheets, ...jsonC.Sheets];
+    var obj2 ={};
+    var arrOption1 = [];
+    arrAll.forEach(item => {
+      item.Parts.forEach(i => {
+        //console.log(i.name)
+        if (obj2.hasOwnProperty(i.name)) {
+          obj2[i.name]++;
+        } else {
+          obj2[i.name] = 1;
+        }
+      })
+    })
+    for(let i in obj2) {
+      arrOption1.push(obj2[i]);
+    }
+    
     // 指定图表的配置项和数据
     var option1 = {
 
@@ -186,13 +212,14 @@
             padding: [3, 5]
           }
         },
-        indicator: [
-          { name: '零件A', max: 100 },
-          { name: '零件B', max: 100 },
-          { name: '零件C', max: 100 },
-          { name: '零件D', max: 100 },
-          { name: '零件E', max: 100 },
-          { name: '零件F', max: 100 }
+        indicator: 
+        [
+          { name: '零件A', max: 50 },
+          { name: '零件B', max: 50 },
+          { name: '零件C', max: 50 },
+          { name: '零件D', max: 50 },
+          { name: '零件E', max: 50 },
+          { name: '零件F', max: 50 }
         ],
 
         splitArea: {
@@ -211,7 +238,7 @@
         // areaStyle: {normal: {}},
         data: [
           {
-            value: [62, 15, 99, 78, 36, 83],
+            value: arrOption1,
             name: '零件数量',
             label: {
               normal: {
@@ -236,7 +263,7 @@
       title: [
         {
           textAlign: 'center',
-          text: '总体利用率',
+          text: '平均利用率',
           textStyle: {
             fontSize: 12,
             fontWeight: 'normal',
@@ -283,8 +310,8 @@
       dataset: {
         source: [
           ['%', 'all', 'sheet1', 'sheet2', 'sheet3'],
-          ['利用率', 25, 10, 20, 30],
-          ['未利用率', 75, 90, 80, 70],
+          ['利用率', 77.3, 75.3, 80, 75.7],
+          ['未利用率', 22.7, 24.7, 20, 24.3],
         ]
       },
       series: [{
@@ -419,6 +446,6 @@
     stage.add(layer);
     layer.add(group);
     initEcharts();
-    resizeFn()
+    resizeFn();
   })
 }())

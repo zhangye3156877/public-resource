@@ -41,21 +41,22 @@ body{
   background-size: 100% 100%;
 }
 .title{
-  height: 80px;
+  /* height: 80px;
   background-image: url('../img/header.png');
   background-size: 110% 100%;
   background-position-x: -15px;
-  background-repeat: no-repeat;
+  background-repeat: no-repeat; */
 }
 .title p {
   text-align: center;
-  font-size: 36px;
-  line-height: 72px;
-  background: linear-gradient(0deg,#55aeff,#c4e7f1);
+  font-size: 34px;
+  line-height: 68px;
+  color: white;
+  /* background: linear-gradient(0deg,#55aeff,#c4e7f1);
   color: transparent;
   -webkit-background-clip: text;
   background-clip: text;
-  padding-left: 80px;
+  padding-left: 80px; */
 }
 .main{
   width: 100%;
@@ -76,7 +77,6 @@ body{
 }
 .charts-child{
   float: left;
-  border-top:1px solid  
 }
 .chart-title{
   text-align: center;
