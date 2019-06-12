@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <div id="c3"></div>
+</body>
+<script src="https://gw.alipayobjects.com/os/lib/antv/g2/3.4.10/dist/g2.min.js"></script>
+<script>
+// 模拟数据
+const base = +new Date(2014, 9, 3);
+const oneDay = 24 * 3600 * 1000;
+const date = [];
+
+const data = [];
+const values = [Math.random() * 150];
+let now = new Date(base);
+
+function addData(shift) {
+  const item = {};
+  now = [now.getFullYear(), now.getMonth() + 1, now.getDate()].join('/');
+  item.date = now;
+  item.value = (Math.random() - 0.4) * 10 + values[values.length - 1];
+  values.push(item.value);
+  now = new Date(+new Date(now) + oneDay);
+  data.push(item);
+}
+
+// 创建图表
+const chart = new G2.Chart({
+  container: 'c3',
+  forceFit: true, // 宽度自适应
+  height: 400,
+  animate: false
+});
+// 声明字段度量类型
+chart.source(data);
+chart.tooltip({
+  crosshairs: {
+    type: 'line'
+  }
+});
+chart.line().position('date*value').color('#f80').size(3);
+chart.area().position('date*value').color('#f80');
+chart.render();
+
+let init = true;
+setInterval(function () {
+
+  addData();
+  chart.changeData(data); // 动态更新数据
+}, 700);
+</script>
+</html>

@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@antv/g2-plugin-slider": "^2.1.1"
+  }
+}
