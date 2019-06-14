@@ -22,57 +22,71 @@
 <script>
   (function() {
       var container = document.getElementById('container');
+      var data = [
+        {
+          start: 1,
+          end: 2,
+          name: '种类一'
+        },
+        {
+          start: 2,
+          end: 3,
+          name: '种类二'
+        },
+        {
+          start:1.5,
+          end: 3.5,
+          name:'种类三'
+        }
+      ];
+      
+      var options = {
+        width: container.clientWidth,
+        height: container.clientHeight,
+        padding: 100,
+        axisColor: '#d9d9d9',
+        tickWidth: 1100,
+        tickH: 20,
+        tickIntervalX: 200,
+        tickChidrenX: 4,
+        tickChidrenH: 10,
+      }
 
       var stage = new Konva.Stage({
         container: 'container',
-        width: container.clientWidth,
-        height: container.clientHeight
+        width: options.width,
+        height: options.height
       });
 
       var layer = new Konva.Layer();
 
       var colors = ['red', 'orange', 'yellow', 'green', 'blue', 'purple'];
 
-      for (var i = 0; i < 6; i++) {
-        var box = new Konva.Rect({
-          x: i * 30 + 50,
-          y: i * 18 + 40,
-          fill: colors[i],
-          stroke: 'black',
-          strokeWidth: 4,
-          draggable: true,
-          width: 100,
-          height: 50
-        });
+      var axisX = new Konva.Line({
+        points: [100, 100, 1200, 100],
+        stroke: options.axisColor,
+        lineCap: 'round',
+        strokeWidth: 3,
+      });
+      var axisY = new Konva.Line({
+        points: [100, 100, 100, 1200],
+        stroke: options.axisColor,
+        lineCap: 'round',
+        strokeWidth: 3,
+      })
+      var pathTicksForAxisX = '';
 
-        box.on('dragstart', function() {
-          this.moveToTop();
-          layer.draw();
-        });
-
-        box.on('dragmove', function() {
-          document.body.style.cursor = 'pointer';
-        });
-        /*
-         * dblclick to remove box for desktop app
-         * and dbltap to remove box for mobile app
-         */
-        box.on('dblclick dbltap', function() {
-          this.destroy();
-          layer.draw();
-        });
-
-        box.on('mouseover', function() {
-          document.body.style.cursor = 'pointer';
-        });
-        box.on('mouseout', function() {
-          document.body.style.cursor = 'default';
-        });
-
-        layer.add(box);
+      for (let i = 1; i < options.tickWidth / options.tickIntervalX; i++) {
+        pathTicksForAxisX+= `M${options.tickIntervalX * i},${options.padding}L${options.tickIntervalX * i},${options.padding - options.tickH}`;
       }
+      console.log(pathTicksForAxisX)
+      var path = new Konva.Path({
+        x:options.padding,
+        data: pathTicksForAxisX,
+        stroke: 'green',
+      });
+      layer.add(axisX, axisY, path);
 
-      // add the layer to the stage
       stage.add(layer);
 })();
 </script>
