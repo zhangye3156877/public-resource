@@ -1,93 +1,130 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Document</title>
   <style>
-    #container{
+    #container {
       width: 1200px;
       height: 1000px;
     }
   </style>
 </head>
+
 <body>
-    <div id="container"></div>
+  <div id="container"></div>
 </body>
 <script src="./kv.js"></script>
 <script>
- 
-</script>
-<script>
-  (function() {
-      var container = document.getElementById('container');
-      var data = [
-        {
-          start: 1,
-          end: 2,
-          name: '种类一'
-        },
-        {
-          start: 2,
-          end: 3,
-          name: '种类二'
-        },
-        {
-          start:1.5,
-          end: 3.5,
-          name:'种类三'
-        }
-      ];
-      
-      var options = {
-        width: container.clientWidth,
-        height: container.clientHeight,
-        padding: 100,
-        axisColor: '#d9d9d9',
-        tickWidth: 1100,
-        tickH: 20,
-        tickIntervalX: 200,
-        tickChidrenX: 4,
-        tickChidrenH: 10,
+  // all
+  var charts = {
+    GanttChart: null,
+    Changes: null,
+    Axis: null,
+  }
+  // 甘特图主体
+  charts.GanttChart = function(options = {
+    width: window.innerWidth,
+    height: window.innerHeight,
+    axisOptions: {},
+  }) {
+    this.stage = null;
+    this.layer = null;
+    this.width = options.width;
+    this.height = options.height;
+    this.axis = new charts.Axis(options.axisOptions);
+  }
+  charts.GanttChart.prototype.init = function() {
+    this.stage = new Konva.Stage({
+      container: 'container',
+      width: this.width,
+      height: this.height
+    })
+    this.layer = new Konva.Layer();
+    this.layer.add(this.axis.axisX);
+    this.stage.add(this.layer);
+  }
+  // 绘制主类-用于继承原型
+  charts.Changes = {
+    
+  }
+  // 坐标轴类
+  charts.Axis = function(options) {
+    this.axisColor = options.colors || '#d9d9d9';
+    this.axisXSize = options.axisXSize || 1100;
+    this.axisYSize = options.axisYSize || 1100;
+    this.tickSize = options.tickSize || 20;
+    this.tickXInterval = options.tickXInterval || 200;
+    this.tickXChidren = options.tickXChidren || 4;
+    this.tickChidrenSize = options.tickChidrenSize || 10;
+    this.axisX = new Konva.Line({
+      points: [100, 100, 1200, 100],
+      stroke: this.axisColor,
+      lineCap: 'round',
+      strokeWidth: 3,
+    });
+    this.axisY = new Konva.Line({
+      points: [100, 100, 100, 1200],
+      stroke: this.axisColor,
+      lineCap: 'round',
+      strokeWidth: 3,
+    }) 
+  };
+
+
+
+  (function () {
+
+    var container = document.getElementById('container');
+    var data = [
+      {
+        start: 1,
+        end: 2,
+        name: '种类一'
+      },
+      {
+        start: 2,
+        end: 3,
+        name: '种类二'
+      },
+      {
+        start: 1.5,
+        end: 3.5,
+        name: '种类三'
       }
+    ];
 
-      var stage = new Konva.Stage({
-        container: 'container',
-        width: options.width,
-        height: options.height
-      });
+    var options = {
+      width: container.clientWidth,
+      height: container.clientHeight,
+      padding: 100,
+      axisColor: '#d9d9d9',
+      tickWidth: 1100,
+      tickH: 20,
+      tickIntervalX: 200,
+      tickChidrenX: 4,
+      tickChidrenH: 10,
+    }
 
-      var layer = new Konva.Layer();
+   
+    // var pathTicksForAxisX = '';
 
-      var colors = ['red', 'orange', 'yellow', 'green', 'blue', 'purple'];
-
-      var axisX = new Konva.Line({
-        points: [100, 100, 1200, 100],
-        stroke: options.axisColor,
-        lineCap: 'round',
-        strokeWidth: 3,
-      });
-      var axisY = new Konva.Line({
-        points: [100, 100, 100, 1200],
-        stroke: options.axisColor,
-        lineCap: 'round',
-        strokeWidth: 3,
-      })
-      var pathTicksForAxisX = '';
-
-      for (let i = 1; i < options.tickWidth / options.tickIntervalX; i++) {
-        pathTicksForAxisX+= `M${options.tickIntervalX * i},${options.padding}L${options.tickIntervalX * i},${options.padding - options.tickH}`;
-      }
-      console.log(pathTicksForAxisX)
-      var path = new Konva.Path({
-        x:options.padding,
-        data: pathTicksForAxisX,
-        stroke: 'green',
-      });
-      layer.add(axisX, axisY, path);
-
-      stage.add(layer);
-})();
+    // for (let i = 1; i < options.tickWidth / options.tickIntervalX; i++) {
+    //   pathTicksForAxisX += `M${options.tickIntervalX * i},${options.padding}L${options.tickIntervalX * i},${options.padding - options.tickH}`;
+    // }
+    // console.log(pathTicksForAxisX)
+    // var path = new Konva.Path({
+    //   x: options.padding,
+    //   data: pathTicksForAxisX,
+    //   stroke: 'green',
+    // });
+    const ganttChart = new charts.GanttChart();
+    ganttChart.init();
+    console.log(ganttChart)
+  })();
 </script>
+
 </html>
