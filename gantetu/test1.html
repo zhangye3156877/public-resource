@@ -60,7 +60,7 @@
     `width: ${this.width}px;
      height: ${this.height}px;
     `;
-    document.addEventListener('scroll', _.debounce(this.scoll.bind(this), 50));
+    document.addEventListener('scroll', this.scoll.bind(this));
     this.stage = new Konva.Stage({
       container: this.container,
       width: this.width,
