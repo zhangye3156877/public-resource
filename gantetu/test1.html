@@ -7,16 +7,26 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Document</title>
   <style>
-    #container {
+    html,body,div{
+      margin: 0;
+      padding: 0;
+    }
+    .scroll-mask{
       width: 2000px;
       height: 1000px;
       overflow: hidden;
+      position: relative;
+    }
+    #container {
+      transform: translateZ(0);
     }
   </style>
 </head>
 
 <body>
-  <div id="container"></div>
+  <div class="scroll-mask">
+      <div id="container"></div>
+  </div>
 </body>
 <script src="./kv.js"></script>
 <script src="./lodash.js"></script>
@@ -47,11 +57,10 @@
     const left = bound.scrollLeft;
     const top = bound.scrollTop;
     dom.style.cssText += 
-    `box-sizing: border-box;
-     padding-left: ${left}px;
-     padding-top: ${top}px;
+    `width: ${this.width}px;
+     height: ${this.height}px;
     `;
-    document.addEventListener('scroll', _.debounce(this.scoll.bind(this), 100));
+    document.addEventListener('scroll', _.debounce(this.scoll.bind(this), 50));
     this.stage = new Konva.Stage({
       container: this.container,
       width: this.width,
@@ -79,7 +88,7 @@
     const left = bound.scrollLeft;
     const top = bound.scrollTop;
     console.log(left, top, dom,this.container);
-    dom.style.paddingLeft = `${left}px`;
+    dom.style.cssText += `transform: translateX(${left}px)`;
 
   }
   // 绘制主类-用于继承原型
