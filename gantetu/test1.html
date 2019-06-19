@@ -8,8 +8,9 @@
   <title>Document</title>
   <style>
     #container {
-      width: 22000px;
+      width: 2000px;
       height: 1000px;
+      overflow: hidden;
     }
   </style>
 </head>
@@ -20,11 +21,9 @@
 <script src="./kv.js"></script>
 <script src="./lodash.js"></script>
 <script>
-  console.log(_)
   // all
   const charts = {
     GanttChart: null,
-    Scoll:null,
     Changes: null,
     Axis: null,
   }
@@ -42,9 +41,17 @@
     this.axis = null;
   }
   charts.GanttChart.prototype.init = function (options = {}) {
+    //固定样式
     const dom = document.getElementById(this.container);
-    console.log(dom)
-    document.addEventListener('scroll', _.throttle(charts.Scoll, 100));
+    const bound = document.documentElement;
+    const left = bound.scrollLeft;
+    const top = bound.scrollTop;
+    dom.style.cssText += 
+    `box-sizing: border-box;
+     padding-left: ${left}px;
+     padding-top: ${top}px;
+    `;
+    document.addEventListener('scroll', _.debounce(this.scoll.bind(this), 100));
     this.stage = new Konva.Stage({
       container: this.container,
       width: this.width,
@@ -66,8 +73,14 @@
   }
 
   // 滚动方法
-  charts.Scoll = function(){
-    console.log(document.documentElement.scrollLeft,document.documentElement.scrollTop);
+  charts.GanttChart.prototype.scoll = function(){
+    const dom = document.getElementById(this.container);
+    const bound = document.documentElement;
+    const left = bound.scrollLeft;
+    const top = bound.scrollTop;
+    console.log(left, top, dom,this.container);
+    dom.style.paddingLeft = `${left}px`;
+
   }
   // 绘制主类-用于继承原型
   charts.Changes = {
