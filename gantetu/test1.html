@@ -11,35 +11,65 @@
       margin: 0;
       padding: 0;
     }
-    .scroll-mask{
-      width: 2000px;
-      height: 1000px;
+    #container{
+      width: 80%;
+      height: 600px;
+      overflow: scroll;
+    }
+    #container::-webkit-scrollbar {
+        width: 7px;
+        height: 7px;
+    }
+    /*滚动条滑块*/
+    #container::-webkit-scrollbar-thumb {
+        border-radius: 10px;
+        -webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+        box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+        background: #535353;
+    }
+    /*滚动条轨道*/
+    #container::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 1px rgba(0,0,0,0);
+        box-shadow: inset 0 0 1px rgba(0,0,0,0);
+        border-radius: 10px;
+        background: #ccc;
+    }
+    /* 边角 */
+    #container::-webkit-scrollbar-corner {
+      border-radius: 50%;
+      background:#535353;
+    }
+    #scroll-mask{
       overflow: hidden;
       position: relative;
     }
-    #container {
+    #canvas {
       transform: translateZ(0);
     }
   </style>
 </head>
 
 <body>
-  <div class="scroll-mask">
-      <div id="container"></div>
-  </div>
+ <div id="container">
+    <div id="scroll-mask">
+      <div id="canvas"></div>
+    </div>
+ </div>
 </body>
+<script src="./jquery.min.js"></script>
 <script src="./kv.js"></script>
 <script src="./lodash.js"></script>
 <script>
   // all
   const charts = {
     GanttChart: null,
-    Changes: null,
     Axis: null,
   }
   // 甘特图主体
   charts.GanttChart = function (options = {}) {
-    this.container = options.container;
+    this.container = options.canvas;
+    this.scollDom = null;
+    this.canvasWrapDom = null;
     this.stage = null;
     this.layer = null;
     this.width = options.width || window.innerWidth;
@@ -52,20 +82,29 @@
   }
   charts.GanttChart.prototype.init = function (options = {}) {
     //固定样式
-    const dom = document.getElementById(this.container);
-    const bound = document.documentElement;
-    const left = bound.scrollLeft;
-    const top = bound.scrollTop;
-    dom.style.cssText += 
-    `width: ${this.width}px;
-     height: ${this.height}px;
-    `;
-    document.addEventListener('scroll', this.scoll.bind(this));
+    const scollDom = $(`#container`);
+    this.scollDom = scollDom;
+    this.canvasWrapDom = $(`#${this.container}`);
+    const left = scollDom.scrollLeft();
+    const top = scollDom.scrollTop();
+    const width = options.axis.axisXSize || 0;
+    const height = options.axis.axisYSize || 0;
+    
+    $('#scroll-mask').css({
+      width: `${this.paddingLeft + this.paddingRight + width}px`,
+      height: `${this.paddingTop + this.paddingBottom + height}px`,
+    });
+    $(`#${this.container}`).css({
+      width: `${this.width}px`,
+      height: `${this.height}px`
+    });
+    $('#container').scroll(this.scoll.bind(this));
+    
     this.stage = new Konva.Stage({
       container: this.container,
       width: this.width,
       height: this.height
-    })
+    });
     this.layer = new Konva.Layer();
     if (options.axis !== false) {
       let ap = options.axis || {};
@@ -75,25 +114,26 @@
         paddingTop: this.paddingTop,
         paddingBottom: this.paddingBottom
       }));
-      console.log(this.axis.group)
       this.layer.add(this.axis.group);
     }
     this.stage.add(this.layer);
   }
 
   // 滚动方法
-  charts.GanttChart.prototype.scoll = function(){
-    const dom = document.getElementById(this.container);
-    const bound = document.documentElement;
-    const left = bound.scrollLeft;
-    const top = bound.scrollTop;
-    console.log(left, top, dom,this.container);
-    dom.style.cssText += `transform: translateX(${left}px)`;
-
-  }
-  // 绘制主类-用于继承原型
-  charts.Changes = {
-
+  charts.GanttChart.prototype.scoll = function(e){
+    const scollDom = this.scollDom;
+    const canvasWrapDom = this.canvasWrapDom;
+    const left = scollDom.scrollLeft();
+    const top = scollDom.scrollTop();
+    console.log(left, top);
+    canvasWrapDom.css({
+      transform: `translate3d(${left}px, ${top}px, 0)`
+    });
+    this.layer.setAttrs({
+      x: -left,
+      y: -top
+    })
+    this.layer.draw();
   }
   // 坐标轴类
   charts.Axis = function (options = {}) {
@@ -101,10 +141,12 @@
     this.paddingRight = options.paddingRight || 0;
     this.paddingTop = options.paddingTop || 0;
     this.paddingBottom = options.paddingBottom || 0;
+    this.strokeWidth = options.strokeWidth || 2;
+    this.fontSize = options.fontSize || 15;
     this.axisColor = options.colors || '#d9d9d9';
     this.axisXSize = options.axisXSize || 0;
     this.axisYSize = options.axisYSize || 0;
-    this.tickSize = options.tickSize || 20;
+    this.tickSize = options.tickSize || 10;
     this.tickXInterval = options.tickXInterval || 200;
     this.tickXChidren = options.tickXChidren || 4;
     this.tickChidrenSize = options.tickChidrenSize || 10;
@@ -112,6 +154,7 @@
     this.axisY = null;
     this.tickX = null;
     this.tickY = null;
+    //this.tickText = null;
     this.group = new Konva.Group();
     this.init();
   };
@@ -120,31 +163,46 @@
       points: [this.paddingLeft, this.paddingTop, this.paddingLeft + this.axisXSize, this.paddingTop],
       stroke: this.axisColor,
       lineCap: 'round',
-      strokeWidth: 3,
+      strokeWidth: this.strokeWidth,
     });
     this.axisY = new Konva.Line({
       points: [this.paddingLeft, this.paddingTop, this.paddingLeft, this.paddingTop + this.axisYSize],
       stroke: this.axisColor,
       lineCap: 'round',
-      strokeWidth: 3,
+      strokeWidth: this.strokeWidth,
     });
+    this.axisXText = new Konva.Group();
+    this.axisYText = new Konva.Group();
     let pathTicksForAxisX = '';
     for (let i = 1; i < this.axisXSize / this.tickXInterval; i++) {
-      pathTicksForAxisX += `M${this.tickXInterval * i},${this.paddingLeft}L${this.tickXInterval * i},${this.paddingTop - this.tickSize}`;
+      pathTicksForAxisX += `M${this.tickXInterval * i},${this.paddingTop}L${this.tickXInterval * i},${this.paddingTop - this.tickSize}`;
+      const str = `编号${i}`;
+      const text = new Konva.Text({
+        x: this.tickXInterval * i - this.fontSize * str.length / 2,
+        text: str,
+        fontSize: this.fontSize,
+        fontFamily: 'Calibri',
+        fill: this.axisColor
+      })
+      this.axisXText.add(text);
     }
     this.tickX = new Konva.Path({
       x: this.paddingLeft,
       data: pathTicksForAxisX,
       stroke: this.axisColor,
     });
-    this.group.add(this.axisX, this.axisY, this.tickX);
+    this.axisXText.setAttrs({
+      x: this.paddingLeft,
+      y: this.paddingTop - this.tickSize - this.fontSize
+    });
+    this.group.add(this.axisX, this.axisY, this.tickX, this.axisXText);
   };
 
 
 
     (function () {
 
-      const container = document.getElementById('container');
+      const canvas = document.getElementById('canvas');
       const data = [
         {
           start: 1,
@@ -163,38 +221,16 @@
         }
       ];
 
-      const options = {
-        width: container.clientWidth,
-        height: container.clientHeight,
-        padding: 100,
-        axisColor: '#d9d9d9',
-        tickWidth: 1100,
-        tickH: 20,
-        tickIntervalX: 200,
-        tickChidrenX: 4,
-        tickChidrenH: 10,
-      }
-
-
-      // var pathTicksForAxisX = '';
-
-      // for (let i = 1; i < options.tickWidth / options.tickIntervalX; i++) {
-      //   pathTicksForAxisX += `M${options.tickIntervalX * i},${options.padding}L${options.tickIntervalX * i},${options.padding - options.tickH}`;
-      // }
-      // console.log(pathTicksForAxisX)
-      // var path = new Konva.Path({
-      //   x: options.padding,
-      //   data: pathTicksForAxisX,
-      //   stroke: 'green',
-      // });
       const ganttChart = new charts.GanttChart({
-        container: 'container',
+        canvas: 'canvas',
         paddingLeft: 100,
-        paddingTop: 100
+        paddingTop: 100,
+        paddingRight: 100,
+        paddingBottom: 100
       });
       ganttChart.init({
         axis: {
-          axisXSize: 1200,
+          axisXSize: 2000,
           axisYSize: 1200
         }
       });
