@@ -1,5 +1,4 @@
-import moment from 'moment';
-//console.log(import);
+
 // all
 var charts = {
   GanttChart: null,
@@ -89,7 +88,7 @@ charts.Axis = function (options = {}) {
   this.tickSize = options.tickSize || 10;
   this.tickXInterval = options.tickXInterval || 200;
   this.tickYInterval = options.tickYInterval || 100;
-  this.tickXChidren = options.tickXChidren || 4;
+  this.tickXChidren = options.tickXChidren || 6;
   this.tickChidrenSize = options.tickChidrenSize || 5;
   this.gridColor = options.gridColor || '#d9d9d9';
   this.gridStrokeWidth = options.gridStrokeWidth || 1;
@@ -133,6 +132,10 @@ charts.Axis.prototype.init = function () {
   this.gridX = new Konva.Group();
   this.gridY = new Konva.Group();
   let pathTicksForAxis = '';
+  const childTickInternval = this.tickXInterval / this.tickXChidren;
+  for (let i = 1; i <= this.axisXSize / childTickInternval; i ++) {
+    pathTicksForAxis += `M${childTickInternval * i},0L${childTickInternval * i},${-this.tickChidrenSize}`;
+  }
   for (let i = 1; i <= this.axisXSize / this.tickXInterval; i++) {
     pathTicksForAxis += `M${this.tickXInterval * i},0L${this.tickXInterval * i},${-this.tickSize}`;
     const str = `横轴${i}`;
