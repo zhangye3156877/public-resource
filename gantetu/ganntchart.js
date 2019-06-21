@@ -1,3 +1,5 @@
+import moment from 'moment';
+//console.log(import);
 // all
 var charts = {
   GanttChart: null,

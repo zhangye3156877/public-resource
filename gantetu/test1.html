@@ -64,23 +64,11 @@
 <script>
     (function () {
 
-      const data = [
-        {
-          start: 1,
-          end: 2,
-          name: '种类一'
-        },
-        {
-          start: 2,
-          end: 3,
-          name: '种类二'
-        },
-        {
-          start: 1.5,
-          end: 3.5,
-          name: '种类三'
-        }
-      ];
+      const data = {
+        start: '',
+        end: '',
+        
+      }
 
       const ganttChart = new charts.GanttChart({
         canvas: 'canvas',
@@ -89,7 +77,9 @@
         paddingRight: 100,
         paddingBottom: 100
       });
+
       ganttChart.init({
+        data,
         axis: {
           axisXSize: 5000,
           axisYSize: 1200
