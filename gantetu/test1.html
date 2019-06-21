@@ -65,17 +65,40 @@
 <script>
     (function () {
       const data = {
-        start: '',
-        end: '',
-
+        start: '2019-06-21',
+        end: '2019-06-30',
+        m: {
+          count: 8,
+          data:[
+            {
+              name: '机器1'
+            },
+            {
+              name: '机器2'
+            },
+            {
+              name: '机器3'
+            },
+            {
+              name: '机器4'
+            },
+            {
+              name: '机器5'
+            },
+            {
+              name: '机器6'
+            },
+            {
+              name: '机器7'
+            },
+            {
+              name: '机器8'
+            }
+          ]
+        }
       }
-
       const ganttChart = new charts.GanttChart({
         canvas: 'canvas',
-        paddingLeft: 100,
-        paddingTop: 100,
-        paddingRight: 100,
-        paddingBottom: 100
       });
 
       ganttChart.init({
