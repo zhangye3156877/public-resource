@@ -10,6 +10,8 @@ var charts = {
 utils = {
   //lodash
   '_': _, 
+  //moment
+  moment,
   //获取字符偏移量
   getBytesLength: (str) => {
     let num = str.length;
@@ -44,7 +46,7 @@ charts.GanttChart = function (options = {}) {
   this.maskDom = $('#scroll-mask');
   this.canvasWrapDom = null;
   this.stage = null;
-  this.layer = null;
+  this.layerAxis = null;
   this.width = options.width || window.innerWidth;
   this.height = options.height || window.innerHeight;
   this.axis = null;
@@ -67,7 +69,7 @@ charts.GanttChart.prototype.init = function (options = {}) {
     width: this.width,
     height: this.height
   });
-  this.layer = new Konva.Layer();
+  this.layerAxis = new Konva.Layer();
   if (options.axis !== false) {
     const ap = options.axis || {};
     this.axis = new charts.Axis(Object.assign(options.data, ap, {
@@ -77,9 +79,9 @@ charts.GanttChart.prototype.init = function (options = {}) {
       paddingTop: this.paddingTop,
       paddingBottom: this.paddingBottom
     }));
-    this.layer.add(this.axis.group);
+    this.layerAxis.add(this.axis.group);
   }
-  this.stage.add(this.layer);
+  this.stage.add(this.layerAxis);
 }
 // resize
 charts.GanttChart.prototype.resize = function(options) {
@@ -100,11 +102,11 @@ charts.GanttChart.prototype.scoll = function (e) {
   containerDom.css({
     transform: `translate3d(${left}px, ${top}px, 0)`
   });
-  this.layer.setAttrs({
+  this.stage.setAttrs({
     x: -left,
     y: -top
   })
-  this.layer.draw();
+  this.layerAxis.draw();
 }
 // 轴线格局类
 charts.Axis = function (options = {}) {
@@ -130,9 +132,9 @@ charts.Axis = function (options = {}) {
   this.init();
 };
 charts.Axis.prototype.init = function () {
-  const start = moment(this.start).valueOf();
-  const end = moment(this.end).valueOf();
-  const axisXSize = moment(end - start).valueOf() / this.timeInterval * this.tickXInterval;
+  const start = utils.moment(this.start).valueOf();
+  const end = utils.moment(this.end).valueOf();
+  const axisXSize = utils.moment(end - start).valueOf() / this.timeInterval * this.tickXInterval;
 
   const axisYSize = this.m.count * this.tickYInterval;
   
@@ -163,7 +165,7 @@ charts.Axis.prototype.init = function () {
   }
   for (let i = 1; i <= axisXSize / this.tickXInterval; i++) {
     pathTicksForAxis += `M${this.tickXInterval * i},0L${this.tickXInterval * i},${-this.tickSize}`;
-    const str = moment(start + this.timeInterval * i).format('MM-DD');
+    const str = utils.moment(start + this.timeInterval * i).format('MM-DD');
     const num = utils.getBytesLength(str);
     const text = new Konva.Text({
       x: this.tickXInterval * i - this.fontSize * num / 4,
