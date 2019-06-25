@@ -1,0 +1,159 @@
+[
+    {
+        "machine": [
+            "织机",
+            "织机1"
+        ],
+        "workplan": [
+            {
+                "tmstart": 0,
+                "tmfinish": 25,
+                "keys": "6",
+                "order": {
+                    "6": 0
+                },
+                "step": "1"
+            }
+        ]
+    },
+    {
+        "machine": [
+            "织机",
+            "织机2"
+        ],
+        "workplan": [
+            {
+                "tmstart": 0,
+                "tmfinish": 20,
+                "keys": "3",
+                "order": {
+                    "3": 0
+                },
+                "step": "1"
+            },
+            {
+                "tmstart": 100,
+                "tmfinish": 108,
+                "keys": "5",
+                "order": {
+                    "5": 0
+                },
+                "step": "1"
+            },
+            {
+                "tmstart": 20,
+                "tmfinish": 28,
+                "keys": "oa,ob",
+                "order": {
+                    "oa": 20,
+                    "ob": 30
+                },
+                "step": "1"
+            },
+            {
+                "tmstart": 28,
+                "tmfinish": 48,
+                "keys": "2",
+                "order": {
+                    "2": 0
+                },
+                "step": "1"
+            }
+        ]
+    },
+    {
+        "machine": [
+            "织机",
+            "织机3"
+        ],
+        "workplan": [
+            {
+                "tmstart": 0,
+                "tmfinish": 13,
+                "keys": "7",
+                "order": {
+                    "7": 0
+                },
+                "step": "1"
+            }
+        ]
+    },
+    {
+        "machine": [
+            "染缸",
+            "d5"
+        ],
+        "workplan": [
+            {
+                "tmstart": 0,
+                "tmfinish": 8,
+                "keys": "4",
+                "order": {
+                    "4": 0
+                },
+                "step": "1"
+            },
+            {
+                "tmstart": 28,
+                "tmfinish": 36,
+                "keys": "oa,ob",
+                "order": {
+                    "oa": 20,
+                    "ob": 30
+                },
+                "step": "2"
+            }
+        ]
+    },
+    {
+        "machine": [
+            "染缸",
+            "d6"
+        ],
+        "workplan": [
+            {
+                "tmstart": 25,
+                "tmfinish": 33,
+                "keys": "6",
+                "order": {
+                    "6": 0
+                },
+                "step": "2"
+            },
+            {
+                "tmstart": 108,
+                "tmfinish": 112,
+                "keys": "5",
+                "order": {
+                    "5": 0
+                },
+                "step": "2"
+            },
+            {
+                "tmstart": 0,
+                "tmfinish": 4,
+                "keys": "8",
+                "order": {
+                    "8": 0
+                },
+                "step": "1"
+            },
+            {
+                "tmstart": 48,
+                "tmfinish": 56,
+                "keys": "2",
+                "order": {
+                    "2": 0
+                },
+                "step": "2"
+            }
+        ]
+    },
+    {
+        "machine": [
+            "染缸",
+            "d7"
+        ],
+        "workplan": []
+    }
+]

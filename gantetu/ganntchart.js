@@ -9,7 +9,7 @@ var charts = {
 //工具函数
 utils = {
   //lodash
-  '_': _, 
+  '_': _,
   //moment
   moment,
   //获取字符偏移量
@@ -25,7 +25,7 @@ utils = {
 }
 
 //各元素继承基类
-charts.Element = function(options = {}){
+charts.Element = function (options = {}) {
   this.paddingLeft = options.paddingLeft || 100;
   this.paddingRight = options.paddingRight || 100;
   this.paddingTop = options.paddingTop || 100;
@@ -46,10 +46,13 @@ charts.GanttChart = function (options = {}) {
   this.maskDom = $('#scroll-mask');
   this.canvasWrapDom = null;
   this.stage = null;
-  this.layerAxis = null;
-  this.width = options.width || window.innerWidth;
-  this.height = options.height || window.innerHeight;
+  this.layerAxis = new Konva.FastLayer();
+  this.layerBasicShapes = new Konva.Layer();
+  this.layerSwitch = new Konva.Layer();
+  this.width = options.width || 800;
+  this.height = options.height || 600;
   this.axis = null;
+  this.rests = null;
 }
 
 charts.GanttChart.prototype.init = function (options = {}) {
@@ -62,6 +65,10 @@ charts.GanttChart.prototype.init = function (options = {}) {
     width: `${this.width}px`,
     height: `${this.height}px`
   });
+  $("#container").css({
+    width: `${this.width}px`,
+    height: `${this.height}px`
+  })
   this.scollDom.scroll(this.scoll.bind(this));
 
   this.stage = new Konva.Stage({
@@ -69,27 +76,45 @@ charts.GanttChart.prototype.init = function (options = {}) {
     width: this.width,
     height: this.height
   });
-  this.layerAxis = new Konva.Layer();
+  const propsForChildren = options.data;
+  propsForChildren.base = this;
+
+  //坐标轴
   if (options.axis !== false) {
-    const ap = options.axis || {};
-    this.axis = new charts.Axis(Object.assign(options.data, ap, {
-      base: this,
-      paddingLeft: this.paddingLeft,
-      paddingRight: this.paddingRight,
-      paddingTop: this.paddingTop,
-      paddingBottom: this.paddingBottom
-    }));
-    this.layerAxis.add(this.axis.group);
+    const payload = options.axis || {};
+    this.axis = new charts.Axis(Object.assign(propsForChildren, payload));
+    //this.layerAxis.add(this.axis.group);
   }
-  this.stage.add(this.layerAxis);
+  // 设备休息区-读取图片
+  const readFile = new Promise((resove => {
+    if (options.rests !== false) {
+      const payload = options.rests || {};
+      const image = new Image();
+      image.onload =  () => {
+        payload.image = image;
+        this.rests = new charts.Rests(Object.assign(propsForChildren, payload));
+        this.layerBasicShapes.add(this.rests.group);
+        console.log(this.rests.group)
+        resove();
+      };
+      image.src = './img/texture.png';
+    } else {
+      resove();
+    }
+  }))
+
+  readFile.then(() => {
+    this.stage.add(this.layerAxis, this.layerBasicShapes);
+  })
+
 }
 // resize
-charts.GanttChart.prototype.resize = function(options) {
-  this.width = options.width || this.width;
-  this.height = options.height || this.height;
+charts.GanttChart.prototype.resize = function (options) {
+  //this.width = options.width || this.width;
+  //this.height = options.height || this.height;
   this.maskDom.css({
-    width: `${this.paddingLeft + this.paddingRight + this.width}px`,
-    height: `${this.paddingTop + this.paddingBottom + this.height}px`,
+    width: `${this.paddingLeft + this.paddingRight + options.width}px`,
+    height: `${this.paddingTop + this.paddingBottom + options.height}px`,
   });
 }
 // 滚动方法
@@ -98,15 +123,21 @@ charts.GanttChart.prototype.scoll = function (e) {
   const containerDom = this.containerDom;
   const left = scollDom.scrollLeft();
   const top = scollDom.scrollTop();
-  console.log(left, top);
   containerDom.css({
     transform: `translate3d(${left}px, ${top}px, 0)`
   });
-  this.stage.setAttrs({
-    x: -left,
-    y: -top
-  })
-  this.layerAxis.draw();
+  // this.stage.setAttrs({
+  //   x: -left,
+  //   y: -top
+  // })
+  // this.layerAxis.draw();
+  this.draw(left, top);
+}
+// 绘图
+charts.GanttChart.prototype.draw = function(x, y) {
+  this.layerBasicShapes.destroyChildren();
+  this.rests.changeData(x, y);
+  this.layerBasicShapes.draw();
 }
 // 轴线格局类
 charts.Axis = function (options = {}) {
@@ -135,13 +166,12 @@ charts.Axis.prototype.init = function () {
   const startTime = utils.moment(this.startTime).valueOf();
   const endTime = utils.moment(this.endTime).valueOf();
   const axisXSize = utils.moment(endTime - startTime).valueOf() / this.timeInterval * this.tickXInterval;
-
   const axisYSize = this.data.length * this.tickYInterval;
-  
+
   this.base.resize({
     width: axisXSize,
     height: axisYSize
-  })
+  });
   this.axisX = new Konva.Line({
     points: [this.paddingLeft, this.paddingTop, this.paddingLeft + axisXSize, this.paddingTop],
     stroke: this.axisColor,
@@ -154,13 +184,13 @@ charts.Axis.prototype.init = function () {
     lineCap: 'round',
     strokeWidth: this.strokeWidth,
   });
-  this.axisXText = new Konva.Group();
-  this.axisYText = new Konva.Group();
-  this.gridX = new Konva.Group();
-  this.gridY = new Konva.Group();
+  // this.axisXText = new Konva.Group();
+  // this.axisYText = new Konva.Group();
+  // this.gridX = new Konva.Group();
+  // this.gridY = new Konva.Group();
   let pathTicksForAxis = '';
   const childTickInternval = this.tickXInterval / this.tickXChidren;
-  for (let i = 1; i <= axisXSize / childTickInternval; i ++) {
+  for (let i = 1; i <= axisXSize / childTickInternval; i++) {
     pathTicksForAxis += `M${childTickInternval * i},0L${childTickInternval * i},${-this.tickChidrenSize}`;
   }
   for (let i = 1; i <= axisXSize / this.tickXInterval; i++) {
@@ -168,7 +198,8 @@ charts.Axis.prototype.init = function () {
     const str = utils.moment(startTime + this.timeInterval * i).format('MM-DD');
     const num = utils.getBytesLength(str);
     const text = new Konva.Text({
-      x: this.tickXInterval * i - this.fontSize * num / 4,
+      x: this.paddingLeft + this.tickXInterval * i - this.fontSize * num / 4,
+      y: this.paddingTop - this.tickSize - this.fontSize,
       text: str,
       fontSize: this.fontSize,
       fontFamily: 'Calibri',
@@ -180,8 +211,9 @@ charts.Axis.prototype.init = function () {
       lineCap: 'round',
       strokeWidth: this.gridStrokeWidth,
     });
-    this.axisXText.add(text);
-    this.gridY.add(line);
+    this.base.layerAxis.add(text, line);
+    // this.axisXText.add(text);
+    // this.gridY.add(line);
   }
   for (let i = 1; i <= axisYSize / this.tickYInterval; i++) {
     // pathTicksForAxis += `M0,${this.tickYInterval * i}L${-this.tickSize},${this.tickYInterval * i}`;
@@ -189,21 +221,22 @@ charts.Axis.prototype.init = function () {
     const num = utils.getBytesLength(str);
 
     const text = new Konva.Text({
-      x: -this.fontSize * num / 2 - this.tickSize - 3,
-      y: this.tickYInterval * (i - .5),
+      x:  this.paddingLeft - this.fontSize * num / 2 - this.tickSize - 3,
+      y: this.paddingTop + this.tickYInterval * (i - .5),
       text: str,
       fontSize: this.fontSize,
       fontFamily: 'Calibri',
       fill: this.axisColor,
     });
     const line = new Konva.Line({
-      points: [this.paddingLeft , this.paddingTop + this.tickYInterval * i, this.paddingLeft + axisXSize, this.paddingTop + this.tickYInterval * i],
+      points: [this.paddingLeft, this.paddingTop + this.tickYInterval * i, this.paddingLeft + axisXSize, this.paddingTop + this.tickYInterval * i],
       stroke: this.gridColor,
       lineCap: 'round',
       strokeWidth: this.gridStrokeWidth,
     });
-    this.axisYText.add(text);
-    this.gridX.add(line)
+    //this.axisYText.add(text);
+    //this.gridX.add(line);
+    this.base.layerAxis.add(text, line);
   }
 
   this.tickX = new Konva.Path({
@@ -212,29 +245,75 @@ charts.Axis.prototype.init = function () {
     data: pathTicksForAxis,
     stroke: this.axisColor,
   });
-  this.axisXText.setAttrs({
-    x: this.paddingLeft,
-    y: this.paddingTop - this.tickSize - this.fontSize
-  });
-  this.axisYText.setAttrs({
-    x: this.paddingLeft,
-    y: this.paddingTop,
-  })
-  this.group.add(this.axisX, this.axisY, this.tickX, this.axisXText, this.axisYText, this.gridX, this.gridY);
+  this.base.layerAxis.add(this.axisX, this.axisY,this.tickX);
+  // this.axisXText.setAttrs({
+  //   x: this.paddingLeft,
+  //   y: this.paddingTop - this.tickSize - this.fontSize
+  // });
+  // this.axisYText.setAttrs({
+  //   x: this.paddingLeft,
+  //   y: this.paddingTop,
+  // })
+  //this.group.add(this.axisX, this.axisY, this.tickX, this.axisXText, this.axisYText, this.gridX, this.gridY);
 };
 
 // 工序类
-charts.Main = function(options = {}) {
+charts.Main = function (options = {}) {
   charts.Element.call(this, options);
 
 }
-charts.Main.prototype.init = function() {
+charts.Main.prototype.init = function () {
 
 }
 // 休息时间
-charts.Rests = function(options = {}) {
+charts.Rests = function (options = {}) {
   charts.Element.call(this, options);
+  this.base = options.base || null;
+  this.xx = 50;
+  this.yy = 5;
+  this.image = options.image;
+  this.group = new Konva.Group();
+  this.init();
 }
-charts.Rests.prototype.init = function() {
-
+charts.Rests.prototype.init = function () {
+  for(let i = 0,j = 0; i < 50; i++, j=0){
+    for(; j < 5; j++) {
+      // const re = new Konva.Image({
+      //   x: 150 * i ,
+      //   y: 150 * j,
+      //   width: 100,
+      //   height: 100,
+      //   image: this.image,
+      //   text: 'ff'
+      // });
+      const re = new Konva.Text({
+        x: 150 *i,
+        y: 150 * j,
+        text: `${i}列${j}行`,
+        fontSize: 30
+      })
+      this.group.add(re);
+    }
+  }
+}
+charts.Rests.prototype.changeData = function(x,y) {
+  //console.log(x,y,this.base);
+  const l = this.base.width;
+  const one = 150 ;
+  const offsetX = x % l;
+  const start = Math.floor((x + this.paddingLeft) / 350);
+  const num = Math.ceil(l / one);
+  console.log(start, num);
+  for(let i = start,j = 0; i < start + num; i++, j=0){
+    for(; j < 5; j++) {
+      const re = new Konva.Text({
+        x: -150 * (i - start)+ offsetX,
+        y: 150 * j,
+        text: `${i}列${j}行`,
+        fontSize: 30
+      })
+      this.group.add(re);
+    }
+  }
+  this.base.layerBasicShapes.add(this.group);
 }
