@@ -287,7 +287,7 @@ charts.Rests.prototype.init = function () {
       //   text: 'ff'
       // });
       const re = new Konva.Text({
-        x: 150 *i,
+        x: 200 *i + this.paddingLeft,
         y: 150 * j,
         text: `${i}列${j}行`,
         fontSize: 30
@@ -299,20 +299,28 @@ charts.Rests.prototype.init = function () {
 charts.Rests.prototype.changeData = function(x,y) {
   //console.log(x,y,this.base);
   const l = this.base.width;
-  const one = 150 ;
-  const offsetX = x % l;
-  const start = Math.floor((x + this.paddingLeft) / 350);
-  const num = Math.ceil(l / one);
-  console.log(start, num);
+  const one = 200 ;
+  const offsetX = x % one;
+  let start = Math.floor((x - this.paddingLeft) / one);
+  start = start > 0 ? start : 0;
+  const num = Math.floor(l / one) + 1;
+  console.log(start, num, offsetX,x);
   for(let i = start,j = 0; i < start + num; i++, j=0){
     for(; j < 5; j++) {
+      const rr = new Konva.Rect({
+        x: 200 * (i - start) - offsetX + this.paddingLeft,
+        y: 150 * j,
+        width: 196,
+        height: 146,
+        stroke:'red'
+      })
       const re = new Konva.Text({
-        x: -150 * (i - start)+ offsetX,
+        x: 200 * (i - start) - offsetX + this.paddingLeft,
         y: 150 * j,
         text: `${i}列${j}行`,
         fontSize: 30
       })
-      this.group.add(re);
+      this.group.add(re, rr);
     }
   }
   this.base.layerBasicShapes.add(this.group);
