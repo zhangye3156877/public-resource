@@ -7,43 +7,52 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Document</title>
   <style>
-    html,body,div{
+    html,
+    body,
+    div {
       margin: 0;
       padding: 0;
     }
-    #container{
+
+    #container {
       width: 80%;
       height: 600px;
       overflow: scroll;
       margin: 100px auto;
     }
+
     #container::-webkit-scrollbar {
-        width: 7px;
-        height: 7px;
+      width: 7px;
+      height: 7px;
     }
+
     /*滚动条滑块*/
     #container::-webkit-scrollbar-thumb {
-        border-radius: 10px;
-        -webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
-        box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
-        background: #535353;
+      border-radius: 10px;
+      -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+      box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+      background: #535353;
     }
+
     /*滚动条轨道*/
     #container::-webkit-scrollbar-track {
-        -webkit-box-shadow: inset 0 0 1px rgba(0,0,0,0);
-        box-shadow: inset 0 0 1px rgba(0,0,0,0);
-        border-radius: 10px;
-        background: #ccc;
+      -webkit-box-shadow: inset 0 0 1px rgba(0, 0, 0, 0);
+      box-shadow: inset 0 0 1px rgba(0, 0, 0, 0);
+      border-radius: 10px;
+      background: #ccc;
     }
+
     /* 边角 */
     #container::-webkit-scrollbar-corner {
       border-radius: 50%;
-      background:#535353;
+      background: #535353;
     }
-    #scroll-mask{
+
+    #scroll-mask {
       overflow: hidden;
       position: relative;
     }
+
     #canvas {
       transform: translateZ(0);
     }
@@ -51,62 +60,161 @@
 </head>
 
 <body>
- <div id="container">
+  <div id="container">
     <div id="scroll-mask">
       <div id="canvas"></div>
     </div>
- </div>
- <!-- <iframe src="./test2.html" frameborder="0"></iframe> -->
+  </div>
+  <!-- <iframe src="./test2.html" frameborder="0"></iframe> -->
 </body>
 <script src="./jquery.min.js"></script>
 <script src="./kv.js"></script>
 <script src="./lodash.js"></script>
-<script src="./moment.min.js"></script> 
+<script src="./moment.min.js"></script>
 <script src="./ganntchart.js"></script>
 <script>
-    (function () {
-      const data = {
-        start: '2019-06-21',
-        end: '2019-06-30',
-        m: {
-          count: 8,
-          data:[
+  ;(function () {
+    const data = {
+      "startTime": "2019-06-21",
+      "endTime": "2019-06-30",
+      "data": [
+        {
+          "group": {
+            "name": "织机1",
+            "num": "1"
+          },
+          "workplan": [
             {
-              name: '机器1'
+              "start": 0,
+              "end": 25,
+              "type": "T",
+              "name": "w-001"
+            }
+          ]
+        },
+        {
+          "group": {
+            "name": "织机2",
+            "num": "2"
+          },
+          "workplan": [
+            {
+              "start": 0,
+              "end": 20,
+              "type": "T",
+              "name": "w-003"
             },
             {
-              name: '机器2'
+              "start": 20,
+              "end": 40,
+              "type": "T",
+              "name": "w-002"
             },
             {
-              name: '机器3'
+              "start": 40,
+              "end": 48,
+              "type": "T",
+              "name": "w-001"
             },
             {
-              name: '机器4'
+              "start": 100,
+              "end": 108,
+              "type": "T",
+              "name": "w-005"
+            }
+          ]
+        },
+        {
+          "group": {
+            "name": "织机3",
+            "num": "3"
+          },
+          "workplan": [
+            {
+              "start": 0,
+              "end": 13,
+              "type": "T",
+              "name": "w-007"
+            }
+          ]
+        },
+        {
+          "group": {
+            "name": "染缸1",
+            "num": "4"
+          },
+          "workplan": [
+            {
+              "start": 0,
+              "end": 8,
+              "type": "D",
+              "name": "w-004"
             },
             {
-              name: '机器5'
+              "start": 48,
+              "end": 56,
+              "type": "D",
+              "name": "w-001"
+            }
+          ]
+        },
+        {
+          "group": {
+            "name": "染缸2",
+            "num": "5"
+          },
+          "workplan": [
+            {
+              "start": 40,
+              "end": 48,
+              "type": "D",
+              "name": "w-002"
             },
             {
-              name: '机器6'
+              "start": 25,
+              "end": 33,
+              "type": "D",
+              "name": "w-006"
             },
             {
-              name: '机器7'
+              "start": 25,
+              "end": 33,
+              "type": "D",
+              "name": "w-006"
+            }
+          ]
+        },
+        {
+          "group": {
+            "name": "染缸3",
+            "num": "6"
+          },
+          "workplan": [
+            {
+              "start": 0,
+              "end": 4,
+              "type": "D",
+              "name": "w-008"
             },
             {
-              name: '机器8'
+              "start": 108,
+              "end": 112,
+              "type": "D",
+              "name": "w-005"
             }
           ]
         }
-      }
-      const ganttChart = new charts.GanttChart({
-        canvas: 'canvas',
-      });
+      ]
+    }
+    const ganttChart = new charts.GanttChart({
+      canvas: 'canvas',
+    });
 
-      ganttChart.init({
-        data,
-      });
+    ganttChart.init({
+      data,
+    });
 
-    })();
+  })();
 </script>
 
 </html>

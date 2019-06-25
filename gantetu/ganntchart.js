@@ -30,9 +30,9 @@ charts.Element = function(options = {}){
   this.paddingRight = options.paddingRight || 100;
   this.paddingTop = options.paddingTop || 100;
   this.paddingBottom = options.paddingBottom || 100;
-  this.start = options.start; //暂定数据结构
-  this.end = options.end; //暂定数据结构
-  this.m = options.m; //暂定数据结构
+  this.startTime = options.startTime; //暂定数据结构
+  this.endTime = options.endTime; //暂定数据结构
+  this.data = options.data; //暂定数据结构
   this.timeInterval = options.timeInterval || 1000 * 60 * 60 * 24;
   this.tickXInterval = options.tickXInterval || 200; //x轴每时间单位间隔长度，默认1天
   this.tickYInterval = options.tickYInterval || 100; //y轴每个设备单位间距
@@ -132,11 +132,11 @@ charts.Axis = function (options = {}) {
   this.init();
 };
 charts.Axis.prototype.init = function () {
-  const start = utils.moment(this.start).valueOf();
-  const end = utils.moment(this.end).valueOf();
-  const axisXSize = utils.moment(end - start).valueOf() / this.timeInterval * this.tickXInterval;
+  const startTime = utils.moment(this.startTime).valueOf();
+  const endTime = utils.moment(this.endTime).valueOf();
+  const axisXSize = utils.moment(endTime - startTime).valueOf() / this.timeInterval * this.tickXInterval;
 
-  const axisYSize = this.m.count * this.tickYInterval;
+  const axisYSize = this.data.length * this.tickYInterval;
   
   this.base.resize({
     width: axisXSize,
@@ -165,7 +165,7 @@ charts.Axis.prototype.init = function () {
   }
   for (let i = 1; i <= axisXSize / this.tickXInterval; i++) {
     pathTicksForAxis += `M${this.tickXInterval * i},0L${this.tickXInterval * i},${-this.tickSize}`;
-    const str = utils.moment(start + this.timeInterval * i).format('MM-DD');
+    const str = utils.moment(startTime + this.timeInterval * i).format('MM-DD');
     const num = utils.getBytesLength(str);
     const text = new Konva.Text({
       x: this.tickXInterval * i - this.fontSize * num / 4,
@@ -185,7 +185,7 @@ charts.Axis.prototype.init = function () {
   }
   for (let i = 1; i <= axisYSize / this.tickYInterval; i++) {
     // pathTicksForAxis += `M0,${this.tickYInterval * i}L${-this.tickSize},${this.tickYInterval * i}`;
-    const str = this.m.data[i - 1].name;
+    const str = this.data[i - 1].group.name;
     const num = utils.getBytesLength(str);
 
     const text = new Konva.Text({
@@ -222,3 +222,19 @@ charts.Axis.prototype.init = function () {
   })
   this.group.add(this.axisX, this.axisY, this.tickX, this.axisXText, this.axisYText, this.gridX, this.gridY);
 };
+
+// 工序类
+charts.Main = function(options = {}) {
+  charts.Element.call(this, options);
+
+}
+charts.Main.prototype.init = function() {
+
+}
+// 休息时间
+charts.Rests = function(options = {}) {
+  charts.Element.call(this, options);
+}
+charts.Rests.prototype.init = function() {
+
+}
