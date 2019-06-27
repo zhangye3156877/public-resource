@@ -30,8 +30,8 @@ charts.Element = function (options = {}) {
   this.paddingRight = options.paddingRight || 100;
   this.paddingTop = options.paddingTop || 100;
   this.paddingBottom = options.paddingBottom || 100;
-  this.startTime = options.startTime; //暂定数据结构
-  this.endTime = options.endTime; //暂定数据结构
+  this.startTime = utils.moment(options.startTime).valueOf(); //暂定数据结构
+  this.endTime = utils.moment(options.endTime).valueOf(); //暂定数据结构
   this.data = options.data; //暂定数据结构
   this.timeInterval = options.timeInterval || 1000 * 60 * 60 * 24;
   this.tickXInterval = options.tickXInterval || 200; //x轴每时间单位间隔长度，默认1天
@@ -96,7 +96,7 @@ charts.GanttChart.prototype.init = function (options = {}) {
     if (options.rests !== false) {
       const payload = options.rests || {};
       const image = new Image();
-      image.onload =  () => {
+      image.onload = () => {
         payload.image = image;
         this.rests = new charts.Rests(Object.assign(propsForChildren, payload));
         resove();
@@ -140,7 +140,7 @@ charts.GanttChart.prototype.scoll = function (e) {
   this.draw(left, top);
 }
 // 绘图
-charts.GanttChart.prototype.draw = function(x, y) {
+charts.GanttChart.prototype.draw = function (x, y) {
   // 销毁子集
   this.layerBasicShapes.destroyChildren();
   this.layerAxis.destroyChildren();
@@ -174,8 +174,8 @@ charts.Axis = function (options = {}) {
   this.init();
 };
 charts.Axis.prototype.init = function () {
-  const startTime = utils.moment(this.startTime).valueOf();
-  const endTime = utils.moment(this.endTime).valueOf();
+  const startTime = this.startTime;
+  const endTime = this.endTime;
   const axisXSize = this.axisXSize = utils.moment(endTime - startTime).valueOf() / this.timeInterval * this.tickXInterval;
   const axisYSize = this.axisYSize = this.data.length * this.tickYInterval;
 
@@ -238,7 +238,7 @@ charts.Axis.prototype.init = function () {
     const num = utils.getBytesLength(str);
 
     const text = new Konva.Text({
-      x:  this.paddingLeft - this.fontSize * num / 2 - this.tickSize - 3,
+      x: this.paddingLeft - this.fontSize * num / 2 - this.tickSize - 3,
       y: this.paddingTop + this.tickYInterval * (i - .5),
       text: str,
       fontSize: this.fontSize,
@@ -262,7 +262,7 @@ charts.Axis.prototype.init = function () {
     data: pathTicksForAxis,
     stroke: this.axisColor,
   });
-  this.base.layerAxis.add(this.axisX, this.axisY,this.tickX);
+  this.base.layerAxis.add(this.axisX, this.axisY, this.tickX);
   // this.axisXText.setAttrs({
   //   x: this.paddingLeft,
   //   y: this.paddingTop - this.tickSize - this.fontSize
@@ -273,7 +273,7 @@ charts.Axis.prototype.init = function () {
   // })
   //this.group.add(this.axisX, this.axisY, this.tickX, this.axisXText, this.axisYText, this.gridX, this.gridY);
 };
-charts.Axis.prototype.changeData = function(x, y) {
+charts.Axis.prototype.changeData = function (x, y) {
   const paddingLeft = this.paddingLeft;
   const paddingRight = this.paddingRight;
   const paddingTop = this.paddingTop;
@@ -294,12 +294,12 @@ charts.Axis.prototype.changeData = function(x, y) {
   } else if (x > paddingLeft && (diffX - x) < paddingRight) {
     axisXDiffX = diffX - x - paddingRight;
     axisYDiffX = -this.strokeWidth;
-    itemDiffX =  -(x - paddingLeft) % this.tickXInterval;
+    itemDiffX = -(x - paddingLeft) % this.tickXInterval;
     startItemX = Math.floor((x - paddingLeft) / this.tickXInterval);
   } else {
     axisXDiffX = 0;
     axisYDiffX = -this.strokeWidth;
-    itemDiffX =  -(x - paddingLeft) % this.tickXInterval;
+    itemDiffX = -(x - paddingLeft) % this.tickXInterval;
     startItemX = Math.floor((x - paddingLeft) / this.tickXInterval);
   }
 
@@ -308,12 +308,12 @@ charts.Axis.prototype.changeData = function(x, y) {
   } else if (y > paddingTop && (diffY - y) < paddingBottom) {
     axisXDiffY = -this.strokeWidth;
     axisYDiffY = diffY - y - paddingBottom;
-    itemDiffY =  -(y - paddingTop) % this.tickYInterval;
+    itemDiffY = -(y - paddingTop) % this.tickYInterval;
     startItemY = Math.floor((y - paddingTop) / this.tickYInterval);
   } else {
     axisXDiffY = -this.strokeWidth;
     axisYDiffY = 0;
-    itemDiffY =  -(y - paddingTop) % this.tickYInterval;
+    itemDiffY = -(y - paddingTop) % this.tickYInterval;
     startItemY = Math.floor((y - paddingTop) / this.tickYInterval);
   }
 
@@ -333,8 +333,30 @@ charts.Axis.prototype.changeData = function(x, y) {
     lineCap: 'round',
     strokeWidth: this.strokeWidth,
   });
+  let pathTicksForAxis = '';
+  const childTickInternval = this.tickXInterval / this.tickXChidren;
+  // for (let i = 1; i <= axisXSize / childTickInternval; i++) {
+  //   pathTicksForAxis += `M${childTickInternval * i},0L${childTickInternval * i},${-this.tickChidrenSize}`;
+  // }
   for (let i = startItemX; i <= (this.axisXLang / this.tickXInterval + 1 + startItemX); i++) {
     const diff = i - startItemX + 1;
+    console.log(startItemX)
+    const str = utils.moment(this.startTime + this.timeInterval * (i + 1)).format('MM-DD');
+    const num = utils.getBytesLength(str);
+    pathTicksForAxis += `M${this.tickXInterval * diff},0L${this.tickXInterval * diff},${-this.tickSize}`;
+    for (let j = 1; j <= this.tickXChidren; j++) {
+      if (i < (this.axisXLang / this.tickXInterval + 1 + startItemX) - 1) {
+        pathTicksForAxis += `M${this.tickXInterval * (diff - 1) + childTickInternval * j},0L${this.tickXInterval * (diff - 1) + childTickInternval * j},${-this.tickChidrenSize}`;
+      }
+    }
+    const text = new Konva.Text({
+      x: itemDiffX + this.tickXInterval * diff - this.fontSize * num / 4,
+      y: axisYDiffY - this.tickSize - this.fontSize,
+      text: str,
+      fontSize: this.fontSize,
+      fontFamily: 'Calibri',
+      fill: this.axisColor
+    });
     const line = new Konva.Line({
       x: itemDiffX,
       y: axisYDiffY,
@@ -343,12 +365,12 @@ charts.Axis.prototype.changeData = function(x, y) {
       lineCap: 'round',
       strokeWidth: this.gridStrokeWidth,
     });
-    this.base.layerAxis.add(line);
+    this.base.layerAxis.add(line, text);
   }
-  console.log(startItemY)
+
   for (let i = startItemY; i <= (this.axisYLang / this.tickYInterval + 1 + startItemY); i++) {
     const diff = i - startItemY + 1;
-    
+
     if (i < this.data.length) {
       const str = this.data[i].group.name;
       const num = utils.getBytesLength(str);
@@ -374,7 +396,13 @@ charts.Axis.prototype.changeData = function(x, y) {
     this.base.layerAxis.add(line);
   }
 
-  this.base.layerAxis.add(this.axisX, this.axisY);
+  this.tickX = new Konva.Path({
+    x: itemDiffX,
+    y: axisYDiffY,
+    data: pathTicksForAxis,
+    stroke: this.axisColor,
+  });
+  this.base.layerAxis.add(this.axisX, this.axisY, this.tickX);
 
 }
 // 工序类
@@ -396,8 +424,8 @@ charts.Rests = function (options = {}) {
   this.init();
 }
 charts.Rests.prototype.init = function () {
-  for(let i = 0,j = 0; i < 50; i++, j=0){
-    for(; j < 5; j++) {
+  for (let i = 0, j = 0; i < 50; i++ , j = 0) {
+    for (; j < 5; j++) {
       // const re = new Konva.Image({
       //   x: 150 * i ,
       //   y: 150 * j,
@@ -407,7 +435,7 @@ charts.Rests.prototype.init = function () {
       //   text: 'ff'
       // });
       const re = new Konva.Text({
-        x: 200 *i + this.paddingLeft,
+        x: 200 * i + this.paddingLeft,
         y: 150 * j,
         text: `${i}列${j}行`,
         fontSize: 30
@@ -417,10 +445,10 @@ charts.Rests.prototype.init = function () {
     }
   }
 }
-charts.Rests.prototype.changeData = function(x,y) {
+charts.Rests.prototype.changeData = function (x, y) {
   //console.log(x,y,this.base);
-  const {width, height} = this.base;
-  const dw = 200 ;
+  const { width, height } = this.base;
+  const dw = 200;
   const dh = 150;
   let offsetX;
   let offsetY;
@@ -443,15 +471,15 @@ charts.Rests.prototype.changeData = function(x,y) {
 
   const numX = Math.floor(width / dw) + 1;
   const numY = Math.floor(height / dh) + 1;
-  
-  for(let i = startX,j = startY; i < startX + numX; i++, j = startY){
-    for(; j < startY + numY; j++) {
+
+  for (let i = startX, j = startY; i < startX + numX; i++ , j = startY) {
+    for (; j < startY + numY; j++) {
       const rr = new Konva.Rect({
         x: 200 * (i - startX) + offsetX,
         y: 150 * (j - startY) + offsetY,
         width: 196,
         height: 146,
-        stroke:'red'
+        stroke: 'red'
       })
       const re = new Konva.Text({
         x: 200 * (i - startX) + offsetX,
