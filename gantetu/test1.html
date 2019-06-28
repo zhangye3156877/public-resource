@@ -22,8 +22,8 @@
     }
 
     #container::-webkit-scrollbar {
-      width: 7px;
-      height: 7px;
+      width: 12px;
+      height: 12px;
     }
 
     /*滚动条滑块*/
@@ -73,8 +73,8 @@
 <script src="./moment.min.js"></script>
 <script src="./ganntchart.js"></script>
 <script>
-  ;(function () {
-    const data = {
+  ; (function () {
+    const te = {
       "startTime": "2019-06-21",
       "endTime": "2019-06-30",
       "data": [
@@ -85,10 +85,11 @@
           },
           "workplan": [
             {
-              "start": 0,
-              "end": 25,
-              "type": "T",
-              "name": "w-001"
+              "tmstart": 0,
+              "tmfinish": 25,
+              "type": "1",
+              "keys": "6",
+              "name": "w-006"
             }
           ]
         },
@@ -99,28 +100,32 @@
           },
           "workplan": [
             {
-              "start": 0,
-              "end": 20,
-              "type": "T",
+              "tmstart": 0,
+              "tmfinish": 20,
+              "type": "1",
+              "keys": "3",
               "name": "w-003"
             },
             {
-              "start": 20,
-              "end": 40,
-              "type": "T",
+              "tmstart": 20,
+              "tmfinish": 40,
+              "type": "1",
+              "keys": "oa,ob",
+              "name": "w-oa,ob"
+            },
+            {
+              "tmstart": 40,
+              "tmfinish": 48,
+              "type": "1",
+              "keys": "2",
               "name": "w-002"
             },
             {
-              "start": 40,
-              "end": 48,
-              "type": "T",
-              "name": "w-001"
-            },
-            {
-              "start": 100,
-              "end": 108,
-              "type": "T",
-              "name": "w-005"
+              "tmstart": 100,
+              "tmfinish": 108,
+              "type": "1",
+              "keys": "2",
+              "name": "w-004"
             }
           ]
         },
@@ -131,9 +136,10 @@
           },
           "workplan": [
             {
-              "start": 0,
-              "end": 13,
-              "type": "T",
+              "tmstart": 0,
+              "tmfinish": 13,
+              "type": "1",
+              "keys": "7",
               "name": "w-007"
             }
           ]
@@ -145,16 +151,18 @@
           },
           "workplan": [
             {
-              "start": 0,
-              "end": 8,
-              "type": "D",
-              "name": "w-004"
+              "tmstart": 0,
+              "tmfinish": 8,
+              "type": "2",
+              "keys": "4",
+              "name": "d-004"
             },
             {
-              "start": 48,
-              "end": 56,
-              "type": "D",
-              "name": "w-001"
+              "tmstart": 48,
+              "tmfinish": 56,
+              "type": "2",
+              "keys": "oa,ob",
+              "name": "d-oa,ob"
             }
           ]
         },
@@ -165,22 +173,25 @@
           },
           "workplan": [
             {
-              "start": 40,
-              "end": 48,
-              "type": "D",
-              "name": "w-002"
+              "tmstart": 40,
+              "tmfinish": 48,
+              "type": "2",
+              "keys": "2",
+              "name": "d-002"
             },
             {
-              "start": 25,
-              "end": 33,
-              "type": "D",
-              "name": "w-006"
+              "tmstart": 25,
+              "tmfinish": 33,
+              "type": "2",
+              "keys": "6",
+              "name": "d-006"
             },
             {
-              "start": 25,
-              "end": 33,
-              "type": "D",
-              "name": "w-006"
+              "tmstart": 0,
+              "tmfinish": 4,
+              "type": "2",
+              "keys": "7",
+              "name": "d-005"
             }
           ]
         },
@@ -191,16 +202,18 @@
           },
           "workplan": [
             {
-              "start": 0,
-              "end": 4,
-              "type": "D",
-              "name": "w-008"
+              "tmstart": 0,
+              "tmfinish": 4,
+              "type": "2",
+              "keys": "8",
+              "name": "d-008"
             },
             {
-              "start": 108,
-              "end": 112,
-              "type": "D",
-              "name": "w-005"
+              "tmstart": 108,
+              "tmfinish": 112,
+              "type": "2",
+              "keys": "5",
+              "name": "d-005"
             }
           ]
         }
@@ -208,12 +221,10 @@
     }
     const ganttChart = new charts.GanttChart({
       canvas: 'canvas',
+      startTime: te.startTime,
+      endTime: te.endTime,
+      data: te.data,
     });
-
-    ganttChart.init({
-      data,
-    });
-
   })();
 </script>
 
