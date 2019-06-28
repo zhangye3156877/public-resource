@@ -37,7 +37,7 @@ charts.GanttChart = function (options = {}) {
   this.layerAxis = new Konva.FastLayer();
   this.layerBasicShapes = new Konva.Layer();
   this.layerSwitch = new Konva.Layer();
-  this.width = options.width || 800;
+  this.width = options.width || 1000;
   this.height = options.height || 600;
   this.paddingLeft = options.paddingLeft || 100;
   this.paddingRight = options.paddingRight || 100;
@@ -47,11 +47,12 @@ charts.GanttChart = function (options = {}) {
   this.timeInterval = options.timeInterval || 1000 * 60 * 60 * 24;
   this.tickXInterval = options.tickXInterval || 200; //x轴每时间单位间隔长度，默认1天
   this.tickYInterval = options.tickYInterval || 100; //y轴每个设备单位间距
-  this.startTime = utils.moment(options.startTime).valueOf(); 
+  this.startTime = utils.moment(options.startTime).valueOf();
   this.endTime = utils.moment(options.endTime).valueOf();
-  this.presentTime = utils.moment(options.startTime);
-  this.itemDiffX = 0;
-  this.itemDiffY = 0;
+  this.itemDiffX = this.paddingLeft;
+  this.itemDiffY = this.paddingTop;
+  this.startItemX = 0;
+  this.startItemY = 0;
   this.renderCountX = 0;
   this.renderCountY = 0;
   this.axisOption = options.axisOption || {};
@@ -81,7 +82,7 @@ charts.GanttChart.prototype.init = function () {
     height: `${this.height}px`
   })
   this.scollDom.scroll(this.scoll.bind(this));
-
+  //this.scollDom.scroll(utils._.debounce(this.scoll.bind(this), 20));
   this.stage = new Konva.Stage({
     container: this.container,
     width: this.width,
@@ -89,12 +90,16 @@ charts.GanttChart.prototype.init = function () {
   });
 
   //坐标轴
-  if (this.axisOption.axis !== false) {
+  if (this.axisOption !== false) {
     this.axis = new charts.Axis(Object.assign({ base: this }, this.axisOption));
+  }
+  // 工序
+  if (this.workingOptions !== false) {
+    this.working = new charts.Working(Object.assign({ base: this }, this.workingOptions));
   }
   // 设备休息区-读取图片
   const readFile = new Promise((resove => {
-    if (this.restsOptions.rests !== false) {
+    if (this.restsOptions !== false) {
       const image = new Image();
       image.onload = () => {
         this.restsOptions.image = image;
@@ -140,8 +145,9 @@ charts.GanttChart.prototype.draw = function (x, y) {
   this.layerBasicShapes.destroyChildren();
   this.layerAxis.destroyChildren();
   //改变数据集
-  this.axis.changeData(x, y);
-  this.rests.changeData(x, y);
+  this.axis.upDate(x, y);
+  this.working.upDate();
+  this.rests.upDate(x, y);
   // 重绘
   this.layerBasicShapes.batchDraw();
   this.layerAxis.batchDraw();
@@ -190,7 +196,7 @@ charts.Axis.prototype.init = function () {
   });
   let axisXLang = paddingLeft + paddingRight + axisXSize;
   this.axisXLang = axisXLang = axisXLang > width ? width : axisXLang;
-  
+
   this.axisX = new Konva.Line({
     x: paddingLeft,
     y: paddingTop,
@@ -264,7 +270,7 @@ charts.Axis.prototype.init = function () {
   });
   this.base.layerAxis.add(this.axisX, this.axisY, this.tickX);
 };
-charts.Axis.prototype.changeData = function (x, y) {
+charts.Axis.prototype.upDate = function (x, y) {
   const {
     startTime,
     endTime,
@@ -281,7 +287,7 @@ charts.Axis.prototype.changeData = function (x, y) {
     tickXInterval,
     tickYInterval
   } = this.base;
-  
+
   const diffX = maskDomWidth - width;
   const diffY = maskDomHeight - height;
   let axisXDiffX;
@@ -294,32 +300,37 @@ charts.Axis.prototype.changeData = function (x, y) {
   let itemDiffY;
 
   if (x <= paddingLeft) {
-    this.base.itemDiffX = itemDiffX = axisXDiffX = axisYDiffX = paddingLeft - x;
+    itemDiffX = axisXDiffX = axisYDiffX = paddingLeft - x;
   } else if (x > paddingLeft && (diffX - x) < paddingRight) {
     axisXDiffX = diffX - x - paddingRight;
     axisYDiffX = -this.strokeWidth;
-    this.base.itemDiffX = itemDiffX = -(x - paddingLeft) % tickXInterval;
+    itemDiffX = -(x - paddingLeft) % tickXInterval;
     startItemX = Math.floor((x - paddingLeft) / tickXInterval);
   } else {
     axisXDiffX = 0;
     axisYDiffX = -this.strokeWidth;
-    this.base.itemDiffX = itemDiffX = -(x - paddingLeft) % tickXInterval;
+    itemDiffX = -(x - paddingLeft) % tickXInterval;
     startItemX = Math.floor((x - paddingLeft) / tickXInterval);
   }
 
   if (y <= paddingTop) {
-    this.base.itemDiffY = itemDiffY = axisXDiffY = axisYDiffY = paddingTop - y;
+    itemDiffY = axisXDiffY = axisYDiffY = paddingTop - y;
   } else if (y > paddingTop && (diffY - y) < paddingBottom) {
     axisXDiffY = -this.strokeWidth;
     axisYDiffY = diffY - y - paddingBottom;
-    this.base.itemDiffY = itemDiffY = -(y - paddingTop) % tickYInterval;
+    itemDiffY = -(y - paddingTop) % tickYInterval;
     startItemY = Math.floor((y - paddingTop) / tickYInterval);
   } else {
     axisXDiffY = -this.strokeWidth;
     axisYDiffY = 0;
-    this.base.itemDiffY = itemDiffY = -(y - paddingTop) % tickYInterval;
+    itemDiffY = -(y - paddingTop) % tickYInterval;
     startItemY = Math.floor((y - paddingTop) / tickYInterval);
   }
+
+  this.base.itemDiffX = itemDiffX;
+  this.base.itemDiffY = itemDiffY;
+  this.base.startItemX = startItemX;
+  this.base.startItemY = startItemY;
   this.base.renderCountX = this.axisXLang / tickXInterval + 1;
   this.base.renderCountY = this.axisYLang / tickYInterval + 1;
   const xEnd = this.base.renderCountX + startItemX;
@@ -410,12 +421,58 @@ charts.Axis.prototype.changeData = function (x, y) {
 
 }
 // 工序类
-charts.Main = function (options = {}) {
+charts.Working = function (options = {}) {
   this.base = options.base;
+  this.group = new Konva.Group();
+  this.init();
 }
-charts.Main.prototype.init = function () {
-  const {presentTime, data} = this.base;
+charts.Working.prototype.init = function () {
+  const { data, itemDiffX, itemDiffY } = this.base;
+  const rect = new Konva.Rect({
+    x: 100,
+    y: 100,
+    width: 200,
+    height: 100,
+    fill: 'red'
+  });
+  this.group.add(rect);
+  this.base.layerBasicShapes.add(this.group);
 
+}
+charts.Working.prototype.upDate = function () {
+  const {
+    data,
+    timeInterval,
+    tickXInterval,
+    startTime,
+    endTime,
+    itemDiffX,
+    itemDiffY,
+    startItemX,
+    startItemY,
+    renderCountX,
+    renderCountY } = this.base;
+
+  this.startTime = utils.moment('2019-06-29').valueOf();
+  this.endTime = utils.moment('2019-07-01').valueOf();
+  const startTimeShow = startTime + startItemX * timeInterval;
+  const endTimeShow = startTimeShow + renderCountX * timeInterval;
+  if (this.endTime > startTimeShow && this.startTime < endTimeShow && startItemY < 1) {
+    const start = Math.max(startTimeShow, this.startTime);
+    const end = Math.min(endTimeShow, this.endTime, endTime);
+    const rect = new Konva.Rect({
+      x: itemDiffX + (start - startTimeShow) / timeInterval * tickXInterval,
+      y: itemDiffY,
+      width: (end - start) / timeInterval * tickXInterval,
+      height: 100,
+      fill: 'red'
+    });
+    this.group.add(rect);
+  }
+
+
+  
+  this.base.layerBasicShapes.add(this.group);
 }
 // 休息时间
 charts.Rests = function (options = {}) {
@@ -449,7 +506,7 @@ charts.Rests.prototype.init = function () {
     }
   }
 }
-charts.Rests.prototype.changeData = function (x, y) {
+charts.Rests.prototype.upDate = function (x, y) {
   //console.log(x,y,this.base);
   const { width, height, paddingLeft, paddingRight, paddingTop, paddingBottom } = this.base;
   const dw = 200;
