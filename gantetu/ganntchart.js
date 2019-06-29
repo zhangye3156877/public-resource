@@ -44,7 +44,16 @@ charts.GanttChart = function (options = {}) {
   this.paddingTop = options.paddingTop || 100;
   this.paddingBottom = options.paddingBottom || 100;
   this.data = options.data;
-  this.timeInterval = options.timeInterval || 1000 * 60 * 60 * 24;
+  this.timeIntervalSelection = [
+    1000 * 60 * 60 * 6, // 6hour
+    1000 * 60 * 60 * 12, // 12hour
+    1000 * 60 * 60 * 24, //1 day
+    1000 * 60 * 60 * 24 * 7, // 1 week
+    1000 * 60 * 60 * 24 * 7 * 2, //2 week
+    1000 * 60 * 60 * 24 * 7 * 4, // 4 week
+  ];
+  this.timeIntervalSelected = options.timeIntervalSelected || 2;
+  this.timeInterval = this.timeIntervalSelection[this.timeIntervalSelected];
   this.tickXInterval = options.tickXInterval || 200; //x轴每时间单位间隔长度，默认1天
   this.tickYInterval = options.tickYInterval || 100; //y轴每个设备单位间距
   this.startTime = utils.moment(options.startTime).valueOf();
@@ -55,6 +64,16 @@ charts.GanttChart = function (options = {}) {
   this.startItemY = 0;
   this.renderCountX = 0;
   this.renderCountY = 0;
+  this.restTime = options.restTime || {
+    // 一周各天休息分布，0为周日
+    '1': [{'00:00:00': 2 * 1000 * 60 * 60}, {'23:00:00': 2 * 1000 * 60 * 60}],
+    '2': [{'00:00:00': 4 * 1000 * 60 * 60}],
+    '3': [{'00:00:00': 4 * 1000 * 60 * 60}],
+    '4': [{'00:00:00': 4 * 1000 * 60 * 60}],
+    '5': [{'00:00:00': 4 * 1000 * 60 * 60}],
+    '6': [{'00:00:00': 24 * 1000 * 60 * 60}],
+    '0': [{'00:00:00': 24 * 1000 * 60 * 60}],
+  };
   this.axisOption = options.axisOption || {};
   this.restsOptions = options.restsOptions || {};
   this.axis = null;
@@ -436,7 +455,7 @@ charts.Working.prototype.init = function () {
     fill: 'red'
   });
   this.group.add(rect);
-  this.base.layerBasicShapes.add(this.group);
+  //this.base.layerBasicShapes.add(this.group);
 
 }
 charts.Working.prototype.upDate = function () {
@@ -469,10 +488,7 @@ charts.Working.prototype.upDate = function () {
     });
     this.group.add(rect);
   }
-
-
-  
-  this.base.layerBasicShapes.add(this.group);
+  //this.base.layerBasicShapes.add(this.group);
 }
 // 休息时间
 charts.Rests = function (options = {}) {
@@ -484,72 +500,24 @@ charts.Rests = function (options = {}) {
   this.init();
 }
 charts.Rests.prototype.init = function () {
-  const { width, height, paddingLeft, paddingRight, paddingTop, paddingBottom } = this.base;
-  for (let i = 0, j = 0; i < 50; i++ , j = 0) {
-    for (; j < 5; j++) {
-      // const re = new Konva.Image({
-      //   x: 150 * i ,
-      //   y: 150 * j,
-      //   width: 100,
-      //   height: 100,
-      //   image: this.image,
-      //   text: 'ff'
-      // });
-      const re = new Konva.Text({
-        x: 200 * i + paddingLeft,
-        y: 150 * j,
-        text: `${i}列${j}行`,
-        fontSize: 30
-      })
-      this.group.add(re);
-      //this.base.layerBasicShapes.add(this.group);
-    }
-  }
+  const {
+    data,
+    timeInterval,
+    tickXInterval,
+    startTime,
+    endTime,
+    itemDiffX,
+    itemDiffY,
+    startItemX,
+    startItemY,
+    renderCountX,
+    renderCountY } = this.base;
+  
+  
 }
 charts.Rests.prototype.upDate = function (x, y) {
   //console.log(x,y,this.base);
   const { width, height, paddingLeft, paddingRight, paddingTop, paddingBottom } = this.base;
-  const dw = 200;
-  const dh = 150;
-  let offsetX;
-  let offsetY;
-  let startX;
-  let startY;
-  if (x < paddingLeft) {
-    offsetX = paddingLeft - x;
-    startX = 0;
-  } else {
-    offsetX = -(x - paddingLeft) % dw;
-    startX = Math.floor((x - paddingLeft) / dw);
-  }
-  if (y < paddingTop) {
-    offsetY = paddingTop - y;
-    startY = 0;
-  } else {
-    offsetY = -(y - paddingTop) % dh;
-    startY = Math.floor((y - paddingTop) / dh);
-  }
-
-  const numX = Math.floor(width / dw) + 1;
-  const numY = Math.floor(height / dh) + 1;
-
-  for (let i = startX, j = startY; i < startX + numX; i++ , j = startY) {
-    for (; j < startY + numY; j++) {
-      const rr = new Konva.Rect({
-        x: 200 * (i - startX) + offsetX,
-        y: 150 * (j - startY) + offsetY,
-        width: 196,
-        height: 146,
-        stroke: 'red'
-      })
-      const re = new Konva.Text({
-        x: 200 * (i - startX) + offsetX,
-        y: 150 * (j - startY) + offsetY,
-        text: `${i}列${j}行`,
-        fontSize: 30
-      })
-      this.group.add(re, rr);
-    }
-  }
+  
   // this.base.layerBasicShapes.add(this.group);
 }
