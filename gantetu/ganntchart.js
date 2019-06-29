@@ -58,12 +58,14 @@ charts.GanttChart = function (options = {}) {
   this.tickYInterval = options.tickYInterval || 100; //y轴每个设备单位间距
   this.startTime = utils.moment(options.startTime).valueOf();
   this.endTime = utils.moment(options.endTime).valueOf();
-  this.itemDiffX = this.paddingLeft;
-  this.itemDiffY = this.paddingTop;
-  this.startItemX = 0;
-  this.startItemY = 0;
-  this.renderCountX = 0;
-  this.renderCountY = 0;
+  this.itemDiffX = this.paddingLeft; // x轴偏移量
+  this.itemDiffY = this.paddingTop; // y轴偏移量
+  this.startItemX = 0; // x轴当前起始显示数据位数
+  this.startItemY = 0; // y轴当前起始显示数据位数
+  this.renderCountX = 0; // x轴可渲染数量
+  this.renderCountY = 0; // y轴可渲染数量
+  this.startTimeShow = 0; // 当前显示范围起始时间
+  this.endTimeShow = 0; // 当前显示范围结束时间
   this.restTime = options.restTime || {
     // 一周各天休息分布，0为周日
     '1': [{'00:00:00': 2 * 1000 * 60 * 60}, {'23:00:00': 2 * 1000 * 60 * 60}],
@@ -493,8 +495,6 @@ charts.Working.prototype.upDate = function () {
 // 休息时间
 charts.Rests = function (options = {}) {
   this.base = options.base;
-  this.xx = 50;
-  this.yy = 5;
   this.image = options.image;
   this.group = new Konva.Group();
   this.init();
@@ -513,7 +513,10 @@ charts.Rests.prototype.init = function () {
     renderCountX,
     renderCountY } = this.base;
   
-  
+  const img = new Konva.Image({
+    image: this.image
+  });
+
 }
 charts.Rests.prototype.upDate = function (x, y) {
   //console.log(x,y,this.base);
