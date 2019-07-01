@@ -34,10 +34,10 @@ charts.GanttChart = function (options = {}) {
   this.maskDomWidth = null;
   this.maskDomHeight = null;
   this.stage = null;
-  this.layerAxis = new Konva.FastLayer();
+  this.layerFast = new Konva.FastLayer();
   this.layerBasicShapes = new Konva.Layer();
   this.layerSwitch = new Konva.Layer();
-  this.width = options.width || 1000;
+  this.width = options.width || 1500;
   this.height = options.height || 600;
   this.paddingLeft = options.paddingLeft || 100;
   this.paddingRight = options.paddingRight || 100;
@@ -134,7 +134,7 @@ charts.GanttChart.prototype.init = function () {
   }))
 
   readFile.then(() => {
-    this.stage.add(this.layerAxis, this.layerBasicShapes);
+    this.stage.add(this.layerFast, this.layerBasicShapes);
   })
 
 }
@@ -164,14 +164,14 @@ charts.GanttChart.prototype.scoll = function (e) {
 charts.GanttChart.prototype.draw = function (x, y) {
   // 销毁子集
   this.layerBasicShapes.destroyChildren();
-  this.layerAxis.destroyChildren();
+  this.layerFast.destroyChildren();
   //改变数据集
   this.axis.upDate(x, y);
   this.working.upDate();
   this.rests.upDate(x, y);
   // 重绘
   this.layerBasicShapes.batchDraw();
-  this.layerAxis.batchDraw();
+  this.layerFast.batchDraw();
 }
 // 轴线格局类
 charts.Axis = function (options = {}) {
@@ -351,7 +351,7 @@ charts.Axis.prototype.render = function () {
         pathTicksForAxis += `M${tickXInterval * (diff - 1) + childTickInternval * j},0L${tickXInterval * (diff - 1) + childTickInternval * j},${-this.tickChidrenSize}`;
       }
     }
-    
+    console.log(this.axisYDiffY)
     const text = new Konva.Text({
       x: itemDiffX + tickXInterval * diff - this.fontSize * num / 4,
       y: this.axisYDiffY - this.tickSize - this.fontSize,
@@ -368,7 +368,7 @@ charts.Axis.prototype.render = function () {
       lineCap: 'round',
       strokeWidth: this.gridStrokeWidth,
     });
-    this.base.layerAxis.add(line, text);
+    this.base.layerFast.add(line, text);
   }
 
   for (let i = startItemY; i <= this.yEnd; i++) {
@@ -384,7 +384,7 @@ charts.Axis.prototype.render = function () {
         fontFamily: 'Calibri',
         fill: this.axisColor,
       });
-      this.base.layerAxis.add(text);
+      this.base.layerFast.add(text);
     }
 
     const line = new Konva.Line({
@@ -395,7 +395,7 @@ charts.Axis.prototype.render = function () {
       lineCap: 'round',
       strokeWidth: this.gridStrokeWidth,
     });
-    this.base.layerAxis.add(line);
+    this.base.layerFast.add(line);
   }
 
   this.tickX = new Konva.Path({
@@ -404,7 +404,7 @@ charts.Axis.prototype.render = function () {
     data: pathTicksForAxis,
     stroke: this.axisColor,
   });
-  this.base.layerAxis.add(this.axisX, this.axisY, this.tickX);
+  this.base.layerFast.add(this.axisX, this.axisY, this.tickX);
 }
 
 // 工序类
@@ -450,7 +450,7 @@ charts.Working.prototype.render = function() {
     });
     this.group.add(rect);
   }
-  this.base.layerBasicShapes.add(this.group);
+  //this.base.layerBasicShapes.add(this.group);
 }
 // 休息时间
 charts.Rests = function (options = {}) {
@@ -471,18 +471,99 @@ charts.Rests.prototype.init = function () {
     startItemX,
     startItemY,
     renderCountX,
-    renderCountY 
+    renderCountY,
   } = this.base;
-
+  
+  this.render();
 }
 charts.Rests.prototype.upDate = function (x, y) {
-  //console.log(x,y,this.base);
   const { width, height, paddingLeft, paddingRight, paddingTop, paddingBottom } = this.base;
 
-  // this.base.layerBasicShapes.add(this.group);
 }
 charts.Rests.prototype.render = function() {
-  const img = new Konva.Image({
-    image: this.image
+  const {
+    data,
+    timeInterval,
+    tickXInterval,
+    startTime,
+    endTime,
+    itemDiffX,
+    itemDiffY,
+    startItemX,
+    startItemY,
+    renderCountX,
+    renderCountY,
+    startTimeShow, 
+    endTimeShow,
+  } = this.base;
+
+  const img = new Konva.Rect({
+    width: 2000,
+    height: 2000,
+    fillPatternImage: this.image,
+    // fillPatternScale: {
+    //   x: .1,
+    //   y: .1
+    // },
+    //fillPatternOffsetX: 45,
+    scale: {
+      x: .05,
+      y: .05
+    }
   });
+  const img2 = new Konva.Rect({
+    x:100,
+    width: 1000,
+    height: 2000,
+    fillPatternImage: this.image,
+    // fillPatternScale: {
+    //   x: .1,
+    //   y: .1
+    // },
+    fillPatternOffsetX: 45,
+    // fillPatternRepeat: 'no-repeat',
+    scale: {
+      x: .05,
+      y: .05
+    }
+  });
+  console.log(this.image.width, this.image.height)
+  const img3 = new Konva.Rect({
+    width: 1000,
+    height: 2000,
+    fillPatternImage: this.image,
+    x: 150,
+    //fillPatternOffsetX: 45,
+    scale: {
+      x: .05,
+      y: .05
+    }
+  });
+  const img4 = new Konva.Rect({
+    width: 1500,
+    height: 2000,
+    fillPatternImage: this.image,
+    x: 50,
+    y: 100,
+    fillPatternOffsetX: 45,
+    scale: {
+      x: .05,
+      y: .05
+    }
+  });
+
+  //for (let i = )
+  if (this.endTime > startTimeShow && this.startTime < endTimeShow && startItemY < 1) {
+    const start = Math.max(startTimeShow, this.startTime);
+    const end = Math.min(endTimeShow, this.endTime, endTime);
+    const rect = new Konva.Rect({
+      x: itemDiffX + (start - startTimeShow) / timeInterval * tickXInterval,
+      y: itemDiffY,
+      width: (end - start) / timeInterval * tickXInterval,
+      height: 200,
+      fill: 'yellow'
+    });
+    this.group.add(rect);
+  }
+  this.base.layerFast.add(img,img2,img3,img4);
 }
