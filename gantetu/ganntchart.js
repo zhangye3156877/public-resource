@@ -485,6 +485,7 @@ charts.Rests.prototype.render = function() {
     data,
     timeInterval,
     tickXInterval,
+    tickYInterval,
     startTime,
     endTime,
     itemDiffX,
@@ -497,60 +498,30 @@ charts.Rests.prototype.render = function() {
     endTimeShow,
   } = this.base;
 
+  const scaleX = tickXInterval / this.image.width;
+  const scaleY = tickYInterval / this.image.height;
   const img = new Konva.Rect({
-    width: 2000,
-    height: 2000,
+    x: 100,
+    width: 200,
+    height: 100,
     fillPatternImage: this.image,
-    // fillPatternScale: {
-    //   x: .1,
-    //   y: .1
-    // },
-    //fillPatternOffsetX: 45,
-    scale: {
-      x: .05,
-      y: .05
+    fillPatternScale: {
+      x: scaleX,
+      y: scaleY
     }
   });
   const img2 = new Konva.Rect({
-    x:100,
-    width: 1000,
-    height: 2000,
+    x: 300,
+    width: 200,
+    height: 100,
     fillPatternImage: this.image,
-    // fillPatternScale: {
-    //   x: .1,
-    //   y: .1
-    // },
-    fillPatternOffsetX: 45,
-    // fillPatternRepeat: 'no-repeat',
-    scale: {
-      x: .05,
-      y: .05
+    fillPatternScale: {
+      x: scaleX,
+      y: scaleY
     }
   });
-  console.log(this.image.width, this.image.height)
-  const img3 = new Konva.Rect({
-    width: 1000,
-    height: 2000,
-    fillPatternImage: this.image,
-    x: 150,
-    //fillPatternOffsetX: 45,
-    scale: {
-      x: .05,
-      y: .05
-    }
-  });
-  const img4 = new Konva.Rect({
-    width: 1500,
-    height: 2000,
-    fillPatternImage: this.image,
-    x: 50,
-    y: 100,
-    fillPatternOffsetX: 45,
-    scale: {
-      x: .05,
-      y: .05
-    }
-  });
+  
+ 
 
   //for (let i = )
   if (this.endTime > startTimeShow && this.startTime < endTimeShow && startItemY < 1) {
@@ -565,5 +536,5 @@ charts.Rests.prototype.render = function() {
     });
     this.group.add(rect);
   }
-  this.base.layerFast.add(img,img2,img3,img4);
+  this.base.layerFast.add(img,img2);
 }
