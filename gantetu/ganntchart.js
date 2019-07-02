@@ -52,7 +52,8 @@ charts.GanttChart = function (options = {}) {
     1000 * 60 * 60 * 24 * 7 * 2, //2 week
     1000 * 60 * 60 * 24 * 7 * 4, // 4 week
   ];
-  this.timeIntervalSelected = options.timeIntervalSelected || 2;
+  //this.timeIntervalSelected = options.timeIntervalSelected || 2;
+  this.timeIntervalSelected = 2; //单位非一天时，需要改变endtime为单位时间的倍数，暂不支持改变
   this.timeInterval = this.timeIntervalSelection[this.timeIntervalSelected];
   this.tickXInterval = options.tickXInterval || 200; //x轴每时间单位间隔长度，默认1天
   this.tickYInterval = options.tickYInterval || 100; //y轴每个设备单位间距
@@ -127,14 +128,14 @@ charts.GanttChart.prototype.init = function () {
         this.rests = new charts.Rests(Object.assign({ base: this }, this.restsOptions));
         resove();
       };
-      image.src = './img/texture.png';
+      image.src = './img/t2.jpg';
     } else {
       resove();
     }
   }))
 
   readFile.then(() => {
-    this.stage.add(this.layerFast, this.layerBasicShapes);
+    this.stage.add(this.layerBasicShapes, this.layerFast);
   })
 
 }
@@ -183,7 +184,7 @@ charts.Axis = function (options = {}) {
   this.tickXChidren = options.tickXChidren || 6;
   this.tickChidrenSize = options.tickChidrenSize || 5;
   this.gridColor = options.gridColor || '#d9d9d9';
-  this.gridStrokeWidth = options.gridStrokeWidth || 1;
+  this.gridStrokeWidth = 1;
   this.axisXLang = 0;
   this.axisYLang = 0;
   this.xEnd = 0;
@@ -231,7 +232,7 @@ charts.Axis.prototype.init = function () {
   const renderCountX = this.base.renderCountX = this.axisXLang / tickXInterval + 1;
   const renderCountY = this.base.renderCountY = this.axisYLang / tickYInterval + 1;
   const startTimeShow = this.base.startTimeShow = startTime + startItemX * timeInterval;
-  this.base.endTimeShow = startTimeShow + renderCountX * timeInterval;
+  this.base.endTimeShow = Math.min(startTimeShow + renderCountX * timeInterval, endTime);
   this.xEnd = renderCountX;
   this.yEnd = renderCountY;
   this.render();
@@ -247,6 +248,7 @@ charts.Axis.prototype.upDate = function (x, y) {
     maskDomWidth,
     maskDomHeight,
     startTime,
+    endTime,
     timeInterval,
     tickXInterval,
     tickYInterval,
@@ -302,7 +304,7 @@ charts.Axis.prototype.upDate = function (x, y) {
   this.base.startItemX = startItemX;
   this.base.startItemY = startItemY;
   const startTimeShow = this.base.startTimeShow = startTime + startItemX * timeInterval;
-  this.base.endTimeShow = startTimeShow + renderCountX * timeInterval;
+  this.base.endTimeShow = Math.min(startTimeShow + renderCountX * timeInterval, endTime);
   this.xEnd = renderCountX + startItemX;
   this.yEnd = renderCountY + startItemY;
   this.render();
@@ -340,7 +342,7 @@ charts.Axis.prototype.render = function () {
   let pathTicksForAxis = '';
   const childTickInternval = tickXInterval / this.tickXChidren;
   
-  for (let i = startItemX; i <= this.xEnd; i++) {
+  for (let i = startItemX; i < this.xEnd; i++) {
     const diff = i - startItemX + 1;
     const str = utils.moment(startTime + timeInterval * (i + 1)).format('MM-DD');
     const num = utils.getBytesLength(str);
@@ -370,7 +372,7 @@ charts.Axis.prototype.render = function () {
     this.base.layerFast.add(line, text);
   }
 
-  for (let i = startItemY; i <= this.yEnd; i++) {
+  for (let i = startItemY; i < this.yEnd; i++) {
     const diff = i - startItemY + 1;
     if (i < data.length) {
       const str = data[i].group.name;
@@ -434,8 +436,8 @@ charts.Working.prototype.render = function() {
     endTimeShow,
     } = this.base;
 
-  this.startTime = utils.moment('2019-06-22').valueOf();
-  this.endTime = utils.moment('2019-06-24').valueOf();
+  this.startTime = utils.moment('2019-07-02').valueOf();
+  this.endTime = utils.moment('2019-07-03').valueOf();
 
   if (this.endTime > startTimeShow && this.startTime < endTimeShow && startItemY < 1) {
     const start = Math.max(startTimeShow, this.startTime);
@@ -445,7 +447,7 @@ charts.Working.prototype.render = function() {
       y: itemDiffY,
       width: (end - start) / timeInterval * tickXInterval,
       height: 100,
-      fill: 'red'
+      fill: 'red',
     });
     this.group.add(rect);
   }
@@ -472,6 +474,7 @@ charts.Rests.prototype.upDate = function () {
 }
 charts.Rests.prototype.render = function() {
   const {
+    data,
     timeInterval,
     tickXInterval,
     tickYInterval,
@@ -488,12 +491,21 @@ charts.Rests.prototype.render = function() {
 
   
   for(let i = startItemX; i < startItemX + renderCountX; i++) {
-    const days = utils.moment(startTimeShow + timeInterval * (i - startItemX)).day();
+    const diffX = i - startItemX;
+    const now = startTimeShow + timeInterval * diffX;
+    if (now >= endTimeShow) {
+      continue;
+    }
+    const days = utils.moment(now).day();
     for(let j =  startItemY; j < startItemY + renderCountY; j++) {
-      const dx = itemDiffX + tickXInterval * (i - startItemX);
-      const dy = itemDiffY + tickYInterval * (j - startItemY);
+      if (j >= data.length) {
+        continue;
+      }
+      const diffY = j - startItemY;
+      const dx = itemDiffX + tickXInterval * diffX;
+      const dy = itemDiffY + tickYInterval * diffY;
       const times = restTime[days];
-      // 将此处前提取可封装成坐标轴相关，data无关数据的公共渲染函数
+      // 将此处前提取可封装成坐标轴相关的公共渲染函数
       for(let k = 0; k < times.length;k++){
         const w = times[k];
         const startArray = w.start.split(':');
@@ -503,17 +515,18 @@ charts.Rests.prototype.render = function() {
         const dx_ = dx + startTimeDiff / timeInterval * tickXInterval;
         const width = rangeTime / timeInterval * tickXInterval;
         const img = new Konva.Rect({
-          x: dx_,
-          y: dy,
-          width,
-          height: tickYInterval,
+          x: dx_, 
+          y: dy + 5,
+          width: width,
+          height: tickYInterval - 10,
           fillPatternImage: this.image,
+          fillPatternOffsetX: tickXInterval -  width, //适配图形拼接
           fillPatternScale: {
             x: this.scaleX,
             y: this.scaleY
           }
         });
-        this.base.layerFast.add(img);
+        this.base.layerBasicShapes.add(img);
       } 
     }
   }
