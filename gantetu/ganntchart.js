@@ -37,7 +37,7 @@ charts.GanttChart = function (options = {}) {
   this.layerFast = new Konva.FastLayer();
   this.layerBasicShapes = new Konva.Layer();
   this.layerSwitch = new Konva.Layer();
-  this.width = options.width || 1500;
+  this.width = options.width || 1000;
   this.height = options.height || 600;
   this.paddingLeft = options.paddingLeft || 100;
   this.paddingRight = options.paddingRight || 100;
@@ -68,13 +68,13 @@ charts.GanttChart = function (options = {}) {
   this.endTimeShow = 0; // 当前显示范围结束时间
   this.restTime = options.restTime || {
     // 一周各天休息分布，0为周日
-    '1': [{ '00:00:00': 2 * 1000 * 60 * 60 }, { '23:00:00': 2 * 1000 * 60 * 60 }],
-    '2': [{ '00:00:00': 4 * 1000 * 60 * 60 }],
-    '3': [{ '00:00:00': 4 * 1000 * 60 * 60 }],
-    '4': [{ '00:00:00': 4 * 1000 * 60 * 60 }],
-    '5': [{ '00:00:00': 4 * 1000 * 60 * 60 }],
-    '6': [{ '00:00:00': 24 * 1000 * 60 * 60 }],
-    '0': [{ '00:00:00': 24 * 1000 * 60 * 60 }],
+    '1': [{ start: '00:00:00', range: '02:00:00'}, { start: '22:00:00', range: '02:00:00'}],
+    '2': [{ start: '00:00:00', range: '04:00:00'}],
+    '3': [{ start: '00:00:00', range: '04:00:00'}],
+    '4': [{ start: '00:00:00', range: '04:00:00'}],
+    '5': [{ start: '00:00:00', range: '04:00:00'}],
+    '6': [{ start: '00:00:00', range: '24:00:00'}],
+    '0': [{ start: '00:00:00', range: '24:00:00'}],
   };
   this.axisOption = options.axisOption || {};
   this.restsOptions = options.restsOptions || {};
@@ -351,7 +351,6 @@ charts.Axis.prototype.render = function () {
         pathTicksForAxis += `M${tickXInterval * (diff - 1) + childTickInternval * j},0L${tickXInterval * (diff - 1) + childTickInternval * j},${-this.tickChidrenSize}`;
       }
     }
-    console.log(this.axisYDiffY)
     const text = new Konva.Text({
       x: itemDiffX + tickXInterval * diff - this.fontSize * num / 4,
       y: this.axisYDiffY - this.tickSize - this.fontSize,
@@ -461,33 +460,21 @@ charts.Rests = function (options = {}) {
 }
 charts.Rests.prototype.init = function () {
   const {
-    data,
-    timeInterval,
     tickXInterval,
-    startTime,
-    endTime,
-    itemDiffX,
-    itemDiffY,
-    startItemX,
-    startItemY,
-    renderCountX,
-    renderCountY,
+    tickYInterval
   } = this.base;
-  
+   this.scaleX = tickXInterval / this.image.width;
+   this.scaleY = tickYInterval / this.image.height;
   this.render();
 }
-charts.Rests.prototype.upDate = function (x, y) {
-  const { width, height, paddingLeft, paddingRight, paddingTop, paddingBottom } = this.base;
-
+charts.Rests.prototype.upDate = function () {
+  this.render();
 }
 charts.Rests.prototype.render = function() {
   const {
-    data,
     timeInterval,
     tickXInterval,
     tickYInterval,
-    startTime,
-    endTime,
     itemDiffX,
     itemDiffY,
     startItemX,
@@ -496,45 +483,38 @@ charts.Rests.prototype.render = function() {
     renderCountY,
     startTimeShow, 
     endTimeShow,
+    restTime
   } = this.base;
 
-  const scaleX = tickXInterval / this.image.width;
-  const scaleY = tickYInterval / this.image.height;
-  const img = new Konva.Rect({
-    x: 100,
-    width: 200,
-    height: 100,
-    fillPatternImage: this.image,
-    fillPatternScale: {
-      x: scaleX,
-      y: scaleY
-    }
-  });
-  const img2 = new Konva.Rect({
-    x: 300,
-    width: 200,
-    height: 100,
-    fillPatternImage: this.image,
-    fillPatternScale: {
-      x: scaleX,
-      y: scaleY
-    }
-  });
   
- 
-
-  //for (let i = )
-  if (this.endTime > startTimeShow && this.startTime < endTimeShow && startItemY < 1) {
-    const start = Math.max(startTimeShow, this.startTime);
-    const end = Math.min(endTimeShow, this.endTime, endTime);
-    const rect = new Konva.Rect({
-      x: itemDiffX + (start - startTimeShow) / timeInterval * tickXInterval,
-      y: itemDiffY,
-      width: (end - start) / timeInterval * tickXInterval,
-      height: 200,
-      fill: 'yellow'
-    });
-    this.group.add(rect);
+  for(let i = startItemX; i < startItemX + renderCountX; i++) {
+    const days = utils.moment(startTimeShow + timeInterval * (i - startItemX)).day();
+    for(let j =  startItemY; j < startItemY + renderCountY; j++) {
+      const dx = itemDiffX + tickXInterval * (i - startItemX);
+      const dy = itemDiffY + tickYInterval * (j - startItemY);
+      const times = restTime[days];
+      // 将此处前提取可封装成坐标轴相关，data无关数据的公共渲染函数
+      for(let k = 0; k < times.length;k++){
+        const w = times[k];
+        const startArray = w.start.split(':');
+        const rangeArray = w.range.split(':');
+        const startTimeDiff = parseInt(startArray[0]) * 1000 * 60 * 60 + parseInt(startArray[1]) * 1000 * 60 + parseInt(startArray[2]) * 1000;
+        const rangeTime = parseInt(rangeArray[0]) * 1000 * 60 * 60 + parseInt(rangeArray[1]) * 1000 * 60 + parseInt(rangeArray[2]) * 1000;
+        const dx_ = dx + startTimeDiff / timeInterval * tickXInterval;
+        const width = rangeTime / timeInterval * tickXInterval;
+        const img = new Konva.Rect({
+          x: dx_,
+          y: dy,
+          width,
+          height: tickYInterval,
+          fillPatternImage: this.image,
+          fillPatternScale: {
+            x: this.scaleX,
+            y: this.scaleY
+          }
+        });
+        this.base.layerFast.add(img);
+      } 
+    }
   }
-  this.base.layerFast.add(img,img2);
 }
