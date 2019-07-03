@@ -169,7 +169,7 @@ charts.GanttChart.prototype.draw = function (x, y) {
   //改变数据集
   this.axis.upDate(x, y);
   this.working.upDate();
-  this.rests.upDate(x, y);
+  this.rests.upDate();
   // 重绘
   this.layerBasicShapes.batchDraw();
   this.layerFast.batchDraw();
@@ -426,6 +426,7 @@ charts.Working.prototype.render = function() {
     data,
     timeInterval,
     tickXInterval,
+    tickYInterval,
     startTime,
     endTime,
     itemDiffX,
@@ -434,24 +435,37 @@ charts.Working.prototype.render = function() {
     startItemY,
     startTimeShow, 
     endTimeShow,
+    renderCountY
     } = this.base;
 
-  this.startTime = utils.moment('2019-07-02').valueOf();
-  this.endTime = utils.moment('2019-07-03').valueOf();
-
-  if (this.endTime > startTimeShow && this.startTime < endTimeShow && startItemY < 1) {
-    const start = Math.max(startTimeShow, this.startTime);
-    const end = Math.min(endTimeShow, this.endTime, endTime);
-    const rect = new Konva.Rect({
-      x: itemDiffX + (start - startTimeShow) / timeInterval * tickXInterval,
-      y: itemDiffY,
-      width: (end - start) / timeInterval * tickXInterval,
-      height: 100,
-      fill: 'red',
-    });
-    this.group.add(rect);
+  // this.startTime = utils.moment('2019-07-02').valueOf();
+  // this.endTime = utils.moment('2019-07-03').valueOf();
+  const l = Math.min(data.length, startItemY + renderCountY);
+  console.log(startItemY)
+  for (let i = startItemY; i < l; i++) {
+    const diffY = i -startItemY;
+    const workplan = data[i].workplan;
+    for(let j = 0; j < workplan.length; j++) {
+      const istartTime = startTime + workplan[j].tmstart * 1000 * 60 * 60;
+      const iendTime = startTime +  workplan[j].tmfinish * 1000 * 60 * 60;
+      if (iendTime > startTimeShow && istartTime < endTimeShow) {
+        const start = Math.max(startTimeShow, istartTime);
+        const end = Math.min(endTimeShow, iendTime, endTime);
+        //console.log(data[i].group, start, end);
+        const rect = new Konva.Rect({
+          x: itemDiffX + (start - startTimeShow) / timeInterval * tickXInterval,
+          y: itemDiffY + tickYInterval * diffY,
+          width: (end - start) / timeInterval * tickXInterval,
+          height: 100,
+          stroke: 'black',
+          fill: 'red',
+        });
+        this.group.add(rect);
+    }
   }
-  //this.base.layerBasicShapes.add(this.group);
+  
+  }
+  this.base.layerBasicShapes.add(this.group);
 }
 // 休息时间
 charts.Rests = function (options = {}) {
@@ -526,8 +540,10 @@ charts.Rests.prototype.render = function() {
             y: this.scaleY
           }
         });
-        this.base.layerBasicShapes.add(img);
+        this.group.add(img);
       } 
+      this.base.layerBasicShapes.add(this.group);
+      this.group.setZIndex(0);
     }
   }
 }
