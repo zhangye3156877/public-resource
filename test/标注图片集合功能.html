@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    canvas {
+      display: block;
+      margin: 50px auto;
+    }
+  </style>
+</head>
+
+<body>
+  <input type="file" name="" id="file" multiple>
+  <canvas id="canvas" width="1000" height="1000"></canvas>
+</body>
+<script>
+  const file = document.getElementById('file')
+  const canvas = document.getElementById('canvas')
+  const ctx = canvas.getContext('2d');
+  const IMG_WIDTH = 100;
+  const IMG_HEIGHT = 100;
+  const CANVAS_WIDTH = canvas.width;
+  const CANVAS_HEIGHT = canvas.height;
+  let imgs = 0;
+
+  file.onchange = function (e) {
+    console.log(this.files)
+    window.asd = this.files
+    loadImg(this.files);
+  }
+
+  function loadImg(list) {
+    var loadloop = function (item) {
+      const img = new Image();
+      img.onload = function () {
+        console.log('图片加载完毕');
+        draw(this);
+      }
+      const file = new FileReader();
+      file.onload = function () {
+        console.log('base64加载完毕')
+        img.src = this.result;
+      }
+      file.readAsDataURL(item);
+    }
+    for (let item of list) {
+      const timer = setInterval((function(){
+        let n = 0;
+        let maxs = CANVAS_WIDTH / IMG_WIDTH * CANVAS_HEIGHT / IMG_HEIGHT;
+        return function() {
+          if (++n > maxs) { 
+            setTimeout(() => {
+              ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT); 
+            }, 2000) 
+            return clearInterval(timer) 
+          }
+          loadloop(item);
+        }
+      }()), 500);
+    }
+  }
+
+
+
+  function draw(img) {
+    const x = imgs % (CANVAS_WIDTH / IMG_WIDTH) * IMG_WIDTH;
+    const y = parseInt(imgs / (CANVAS_WIDTH / IMG_WIDTH)) * IMG_HEIGHT;
+    console.log(x, y)
+    ctx.drawImage(img, x, y, IMG_WIDTH, IMG_HEIGHT);
+    imgs++;
+  }
+  //draw()
+
+</script>
+
+</html>
