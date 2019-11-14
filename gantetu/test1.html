@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    html,
+    body,
+    div {
+      margin: 0;
+      padding: 0;
+    }
+
+    #container {
+      width: 800px;
+      height: 600px;
+      overflow: scroll;
+      margin: 100px auto;
+    }
+
+    #container::-webkit-scrollbar {
+      width: 12px;
+      height: 12px;
+    }
+
+    /*滚动条滑块*/
+    #container::-webkit-scrollbar-thumb {
+      border-radius: 10px;
+      -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+      box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+      background: #535353;
+    }
+
+    /*滚动条轨道*/
+    #container::-webkit-scrollbar-track {
+      -webkit-box-shadow: inset 0 0 1px rgba(0, 0, 0, 0);
+      box-shadow: inset 0 0 1px rgba(0, 0, 0, 0);
+      border-radius: 10px;
+      background: #ccc;
+    }
+
+    /* 边角 */
+    #container::-webkit-scrollbar-corner {
+      border-radius: 50%;
+      background: #535353;
+    }
+
+    #scroll-mask {
+      overflow: hidden;
+      position: relative;
+    }
+
+    #canvas {
+      transform: translateZ(0);
+    }
+  </style>
+</head>
+
+<body>
+  <div id="container">
+    <div id="scroll-mask">
+      <div id="canvas"></div>
+    </div>
+  </div>
+  <!-- <iframe src="./test2.html" frameborder="0"></iframe> -->
+</body>
+<script src="./jquery.min.js"></script>
+<script src="./kv.js"></script>
+<script src="./lodash.js"></script>
+<script src="./moment.min.js"></script>
+<script src="./ganntchart.js"></script>
+<script>
+  ; (function () {
+    const te = {
+      "startTime": "2019-07-01",
+      "endTime": "2019-07-31",
+      "data": [
+        {
+          "group": {
+            "name": "织机1",
+            "num": "1"
+          },
+          "workplan": [
+            {
+              "tmstart": 0,
+              "tmfinish": 25,
+              "type": "1",
+              "keys": "6",
+              "name": "w-006"
+            }
+          ]
+        },
+        {
+          "group": {
+            "name": "织机2",
+            "num": "2"
+          },
+          "workplan": [
+            {
+              "tmstart": 0,
+              "tmfinish": 20,
+              "type": "1",
+              "keys": "3",
+              "name": "w-003"
+            },
+            {
+              "tmstart": 20,
+              "tmfinish": 40,
+              "type": "1",
+              "keys": "oa,ob",
+              "name": "w-oa,ob"
+            },
+            {
+              "tmstart": 40,
+              "tmfinish": 48,
+              "type": "1",
+              "keys": "2",
+              "name": "w-002"
+            },
+            {
+              "tmstart": 100,
+              "tmfinish": 108,
+              "type": "1",
+              "keys": "2",
+              "name": "w-004"
+            }
+          ]
+        },
+        {
+          "group": {
+            "name": "织机3",
+            "num": "3"
+          },
+          "workplan": [
+            {
+              "tmstart": 0,
+              "tmfinish": 13,
+              "type": "1",
+              "keys": "7",
+              "name": "w-007"
+            }
+          ]
+        },
+        {
+          "group": {
+            "name": "染缸1",
+            "num": "4"
+          },
+          "workplan": [
+            {
+              "tmstart": 0,
+              "tmfinish": 8,
+              "type": "2",
+              "keys": "4",
+              "name": "d-004"
+            },
+            {
+              "tmstart": 48,
+              "tmfinish": 56,
+              "type": "2",
+              "keys": "oa,ob",
+              "name": "d-oa,ob"
+            }
+          ]
+        },
+        {
+          "group": {
+            "name": "染缸2",
+            "num": "5"
+          },
+          "workplan": [
+            {
+              "tmstart": 40,
+              "tmfinish": 48,
+              "type": "2",
+              "keys": "2",
+              "name": "d-002"
+            },
+            {
+              "tmstart": 25,
+              "tmfinish": 33,
+              "type": "2",
+              "keys": "6",
+              "name": "d-006"
+            },
+            {
+              "tmstart": 0,
+              "tmfinish": 4,
+              "type": "2",
+              "keys": "7",
+              "name": "d-005"
+            }
+          ]
+        },
+        {
+          "group": {
+            "name": "染缸3",
+            "num": "6"
+          },
+          "workplan": [
+            {
+              "tmstart": 0,
+              "tmfinish": 4,
+              "type": "2",
+              "keys": "8",
+              "name": "d-008"
+            },
+            {
+              "tmstart": 108,
+              "tmfinish": 112,
+              "type": "2",
+              "keys": "5",
+              "name": "d-005"
+            }
+          ]
+        }
+      ]
+    }
+    const ganttChart = new charts.GanttChart({
+      canvas: 'canvas',
+      startTime: te.startTime,
+      endTime: te.endTime,
+      data: te.data,
+    });
+  })();
+</script>
+
+</html>
