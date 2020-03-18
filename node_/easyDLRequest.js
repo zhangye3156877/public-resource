@@ -86,7 +86,7 @@ const server = http.createServer();
 
 server.on('request', (req, res) => {
   //console.log(req.url);
- 
+
   if (req.url === '/validateImage') {
     return handlePost(req, res);
   }
