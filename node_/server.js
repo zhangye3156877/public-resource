@@ -6,7 +6,7 @@ const fs = require('fs');
 const path = require('path');
 const app = new Koa();
 const router = new Router();
-app.use(cors());
+// app.use(cors());
 app.use(koaBody({
     multipart: true,
     formidable: {
@@ -23,6 +23,9 @@ router.get('/getimg', async (ctx) => {
   ctx.type = 'image/jpeg';
   ctx.body = stream;
   //stream.pipe(ctx.body);
+})
+router.post('/test', async (ctx) => {
+  ctx.body = 'test success'
 })
 router.post('/uploadfile', async (ctx, next) => {
   const file = ctx.request.files.file;
@@ -41,4 +44,4 @@ app
   .use(router.routes())
   .use(router.allowedMethods())
 
-app.listen(3000)
+app.listen(8080)
