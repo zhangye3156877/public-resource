@@ -10,15 +10,12 @@ const config: IConfig =  {
     {
       path: '/',
       component: '../layouts/index',
-    },
-    {
-      path: '/home',
-      component: '../layouts/second',
       routes: [
         {path: '/home', component: './home/index'},
         {path: '/home/s', component: './second/index'},
       ]
-    }
+    },
+    
 
   ],
   plugins: [
