@@ -4,17 +4,22 @@ import { IConfig } from 'umi-types';
 const config: IConfig =  {
   treeShaking: true,
   history: 'hash',
-  base: './',
   publicPath: './',
   hash: true,
   routes: [
     {
       path: '/',
       component: '../layouts/index',
+    },
+    {
+      path: '/home',
+      component: '../layouts/second',
       routes: [
-        { path: '/', component: '../pages/index' }
+        {path: '/home', component: './home/index'},
+        {path: '/home/s', component: './second/index'},
       ]
     }
+
   ],
   plugins: [
     // ref: https://umijs.org/plugin/umi-plugin-react.html
@@ -36,6 +41,8 @@ const config: IConfig =  {
       },
     }],
   ],
+  // 下面是webpack配置
+  devtool:'source-map'
 }
 
 export default config;
