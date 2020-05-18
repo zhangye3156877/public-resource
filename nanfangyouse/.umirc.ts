@@ -11,8 +11,9 @@ const config: IConfig =  {
       path: '/',
       component: '../layouts/index',
       routes: [
-        {path: '/home', component: './home/index'},
-        {path: '/home/s', component: './second/index'},
+        {path: '/', component: './index'},
+        {path: '/p1', component: './home/index'},
+        {path: '/p2', component: './second/index'},
       ]
     },
     
@@ -23,7 +24,10 @@ const config: IConfig =  {
     ['umi-plugin-react', {
       antd: true,
       dva: true,
-      dynamicImport: false,
+      dynamicImport: {
+        loadingComponent: './components/loading/index',
+        webpackChunkName: true,
+      },
       title: 'nanfangyouse',
       dll: false,
       
