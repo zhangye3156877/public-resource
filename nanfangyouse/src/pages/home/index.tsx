@@ -2,66 +2,98 @@ import React from 'react';
 import {Button} from 'antd';
 import router from 'umi/router';
 
-const json = {
-  list: [
+const inputs = {
+  "list": [
     {
-      name: 'shuixinglun',
-      number: 10001,
-      elements:[
+      "name": "水星轮",
+      "number": 10001,
+      "elements":[
         {
-          name: 'Cu',
-          share: 24.78
+          "name": 'Cu',
+          "percentage": 24.78
         },
         {
-          name: 'Fe',
-          share: 25.78
+          "name": 'Fe',
+          "percentage": 25.78
         }
       ],
-      inventory: 10352,
-      required: false,
-      calculate: null
+      "inventory": 10352,
+      "required": false,
+      "calculatePercentage": null
     },
     {
-      name: 'laiketa',
-      number: 10002,
-      elements:[
+      "name": "莱科塔",
+      "number": 10002,
+      "elements":[
         {
-          name: 'Cu',
-          share: 24.01
+          "name": "Cu",
+          "percentage": 24.01
         },
         {
-          name: 'Fe',
-          share: 31.02
+          "name": "Fe",
+          "percentage": 31.02
         }
       ],
-      inventory: 5686,
-      required: true,
-      calculateShare: 51.23
+      "inventory": 5686,
+      "required": true,
+      "calculatePercentage": 51.23
     }
   ],
-  presetParameter: {
-    MatteTargetTasteShare: 16.54,
-    ModelFactorShare: 14.44
+  "presetParameter": {
+    "MatteTargetGradePercentage": 16.54,
+    "ModelFactorPercentage": 14.44
   },
-  manuallyParameter:{
-    rawCoalShare: 12.36,
-    coldBurdenShare: 75.66
+  "manuallyParameter":{
+    "rawCoalPercentage": 12.36,
+    "coldBurdenPercentage": 75.66
   },
-  elementsTargetList: [
+  "elementsTargetList": [
     {
-      name: 'Cu',
-      share: 33.63,
-      priority: 1
+      "name": "Cu",
+      "percentage": 33.63,
+      "priority": 1
     },
     {
-      name: 'Fe',
-      share: 33.63,
-      priority: 2
+      "name": "Fe",
+      "percentage": 33.63,
+      "priority": 2
     },
     {
-      name: 'S',
-      share: 33.63,
-      priority: 3
+      "name": "S",
+      "percentage": 33.63,
+      "priority": 3
+    }
+  ]
+}
+
+const outputs = {
+  "list": [
+    {
+      "name": "水星轮",
+      "number": 10001,
+      "inventoryBalance": 1346,
+      "calculatePercentage": 31.23
+    },
+    {
+      "name": "莱科塔",
+      "number": 10002,
+      "inventoryBalance": 5686,
+      "calculatePercentage": 51.23
+    }
+  ],
+  "calculateParameter":{
+    "oxygenPercentage": 12.32,
+    "SCuPercentage": 56.56,
+    "paFlow": 200
+  },
+  "feedMixture": [
+    {
+      "name": "Cu",
+      "percentage": 24.01
+    },
+    {
+      "name": "Fe",
+      "percentage": 31.02
     }
   ]
 }
