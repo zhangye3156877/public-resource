@@ -11,7 +11,7 @@ const config: IConfig =  {
       path: '/',
       component: '../layouts/index',
       routes: [
-        {path: '/', component: './index'},
+        {path: '/', component: './homepage'},
         {path: '/p1', component: './home/index'},
         {path: '/p2', component: './second/index'},
       ]
