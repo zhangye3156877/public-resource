@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
-import { Table, Form, Input} from 'antd';
+import { Table, Form, Input } from 'antd';
 
 export const TableContext = React.createContext({
   columns: [],
-  data: []
+  dataSource: [],
+  setData: () => {}
 })
 
 const EditableContext = React.createContext();
@@ -38,6 +39,10 @@ const EditableCell = ({
   }, [editing]);
 
   const toggleEdit = () => {
+    
+    if (dataIndex === 'calculatePercentage' && record.required === false) {
+      return
+    }
     setEditing(!editing);
     form.setFieldsValue({
       [dataIndex]: record[dataIndex],
@@ -55,43 +60,45 @@ const EditableCell = ({
   };
 
   let childNode = children;
-
+  
   if (editable) {
-    childNode = editing ? (
-      <Form.Item
-        style={{
-          margin: 0,
-        }}
-        name={dataIndex}
-        rules={[
-          {
-            required: true,
-            message: `${title} is required.`,
-          },
-        ]}
-      >
-        <Input 
-          style={{width: '80px'}}
-          ref={inputRef} 
-          onPressEnter={save} 
-          onBlur={save} 
-          />
-      </Form.Item>
-    ) : (
-        <div
-          onClick={toggleEdit}
+    
+      childNode = editing ? (
+        <Form.Item
+          style={{
+            margin: 0,
+          }}
+          name={dataIndex}
+          rules={[
+            {
+              required: true
+            },
+          ]}
         >
-          {children}
-        </div>
-      );
+          <Input
+            style={{ width: '80px' }}
+            ref={inputRef}
+            onPressEnter={save}
+            onBlur={save}
+          />
+        </Form.Item>
+      ) : (
+          <div
+            onClick={toggleEdit}
+            style={{minHeight:'20px'}}
+          >
+            {children}
+          </div>
+        );
+    
   }
 
   return <td {...restProps}>{childNode}</td>;
 };
 
 function EditTable(props) {
-  const { columns, data } = useContext(TableContext)
-  
+  const { columns, dataSource, setData } = useContext(TableContext)
+
   const components = {
     body: {
       row: EditableRow,
@@ -99,6 +106,7 @@ function EditTable(props) {
     },
   }
   const columns_ = columns.map(col => {
+    
     if (!col.editable) {
       return col
     }
@@ -110,17 +118,18 @@ function EditTable(props) {
         editable: col.editable,
         dataIndex: col.dataIndex,
         title: col.title,
-        handleSave:  row => {
-          
-          const newData = [...data];
-          newData[row.index] = {...row}
-          props.setData(newData)
+        handleSave: row => {
+
+          const newData = [...dataSource];
+          newData[row.index] = { ...row }
+          console.log(newData)
+          setData(newData)
         },
       }),
     }
   })
 
-  
+
 
   return (
     <div>
@@ -128,7 +137,7 @@ function EditTable(props) {
         rowKey={'number'}
         components={components}
         columns={columns_}
-        dataSource={data}
+        dataSource={dataSource}
         pagination={false}
         bordered
       />

@@ -1,87 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import EditTable, { TableContext } from '@/components/editTable';
 import { Checkbox, Button, Form, Input, InputNumber, Row, Col, Space } from 'antd';
 import styles from './index.css';
 
-const fkcolumns = [
-  {
-    title: '必选',
-    dataIndex: 'required',
-    render: (text, record, index) => <Checkbox
-      onChange={() => { console.log(text, record, index) }}
-    />
-  },
-  {
-    title: '排除',
-    dataIndex: 'delete',
-    render: (text, record, index) => <Checkbox
-      onChange={() => { console.log(text, record, index) }}
-    />
-  },
-  {
-    title: '名称',
-    dataIndex: 'name',
-  },
-  {
-    title: '批次号',
-    dataIndex: 'number',
-  },
-  {
-    title: 'Cu',
-    dataIndex: 'Cu',
-    editable: true,
-  },
-  {
-    title: 'Fe',
-    dataIndex: 'Fe'
-  },
-  {
-    title: 'S',
-    dataIndex: 'S'
-  },
-  {
-    title: 'SiO2',
-    dataIndex: 'SiO2'
-  }, {
-    title: 'Cao',
-    dataIndex: 'Cao'
-  },
-  {
-    title: 'As',
-    dataIndex: 'As'
-  }, {
-    title: 'Zn',
-    dataIndex: 'Zn'
-  },
-  {
-    title: 'Pb',
-    dataIndex: 'Pb'
-  },
-  {
-    title: 'MgO',
-    dataIndex: 'MgO'
-  },
-  {
-    title: 'Al2O3',
-    dataIndex: 'Al2O3'
-  },
-  {
-    title: 'H2O',
-    dataIndex: 'H2O'
-  },
-  {
-    title: '库存/顿',
-    dataIndex: 'inventory'
-  },
-  {
-    title: '演算比例',
-    dataIndex: 'calculatePercentage'
-  },
-  {
-    title: '库存余量',
-    dataIndex: 'inventoryBalance'
-  },
-];
+
 const fkdata = [
   {
     index: 0,
@@ -101,7 +23,7 @@ const fkdata = [
     Al2O3: 1,
     H2O: 1,
     inventory: 1000,
-    calculatePercentage: ' ',
+    calculatePercentage: '',
     inventoryBalance: 100
   },
   {
@@ -192,23 +114,141 @@ const fkdata = [
 
 
 export default function () {
-  const [columns, setColumns] = useState(fkcolumns);
-  const [data, setData] = useState(fkdata);
+
   function onFinish(values) {
     console.log(values)
   }
   function onFinishFailed(errorInfo) {
     console.log('Failed:', errorInfo);
   }
+
+  const [data, setData] = useState(fkdata);
+
+  const childChange = (value) => {
+    setData(value)
+  }
+  const test = (value) => {
+    console.log(data,value)
+  }
+  
+  
+  const fkcolumns = [
+    {
+      title: '必选',
+      dataIndex: 'required',
+      render: (text, record, index) => <Checkbox
+        onChange={() => {
+         
+          const newData = [...data]
+          const value = !text
+          newData[index].required = value
+          //newData[index]
+          test(value)
+        }}
+      />
+    },
+    {
+      title: '排除',
+      dataIndex: 'delete',
+      render: (text, record, index) => <Checkbox
+        onChange={() => {
+          test()
+          // const newData = [...data]
+          // newData[index].delete = !text
+          // setData(newData)
+        }}
+      />
+    },
+    {
+      title: '名称',
+      dataIndex: 'name',
+    },
+    {
+      title: '批次号',
+      dataIndex: 'number',
+    },
+    {
+      title: 'Cu',
+      dataIndex: 'Cu',
+      editable: true,
+    },
+    {
+      title: 'Fe',
+      dataIndex: 'Fe',
+      editable: true,
+    },
+    {
+      title: 'S',
+      dataIndex: 'S',
+      editable: true,
+    },
+    {
+      title: 'SiO2',
+      dataIndex: 'SiO2',
+      editable: true,
+    }, {
+      title: 'Cao',
+      dataIndex: 'Cao',
+      editable: true,
+    },
+    {
+      title: 'As',
+      dataIndex: 'As',
+      editable: true,
+    }, {
+      title: 'Zn',
+      dataIndex: 'Zn',
+      editable: true,
+    },
+    {
+      title: 'Pb',
+      dataIndex: 'Pb',
+      editable: true,
+    },
+    {
+      title: 'MgO',
+      dataIndex: 'MgO',
+      editable: true,
+    },
+    {
+      title: 'Al2O3',
+      dataIndex: 'Al2O3',
+      editable: true,
+    },
+    {
+      title: 'H2O',
+      dataIndex: 'H2O',
+      editable: true,
+    },
+    {
+      title: '库存/顿',
+      dataIndex: 'inventory',
+      editable: true,
+    },
+    {
+      title: '演算比例',
+      dataIndex: 'calculatePercentage',
+      editable: true,
+    },
+    {
+      title: '库存余量',
+      dataIndex: 'inventoryBalance',
+    },
+  ];
+
+  const [columns] = useState(fkcolumns);
+
+  useEffect(() => {
+    console.log(data)
+  })
   return (
     <div style={{ padding: '20px' }}>
       <TableContext.Provider value={{
         columns,
-        data
+        dataSource: data,
+        setData: childChange
       }}>
-        <EditTable
-          setData={setData}
-        />
+        <EditTable />
       </TableContext.Provider >
       <div>
         <p>预设参数</p>
@@ -239,8 +279,7 @@ export default function () {
                   name="ModelFactorRatio"
                   rules={[
                     {
-                      required: true,
-                      message: 'Please input your username!',
+                      required: true
                     },
                   ]}
                 >
@@ -265,150 +304,150 @@ export default function () {
             </Row>
             <Row className={styles.row}>
               <Col span={6}>
-               <Space>
-               <Form.Item
-                  name="checkboxCu"
-                  valuePropName="checked"
-                  noStyle={true}
-                >
-                  <Checkbox onChange={(v) => { console.log(v) }} />
-                </Form.Item>
-                <span className={styles.elementspan}>Cu(%)</span>
-                <Form.Item
-                  name="Cu"
-                  noStyle={true}
-                >
-                  <InputNumber />
-                </Form.Item>
-                <Form.Item
-                  name="priorityCu"
-                  noStyle={true}
-                >
-                  <InputNumber
-                    placeholder="优先级" />
-                </Form.Item>
-               </Space>
-              </Col>
-              <Col span={6}>
                 <Space>
-                <Form.Item
-                  name="checkboxSiO2"
-                  valuePropName="checked"
-                  noStyle={true}
-                >
-                  <Checkbox onChange={(v) => { console.log(v) }} />
-                </Form.Item>
-                <span className={styles.elementspan}>SiO2(%)</span>
-                <Form.Item
-                  name="SiO2"
-                  noStyle={true}
-                >
-                  <InputNumber />
-                </Form.Item>
-                <Form.Item
-                  name="prioritySiO2"
-                  noStyle={true}
-                >
-                  <InputNumber placeholder="优先级"/>
-                </Form.Item>
+                  <Form.Item
+                    name="checkboxCu"
+                    valuePropName="checked"
+                    noStyle={true}
+                  >
+                    <Checkbox onChange={(v) => { console.log(v) }} />
+                  </Form.Item>
+                  <span className={styles.elementspan}>Cu(%)</span>
+                  <Form.Item
+                    name="Cu"
+                    noStyle={true}
+                  >
+                    <InputNumber />
+                  </Form.Item>
+                  <Form.Item
+                    name="priorityCu"
+                    noStyle={true}
+                  >
+                    <InputNumber
+                      placeholder="优先级" />
+                  </Form.Item>
                 </Space>
               </Col>
               <Col span={6}>
-               <Space>
-               <Form.Item
-                  name="checkboxZn"
-                  valuePropName="checked"
-                  noStyle={true}
-                >
-                  <Checkbox onChange={(v) => { console.log(v) }} />
-                </Form.Item>
-                <span className={styles.elementspan}>Zn(%)</span>
-                <Form.Item
-                  name="Zn"
-                  noStyle={true}
-                >
-                  <InputNumber />
-                </Form.Item>
-                <Form.Item
-                  name="priorityZn"
-                  noStyle={true}
-                >
-                  <InputNumber placeholder="优先级" />
-                </Form.Item>
-               </Space>
+                <Space>
+                  <Form.Item
+                    name="checkboxSiO2"
+                    valuePropName="checked"
+                    noStyle={true}
+                  >
+                    <Checkbox onChange={(v) => { console.log(v) }} />
+                  </Form.Item>
+                  <span className={styles.elementspan}>SiO2(%)</span>
+                  <Form.Item
+                    name="SiO2"
+                    noStyle={true}
+                  >
+                    <InputNumber />
+                  </Form.Item>
+                  <Form.Item
+                    name="prioritySiO2"
+                    noStyle={true}
+                  >
+                    <InputNumber placeholder="优先级" />
+                  </Form.Item>
+                </Space>
               </Col>
               <Col span={6}>
-               <Space>
-               <Form.Item
-                  name="checkboxAl2O3"
-                  valuePropName="checked"
-                  noStyle={true}
-                >
-                  <Checkbox onChange={(v) => { console.log(v) }} />
-                </Form.Item>
-                <span className={styles.elementspan}>Al2O3(%)</span>
-                <Form.Item
-                  name="Al2O3"
-                  noStyle={true}
-                >
-                  <InputNumber />
-                </Form.Item>
-                <Form.Item
-                  name="priorityAl2O3"
-                  noStyle={true}
-                >
-                  <InputNumber placeholder="优先级" />
-                </Form.Item>
-               </Space>
+                <Space>
+                  <Form.Item
+                    name="checkboxZn"
+                    valuePropName="checked"
+                    noStyle={true}
+                  >
+                    <Checkbox onChange={(v) => { console.log(v) }} />
+                  </Form.Item>
+                  <span className={styles.elementspan}>Zn(%)</span>
+                  <Form.Item
+                    name="Zn"
+                    noStyle={true}
+                  >
+                    <InputNumber />
+                  </Form.Item>
+                  <Form.Item
+                    name="priorityZn"
+                    noStyle={true}
+                  >
+                    <InputNumber placeholder="优先级" />
+                  </Form.Item>
+                </Space>
+              </Col>
+              <Col span={6}>
+                <Space>
+                  <Form.Item
+                    name="checkboxAl2O3"
+                    valuePropName="checked"
+                    noStyle={true}
+                  >
+                    <Checkbox onChange={(v) => { console.log(v) }} />
+                  </Form.Item>
+                  <span className={styles.elementspan}>Al2O3(%)</span>
+                  <Form.Item
+                    name="Al2O3"
+                    noStyle={true}
+                  >
+                    <InputNumber />
+                  </Form.Item>
+                  <Form.Item
+                    name="priorityAl2O3"
+                    noStyle={true}
+                  >
+                    <InputNumber placeholder="优先级" />
+                  </Form.Item>
+                </Space>
               </Col>
             </Row>
             <Row className={styles.row}>
               <Col span={6}>
                 <Space>
-                <Form.Item
-                  name="checkboxFe"
-                  valuePropName="checked"
-                  noStyle={true}
-                >
-                  <Checkbox onChange={(v) => { console.log(v) }} />
-                </Form.Item>
-                <span className={styles.elementspan}>Fe(%)</span>
-                <Form.Item
-                  name="Fe"
-                  noStyle={true}
-                >
-                  <InputNumber />
-                </Form.Item>
-                <Form.Item
-                  name="priorityFe"
-                  noStyle={true}
-                >
-                  <InputNumber placeholder="优先级" />
-                </Form.Item>
+                  <Form.Item
+                    name="checkboxFe"
+                    valuePropName="checked"
+                    noStyle={true}
+                  >
+                    <Checkbox onChange={(v) => { console.log(v) }} />
+                  </Form.Item>
+                  <span className={styles.elementspan}>Fe(%)</span>
+                  <Form.Item
+                    name="Fe"
+                    noStyle={true}
+                  >
+                    <InputNumber />
+                  </Form.Item>
+                  <Form.Item
+                    name="priorityFe"
+                    noStyle={true}
+                  >
+                    <InputNumber placeholder="优先级" />
+                  </Form.Item>
                 </Space>
               </Col>
               <Col span={6}>
                 <Space>
-                <Form.Item
-                  name="checkboxCao"
-                  valuePropName="checked"
-                  noStyle={true}
-                >
-                  <Checkbox onChange={(v) => { console.log(v) }} />
-                </Form.Item>
-                <span className={styles.elementspan}>Cao(%)</span>
-                <Form.Item
-                  name="Cao"
-                  noStyle={true}
-                >
-                  <InputNumber />
-                </Form.Item>
-                <Form.Item
-                  name="priorityCao"
-                  noStyle={true}
-                >
-                  <InputNumber placeholder="优先级" />
-                </Form.Item>
+                  <Form.Item
+                    name="checkboxCao"
+                    valuePropName="checked"
+                    noStyle={true}
+                  >
+                    <Checkbox onChange={(v) => { console.log(v) }} />
+                  </Form.Item>
+                  <span className={styles.elementspan}>Cao(%)</span>
+                  <Form.Item
+                    name="Cao"
+                    noStyle={true}
+                  >
+                    <InputNumber />
+                  </Form.Item>
+                  <Form.Item
+                    name="priorityCao"
+                    noStyle={true}
+                  >
+                    <InputNumber placeholder="优先级" />
+                  </Form.Item>
                 </Space>
               </Col>
               <Col span={6}>
@@ -431,7 +470,7 @@ export default function () {
                     name="priorityPb"
                     noStyle={true}
                   >
-                    <InputNumber placeholder="优先级"/>
+                    <InputNumber placeholder="优先级" />
                   </Form.Item>
                 </Space>
               </Col>
@@ -481,7 +520,7 @@ export default function () {
                     name="priorityS"
                     noStyle={true}
                   >
-                    <InputNumber placeholder="优先级"/>
+                    <InputNumber placeholder="优先级" />
                   </Form.Item>
                 </Space>
               </Col>
@@ -529,7 +568,7 @@ export default function () {
                     name="priorityMgO"
                     noStyle={true}
                   >
-                    <InputNumber placeholder="优先级"/>
+                    <InputNumber placeholder="优先级" />
                   </Form.Item>
                 </Space>
 
@@ -537,21 +576,16 @@ export default function () {
 
             </Row>
             <Button htmlType="submit">
-              查看
+              查看form
         </Button>
           </Form>
         </div>
       </div>
       <div>
         <Button onClick={() => {
-          const newData = [...data]
-          const newColumns = [...columns]
-          newData[0].name = '水星轮2'
-          newColumns[newColumns.length - 2].editable = true
-          setData(newData)
-          setColumns(newColumns);
+          test()
         }}>
-          改变data
+          查看data
         </Button>
       </div>
     </div>
