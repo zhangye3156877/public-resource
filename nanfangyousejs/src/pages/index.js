@@ -1,22 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import { connect, Dispatch } from 'dva';
-import { Form, Button, Table, Checkbox } from 'antd';
-import router from 'umi/router';
-import EditTable, {TableContext} from '../components/editTable';
-import styles from './homepage.css';
+import React,{useState} from 'react';
+import EditTable, {TableContext} from '@/components/editTable';
+import {Checkbox} from 'antd';
+import styles from './index.css';
 
 const columns = [
   {
     title: '必选',
     dataIndex: 'required',
-    render: (text:boolean, record:object, index:number) => <Checkbox
+    render: (text, record, index) => <Checkbox
       onChange = {() => {console.log(text, record, index)}}
     />
   },
   {
     title: '排除',
     dataIndex: 'delete',
-    render: (text:boolean, record:object, index:number) => <Checkbox
+    render: (text, record, index) => <Checkbox
     onChange = {() => {console.log(text, record, index)}}
     />
   },
@@ -108,29 +106,13 @@ const fkdata =[
 ]
 
 
-function homepage(props:any) {
 
-  const [data, setData] = useState(fkdata)
+export default function() {
   return (
-    <div className={styles.normal}>
-      <TableContext.Provider value={5}>
-
-      </TableContext.Provider>
-     <EditTable
-        columns={columns}
-        dataSource={data}
-        pagination={false}
-      />
-      <Button onClick={() => {
-        console.log(data)
-      }}>
-        submit
-      </Button>
+    <div>
+      <TableContext.provider value={{}}>
+        <EditTable/>
+      </TableContext.provider>
     </div>
   );
 }
-
-export default connect(({ global, loading }: any) => ({
-  global,
-  //loading: loading
-}))(homepage)
