@@ -122,7 +122,6 @@ function EditTable(props) {
 
           const newData = [...dataSource];
           newData[row.index] = { ...row }
-          console.log(newData)
           setData(newData)
         },
       }),

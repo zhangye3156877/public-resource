@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import EditTable, { TableContext } from '@/components/editTable';
 import { Checkbox, Button, Form, Input, InputNumber, Row, Col, Space } from 'antd';
 import styles from './index.css';
@@ -123,27 +123,24 @@ export default function () {
   }
 
   const [data, setData] = useState(fkdata);
+  let prevCountRef = useRef([...data]);
+  useEffect(() => {
+    console.log(data)
+    prevCountRef.current = [...data];
+  })
 
-  const childChange = (value) => {
-    setData(value)
-  }
-  const test = (value) => {
-    console.log(data,value)
-  }
-  
-  
+
   const fkcolumns = [
     {
       title: '必选',
       dataIndex: 'required',
       render: (text, record, index) => <Checkbox
         onChange={() => {
-         
-          const newData = [...data]
+          console.log(prevCountRef.current)
+          const newData = [...prevCountRef.current]
           const value = !text
           newData[index].required = value
-          //newData[index]
-          test(value)
+          setData(newData)
         }}
       />
     },
@@ -152,7 +149,7 @@ export default function () {
       dataIndex: 'delete',
       render: (text, record, index) => <Checkbox
         onChange={() => {
-          test()
+          
           // const newData = [...data]
           // newData[index].delete = !text
           // setData(newData)
@@ -238,15 +235,13 @@ export default function () {
 
   const [columns] = useState(fkcolumns);
 
-  useEffect(() => {
-    console.log(data)
-  })
+  
   return (
     <div style={{ padding: '20px' }}>
       <TableContext.Provider value={{
         columns,
         dataSource: data,
-        setData: childChange
+        setData
       }}>
         <EditTable />
       </TableContext.Provider >
@@ -583,7 +578,7 @@ export default function () {
       </div>
       <div>
         <Button onClick={() => {
-          test()
+         console.log(data)
         }}>
           查看data
         </Button>
