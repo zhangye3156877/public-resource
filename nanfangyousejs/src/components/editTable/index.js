@@ -91,7 +91,7 @@ const EditableCell = ({
 
 function EditTable(props) {
   const { columns, data } = useContext(TableContext)
-  console.log(props.setData)
+  
   const components = {
     body: {
       row: EditableRow,
@@ -111,8 +111,9 @@ function EditTable(props) {
         dataIndex: col.dataIndex,
         title: col.title,
         handleSave:  row => {
+          
           const newData = [...data];
-          newData[0].name = '水星轮3'
+          newData[row.index] = {...row}
           props.setData(newData)
         },
       }),
