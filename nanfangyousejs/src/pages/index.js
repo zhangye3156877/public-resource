@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import EditTable, { TableContext } from '@/components/editTable';
-import { Checkbox } from 'antd';
+import { Checkbox, Button } from 'antd';
 import styles from './index.css';
 
-const columns = [
+const fkcolumns = [
   {
     title: '必选',
     dataIndex: 'required',
@@ -28,7 +28,8 @@ const columns = [
   },
   {
     title: 'Cu',
-    dataIndex: 'Cu'
+    dataIndex: 'Cu',
+    editable: true,
   },
   {
     title: 'Fe',
@@ -83,7 +84,6 @@ const columns = [
 ];
 const fkdata = [
   {
-    key: '1',
     required: false,
     delete: false,
     name: '水星轮',
@@ -100,23 +100,122 @@ const fkdata = [
     Al2O3: 1,
     H2O: 1,
     inventory: 1000,
-    calculatePercentage: 11,
+    calculatePercentage: ' ',
+    inventoryBalance: 100
+  },
+  {
+    required: false,
+    delete: false,
+    name: '莱科塔',
+    number: 10002,
+    Cu: 1,
+    Fe: 1,
+    S: 1,
+    SiO2: 1,
+    Cao: 1,
+    As: 1,
+    Zn: 1,
+    Pb: 1,
+    MgO: 1,
+    Al2O3: 1,
+    H2O: 1,
+    inventory: 1000,
+    calculatePercentage: 'a',
+    inventoryBalance: 100
+  },
+  {
+    required: false,
+    delete: false,
+    name: '和盛',
+    number: 10003,
+    Cu: 1,
+    Fe: 1,
+    S: 1,
+    SiO2: 1,
+    Cao: 1,
+    As: 1,
+    Zn: 1,
+    Pb: 1,
+    MgO: 1,
+    Al2O3: 1,
+    H2O: 1,
+    inventory: 1000,
+    calculatePercentage: 'a',
+    inventoryBalance: 100
+  },
+  {
+    required: false,
+    delete: false,
+    name: '方舟21',
+    number: 10004,
+    Cu: 1,
+    Fe: 1,
+    S: 1,
+    SiO2: 1,
+    Cao: 1,
+    As: 1,
+    Zn: 1,
+    Pb: 1,
+    MgO: 1,
+    Al2O3: 1,
+    H2O: 1,
+    inventory: 1000,
+    calculatePercentage: 'a',
+    inventoryBalance: 100
+  },
+  {
+    required: false,
+    delete: false,
+    name: '江门商人',
+    number: 10005,
+    Cu: 1,
+    Fe: 1,
+    S: 1,
+    SiO2: 1,
+    Cao: 1,
+    As: 1,
+    Zn: 1,
+    Pb: 1,
+    MgO: 1,
+    Al2O3: 1,
+    H2O: 1,
+    inventory: 1000,
+    calculatePercentage: 'a',
     inventoryBalance: 100
   },
 ]
 
-console.log(EditTable)
-console.log(TableContext)
 
 export default function () {
+  const [columns, setColumns] = useState(fkcolumns);
+  const [data, setData] = useState(fkdata);
   return (
-    <div>
+    <div style={{padding:'20px'}}>
       <TableContext.Provider  value={{
         columns,
-        data: fkdata
+        data
       }}>
-        <EditTable />
+        <EditTable 
+          setData={setData}
+        />
       </TableContext.Provider >
+      <div>
+      <Button onClick={() => {
+          const newData = [...data]
+          const newColumns = [...columns]
+          newData[0].name = '水星轮2'
+          newColumns[newColumns.length - 2].editable = true
+          setData(newData)
+          setColumns(newColumns);
+        }}>
+          改变data
+        </Button>
+        <Button onClick={() => {
+          console.log(data);
+        }}>
+          查看
+        </Button>
+      </div>
     </div>
   );
 }
