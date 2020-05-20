@@ -1,15 +1,19 @@
-import React, {usesState} from 'react';
+import React, {usesState, useContext} from 'react';
 import {Table} from 'antd';
 
-export const TableContext = React.createContext();
+export const TableContext = React.createContext({
+  columns: [],
+  data: []
+});
 
 function EditTable(props){
+  const {columns, data} = useContext(TableContext)
   return(
     <div>
       <Table
-        // columns={columns}
-        // dataSource={data}
-        // pagination={false}
+        columns={columns}
+        dataSource={data}
+        pagination={false}
       />
     </div>
   )

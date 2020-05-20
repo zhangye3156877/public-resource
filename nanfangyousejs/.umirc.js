@@ -23,6 +23,7 @@ export default {
         loadingComponent: './components/loading/index',
         webpackChunkName: true,
       },
+      //dynamicImport: false,
       title: 'nanfangyousejs',
       dll: false,
       
