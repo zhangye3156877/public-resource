@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
-import { Table, Form, Input } from 'antd';
+import { Table, Form, Input, InputNumber } from 'antd';
 
 export const TableContext = React.createContext({
   columns: [],
@@ -75,8 +75,8 @@ const EditableCell = ({
             },
           ]}
         >
-          <Input
-            style={{ width: '80px' }}
+          <InputNumber
+            
             ref={inputRef}
             onPressEnter={save}
             onBlur={save}

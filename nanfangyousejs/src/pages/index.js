@@ -11,41 +11,41 @@ const fkdata = [
     delete: false,
     name: '水星轮',
     number: 10001,
-    Cu: 1,
-    Fe: 1,
-    S: 1,
-    SiO2: 1,
-    Cao: 1,
-    As: 1,
-    Zn: 1,
-    Pb: 1,
-    MgO: 1,
-    Al2O3: 1,
-    H2O: 1,
+    Cu: 0,
+    Fe: 0,
+    S: 0,
+    SiO2: 0,
+    Cao: 0,
+    As: 0,
+    Zn: 0,
+    Pb: 0,
+    MgO: 0,
+    Al2O3: 0,
+    H2O: 0,
     inventory: 1000,
     calculatePercentage: '',
-    inventoryBalance: 100
+    inventoryBalance: ''
   },
   {
-    index: 1,
+    index: 0,
     required: false,
     delete: false,
     name: '莱科塔',
     number: 10002,
-    Cu: 1,
-    Fe: 1,
-    S: 1,
-    SiO2: 1,
-    Cao: 1,
-    As: 1,
-    Zn: 1,
-    Pb: 1,
-    MgO: 1,
-    Al2O3: 1,
-    H2O: 1,
+    Cu: 0,
+    Fe: 0,
+    S: 0,
+    SiO2: 0,
+    Cao: 0,
+    As: 0,
+    Zn: 0,
+    Pb: 0,
+    MgO: 0,
+    Al2O3: 0,
+    H2O: 0,
     inventory: 1000,
-    calculatePercentage: 'a',
-    inventoryBalance: 100
+    calculatePercentage: '',
+    inventoryBalance: ''
   },
   {
     index: 2,
@@ -53,20 +53,20 @@ const fkdata = [
     delete: false,
     name: '和盛',
     number: 10003,
-    Cu: 1,
-    Fe: 1,
-    S: 1,
-    SiO2: 1,
-    Cao: 1,
-    As: 1,
-    Zn: 1,
-    Pb: 1,
-    MgO: 1,
-    Al2O3: 1,
-    H2O: 1,
+    Cu: 0,
+    Fe: 0,
+    S: 0,
+    SiO2: 0,
+    Cao: 0,
+    As: 0,
+    Zn: 0,
+    Pb: 0,
+    MgO: 0,
+    Al2O3: 0,
+    H2O: 0,
     inventory: 1000,
-    calculatePercentage: 'a',
-    inventoryBalance: 100
+    calculatePercentage: '',
+    inventoryBalance: ''
   },
   {
     index: 3,
@@ -74,20 +74,20 @@ const fkdata = [
     delete: false,
     name: '方舟21',
     number: 10004,
-    Cu: 1,
-    Fe: 1,
-    S: 1,
-    SiO2: 1,
-    Cao: 1,
-    As: 1,
-    Zn: 1,
-    Pb: 1,
-    MgO: 1,
-    Al2O3: 1,
-    H2O: 1,
+    Cu: 0,
+    Fe: 0,
+    S: 0,
+    SiO2: 0,
+    Cao: 0,
+    As: 0,
+    Zn: 0,
+    Pb: 0,
+    MgO: 0,
+    Al2O3: 0,
+    H2O: 0,
     inventory: 1000,
-    calculatePercentage: 'a',
-    inventoryBalance: 100
+    calculatePercentage: '',
+    inventoryBalance: ''
   },
   {
     index: 4,
@@ -95,20 +95,20 @@ const fkdata = [
     delete: false,
     name: '江门商人',
     number: 10005,
-    Cu: 1,
-    Fe: 1,
-    S: 1,
-    SiO2: 1,
-    Cao: 1,
-    As: 1,
-    Zn: 1,
-    Pb: 1,
-    MgO: 1,
-    Al2O3: 1,
-    H2O: 1,
+    Cu: 0,
+    Fe: 0,
+    S: 0,
+    SiO2: 0,
+    Cao: 0,
+    As: 0,
+    Zn: 0,
+    Pb: 0,
+    MgO: 0,
+    Al2O3: 0,
+    H2O: 0,
     inventory: 1000,
-    calculatePercentage: 'a',
-    inventoryBalance: 100
+    calculatePercentage: '',
+    inventoryBalance: ''
   },
 ]
 
@@ -117,6 +117,26 @@ export default function () {
 
   function onFinish(values) {
     console.log(values)
+    const elementRuls = /checkbox/g
+    const elementsTargetList = Object.keys(values)
+    .filter((item) => elementRuls.test(item) && values[item])
+    .map((item) => {
+      const name = item.replace('checkbox','')
+      return {
+        name,
+        percentage: values[name],
+        priority: values[`priority${name}`]
+      }
+    })
+    const payload ={
+      list: data,
+      presetParameter: {
+        MatteTargetGradeRatio: values.MatteTargetGradeRatio,
+        ModelFactorRatio: values.ModelFactorRatio
+      },
+      elementsTargetList
+    }
+    console.log(payload)
   }
   function onFinishFailed(errorInfo) {
     console.log('Failed:', errorInfo);
@@ -125,21 +145,20 @@ export default function () {
   const [data, setData] = useState(fkdata);
   let prevCountRef = useRef([...data]);
   useEffect(() => {
-    console.log(data)
     prevCountRef.current = [...data];
-  })
-
+  }, [data])
 
   const fkcolumns = [
     {
       title: '必选',
       dataIndex: 'required',
       render: (text, record, index) => <Checkbox
+        checked={text}
         onChange={() => {
-          console.log(prevCountRef.current)
           const newData = [...prevCountRef.current]
-          const value = !text
-          newData[index].required = value
+          newData[index] = {...record}
+          newData[index].required = !text
+          !text && (newData[index].delete = false)
           setData(newData)
         }}
       />
@@ -148,11 +167,13 @@ export default function () {
       title: '排除',
       dataIndex: 'delete',
       render: (text, record, index) => <Checkbox
+        checked={text}
         onChange={() => {
-          
-          // const newData = [...data]
-          // newData[index].delete = !text
-          // setData(newData)
+          const newData = [...prevCountRef.current]
+          newData[index] = {...record}
+          newData[index].delete = !text
+          !text && (newData[index].required = false)
+          setData(newData)
         }}
       />
     },
@@ -305,7 +326,7 @@ export default function () {
                     valuePropName="checked"
                     noStyle={true}
                   >
-                    <Checkbox onChange={(v) => { console.log(v) }} />
+                    <Checkbox />
                   </Form.Item>
                   <span className={styles.elementspan}>Cu(%)</span>
                   <Form.Item
@@ -330,7 +351,7 @@ export default function () {
                     valuePropName="checked"
                     noStyle={true}
                   >
-                    <Checkbox onChange={(v) => { console.log(v) }} />
+                    <Checkbox />
                   </Form.Item>
                   <span className={styles.elementspan}>SiO2(%)</span>
                   <Form.Item
@@ -354,7 +375,7 @@ export default function () {
                     valuePropName="checked"
                     noStyle={true}
                   >
-                    <Checkbox onChange={(v) => { console.log(v) }} />
+                    <Checkbox />
                   </Form.Item>
                   <span className={styles.elementspan}>Zn(%)</span>
                   <Form.Item
@@ -378,7 +399,7 @@ export default function () {
                     valuePropName="checked"
                     noStyle={true}
                   >
-                    <Checkbox onChange={(v) => { console.log(v) }} />
+                    <Checkbox />
                   </Form.Item>
                   <span className={styles.elementspan}>Al2O3(%)</span>
                   <Form.Item
@@ -404,7 +425,7 @@ export default function () {
                     valuePropName="checked"
                     noStyle={true}
                   >
-                    <Checkbox onChange={(v) => { console.log(v) }} />
+                    <Checkbox />
                   </Form.Item>
                   <span className={styles.elementspan}>Fe(%)</span>
                   <Form.Item
@@ -428,7 +449,7 @@ export default function () {
                     valuePropName="checked"
                     noStyle={true}
                   >
-                    <Checkbox onChange={(v) => { console.log(v) }} />
+                    <Checkbox />
                   </Form.Item>
                   <span className={styles.elementspan}>Cao(%)</span>
                   <Form.Item
@@ -452,7 +473,7 @@ export default function () {
                     valuePropName="checked"
                     noStyle={true}
                   >
-                    <Checkbox onChange={(v) => { console.log(v) }} />
+                    <Checkbox />
                   </Form.Item>
                   <span className={styles.elementspan}>Pb(%)</span>
                   <Form.Item
@@ -476,7 +497,7 @@ export default function () {
                     valuePropName="checked"
                     noStyle={true}
                   >
-                    <Checkbox onChange={(v) => { console.log(v) }} />
+                    <Checkbox />
                   </Form.Item>
                   <span className={styles.elementspan}>H2O(%)</span>
                   <Form.Item
@@ -502,7 +523,7 @@ export default function () {
                     valuePropName="checked"
                     noStyle={true}
                   >
-                    <Checkbox onChange={(v) => { console.log(v) }} />
+                    <Checkbox />
                   </Form.Item>
                   <span className={styles.elementspan}>S(%)</span>
                   <Form.Item
@@ -526,7 +547,7 @@ export default function () {
                     valuePropName="checked"
                     noStyle={true}
                   >
-                    <Checkbox onChange={(v) => { console.log(v) }} />
+                    <Checkbox />
                   </Form.Item>
                   <span className={styles.elementspan}>As(%)</span>
                   <Form.Item
@@ -550,7 +571,7 @@ export default function () {
                     valuePropName="checked"
                     noStyle={true}
                   >
-                    <Checkbox onChange={(v) => { console.log(v) }} />
+                    <Checkbox />
                   </Form.Item>
                   <span className={styles.elementspan}>MgO(%)</span>
                   <Form.Item
