@@ -114,7 +114,7 @@ const fkdata = [
 
 
 export default function () {
-
+  
   function onFinish(values) {
     console.log(values)
     const elementRuls = /checkbox/g
@@ -140,6 +140,16 @@ export default function () {
       elementsTargetList
     }
     console.log(payload)
+    const xhr = new XMLHttpRequest()
+    xhr.addEventListener('readystatechange', () => {
+      if (xhr.readyState == 4){
+        console.log(xhr.status)
+      }
+    })
+    
+    xhr.open('POST','http://127.0.0.1:7002/api/calculate')
+    //xhr.open('GET','http://127.0.0.1:7001/')
+    xhr.send()
   }
   function onFinishFailed(errorInfo) {
     console.log('Failed:', errorInfo);
