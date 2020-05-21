@@ -10,7 +10,8 @@ export default {
       path: '/',
       component: '../layouts/index',
       routes: [
-        {path: '/', component: './index'}
+        {path: '/', component: './index'},
+        // {path: '/test', component: './test/test'},
       ]
     },
   ],

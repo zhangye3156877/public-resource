@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import EditTable, { TableContext } from '@/components/editTable';
-import { Checkbox, Button, Form, Input, InputNumber, Row, Col, Space, Table } from 'antd';
+import { Checkbox, Button, Form, Input, InputNumber, Row, Col, Space, Table, Spin } from 'antd';
 import styles from './index.css';
 
 
@@ -225,7 +225,7 @@ const resultElementsMixtureListColumns = [
 ]
 
 export default function () {
-  
+
   function onFinish(values) {
     console.log(values)
     const elementRuls = /checkbox/g
@@ -233,16 +233,16 @@ export default function () {
     const list = data.filter((item) => !item.delete)
 
     const elementsTargetList = Object.keys(values)
-    .filter((item) => elementRuls.test(item) && values[item])
-    .map((item) => {
-      const name = item.replace('checkbox','')
-      return {
-        name,
-        percentage: values[name],
-        priority: values[`priority${name}`]
-      }
-    })
-    const payload ={
+      .filter((item) => elementRuls.test(item) && values[item])
+      .map((item) => {
+        const name = item.replace('checkbox', '')
+        return {
+          name,
+          percentage: values[name],
+          priority: values[`priority${name}`]
+        }
+      })
+    const payload = {
       list,
       presetParameter: {
         MatteTargetGradeRatio: values.MatteTargetGradeRatio,
@@ -252,16 +252,20 @@ export default function () {
     }
     console.log(payload)
     const xhr = new XMLHttpRequest()
+    setResult(null)
+    setResultShow(true)
     xhr.addEventListener('readystatechange', () => {
-      if (xhr.readyState == 4 && xhr.status === 200){
-        console.log(xhr.response);
+      if (xhr.readyState == 4 && xhr.status === 200) {
+        console.log(JSON.parse(xhr.response));
         setResult(JSON.parse(xhr.responseText))
       }
     })
-    xhr.open('POST','http://127.0.0.1:7001/api/calculate')
+    xhr.open('POST', 'http://127.0.0.1:7001/api/calculate')
     xhr.setRequestHeader("Content-type", "application/json")
-    //xhr.open('GET','http://127.0.0.1:7001/')
-    xhr.send(JSON.stringify(payload))
+     xhr.send(JSON.stringify(payload))
+    // setTimeout(() => {
+    //   xhr.send(JSON.stringify(payload))
+    // }, 3000)
   }
   function onFinishFailed(errorInfo) {
     console.log('Failed:', errorInfo);
@@ -269,6 +273,7 @@ export default function () {
 
   const [data, setData] = useState(fkdata);
   const [result, setResult] = useState(null);
+  const [resultShow, setResultShow] = useState(false);
   let prevCountRef = useRef([...data]);
   useEffect(() => {
     prevCountRef.current = [...data];
@@ -282,7 +287,7 @@ export default function () {
         checked={text}
         onChange={() => {
           const newData = [...prevCountRef.current]
-          newData[index] = {...record}
+          newData[index] = { ...record }
           newData[index].required = !text
           !text && (newData[index].delete = false)
           setData(newData)
@@ -296,7 +301,7 @@ export default function () {
         checked={text}
         onChange={() => {
           const newData = [...prevCountRef.current]
-          newData[index] = {...record}
+          newData[index] = { ...record }
           newData[index].delete = !text
           !text && (newData[index].required = false)
           setData(newData)
@@ -382,7 +387,7 @@ export default function () {
 
   const [columns] = useState(fkcolumns);
 
-  
+  console.log(result, resultShow)
   return (
     <div style={{ padding: '20px' }}>
       <TableContext.Provider value={{
@@ -718,47 +723,49 @@ export default function () {
 
             </Row>
             <Button htmlType="submit">
-              查看form
+              演算
         </Button>
           </Form>
         </div>
       </div>
-      <div style={{marginTop: '20px'}}>
+      <div style={{ marginTop: '20px' }}>
         {
-          result && <div>
-            <div>
-              <p>演算参数</p>
-              <Row className={styles.row}>
-                <Col span={6}>
-                  <Input addonBefore="养料比"  defaultValue={result.calculateParameter.oxygenMaterialRatio} />
-                </Col>
-              </Row>
-            </div>
-            <div>
-              <Table
-                rowKey={'number'}
-                columns={resultListColumns}
-                dataSource={result.list}
-                pagination={false}
-                bordered
-              />
-            </div>
-            <div style={{marginTop: '20px'}}>
-            <Table
-                rowKey={'name'}
-                columns={resultElementsMixtureListColumns}
-                dataSource={(() =>{
-                  let value = {name: '参数'}
-                  result.elementsMixtureList.forEach((item) => {
-                    value[item.name] = item.percentage
-                  })
-                  return [value]
-                })()}
-                pagination={false}
-                bordered
-              />
-            </div>
-          </div>
+          resultShow && (result === null ? <div style={{ paddingTop: 100, textAlign: 'center' }}>
+            <Spin size="large" />
+          </div> : <div>
+              <div>
+                <p>演算参数</p>
+                <Row className={styles.row}>
+                  <Col span={6}>
+                    <Input addonBefore="养料比" defaultValue={result.calculateParameter.oxygenMaterialRatio} />
+                  </Col>
+                </Row>
+              </div>
+              <div>
+                <Table
+                  rowKey={'number'}
+                  columns={resultListColumns}
+                  dataSource={result.list}
+                  pagination={false}
+                  bordered
+                />
+              </div>
+              <div style={{ marginTop: '20px' }}>
+                <Table
+                  rowKey={'name'}
+                  columns={resultElementsMixtureListColumns}
+                  dataSource={(() => {
+                    let value = { name: '参数' }
+                    result.elementsMixtureList.forEach((item) => {
+                      value[item.name] = item.percentage
+                    })
+                    return [value]
+                  })()}
+                  pagination={false}
+                  bordered
+                />
+              </div>
+            </div>)
         }
       </div>
     </div>
