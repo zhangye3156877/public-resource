@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import EditTable, { TableContext } from '@/components/editTable';
-import { Checkbox, Button, Form, Input, InputNumber, Row, Col, Space } from 'antd';
+import { Checkbox, Button, Form, Input, InputNumber, Row, Col, Space, Table } from 'antd';
 import styles from './index.css';
 
 
@@ -111,7 +111,118 @@ const fkdata = [
     inventoryBalance: ''
   },
 ]
-
+const resultListColumns = [
+  {
+    title: '名称',
+    dataIndex: 'name',
+  },
+  {
+    title: '批次号',
+    dataIndex: 'number',
+  },
+  {
+    title: 'Cu',
+    dataIndex: 'Cu',
+  },
+  {
+    title: 'Fe',
+    dataIndex: 'Fe',
+  },
+  {
+    title: 'S',
+    dataIndex: 'S',
+  },
+  {
+    title: 'SiO2',
+    dataIndex: 'SiO2',
+  }, {
+    title: 'Cao',
+    dataIndex: 'Cao',
+  },
+  {
+    title: 'As',
+    dataIndex: 'As',
+  }, {
+    title: 'Zn',
+    dataIndex: 'Zn',
+  },
+  {
+    title: 'Pb',
+    dataIndex: 'Pb',
+  },
+  {
+    title: 'MgO',
+    dataIndex: 'MgO',
+  },
+  {
+    title: 'Al2O3',
+    dataIndex: 'Al2O3',
+  },
+  {
+    title: 'H2O',
+    dataIndex: 'H2O',
+  },
+  {
+    title: '库存/顿',
+    dataIndex: 'inventory',
+  },
+  {
+    title: '演算比例',
+    dataIndex: 'calculatePercentage',
+  },
+  {
+    title: '库存余量',
+    dataIndex: 'inventoryBalance',
+  },
+];
+const resultElementsMixtureListColumns = [
+  {
+    title: '入料混合物',
+    dataIndex: 'name',
+  },
+  {
+    title: 'Cu',
+    dataIndex: 'Cu',
+  },
+  {
+    title: 'Fe',
+    dataIndex: 'Fe',
+  },
+  {
+    title: 'S',
+    dataIndex: 'S',
+  },
+  {
+    title: 'SiO2',
+    dataIndex: 'SiO2',
+  }, {
+    title: 'Cao',
+    dataIndex: 'Cao',
+  },
+  {
+    title: 'As',
+    dataIndex: 'As',
+  }, {
+    title: 'Zn',
+    dataIndex: 'Zn',
+  },
+  {
+    title: 'Pb',
+    dataIndex: 'Pb',
+  },
+  {
+    title: 'MgO',
+    dataIndex: 'MgO',
+  },
+  {
+    title: 'Al2O3',
+    dataIndex: 'Al2O3',
+  },
+  {
+    title: 'H2O',
+    dataIndex: 'H2O',
+  },
+]
 
 export default function () {
   
@@ -142,20 +253,22 @@ export default function () {
     console.log(payload)
     const xhr = new XMLHttpRequest()
     xhr.addEventListener('readystatechange', () => {
-      if (xhr.readyState == 4){
-        console.log(xhr.status)
+      if (xhr.readyState == 4 && xhr.status === 200){
+        console.log(xhr.response);
+        setResult(JSON.parse(xhr.responseText))
       }
     })
-    
-    xhr.open('POST','http://127.0.0.1:7002/api/calculate')
+    xhr.open('POST','http://127.0.0.1:7001/api/calculate')
+    xhr.setRequestHeader("Content-type", "application/json")
     //xhr.open('GET','http://127.0.0.1:7001/')
-    xhr.send()
+    xhr.send(JSON.stringify(payload))
   }
   function onFinishFailed(errorInfo) {
     console.log('Failed:', errorInfo);
   }
 
   const [data, setData] = useState(fkdata);
+  const [result, setResult] = useState(null);
   let prevCountRef = useRef([...data]);
   useEffect(() => {
     prevCountRef.current = [...data];
@@ -610,12 +723,43 @@ export default function () {
           </Form>
         </div>
       </div>
-      <div>
-        <Button onClick={() => {
-         console.log(data)
-        }}>
-          查看data
-        </Button>
+      <div style={{marginTop: '20px'}}>
+        {
+          result && <div>
+            <div>
+              <p>演算参数</p>
+              <Row className={styles.row}>
+                <Col span={6}>
+                  <Input addonBefore="养料比"  defaultValue={result.calculateParameter.oxygenMaterialRatio} />
+                </Col>
+              </Row>
+            </div>
+            <div>
+              <Table
+                rowKey={'number'}
+                columns={resultListColumns}
+                dataSource={result.list}
+                pagination={false}
+                bordered
+              />
+            </div>
+            <div style={{marginTop: '20px'}}>
+            <Table
+                rowKey={'name'}
+                columns={resultElementsMixtureListColumns}
+                dataSource={(() =>{
+                  let value = {name: '参数'}
+                  result.elementsMixtureList.forEach((item) => {
+                    value[item.name] = item.percentage
+                  })
+                  return [value]
+                })()}
+                pagination={false}
+                bordered
+              />
+            </div>
+          </div>
+        }
       </div>
     </div>
   );
