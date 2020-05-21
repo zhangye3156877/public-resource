@@ -118,6 +118,9 @@ export default function () {
   function onFinish(values) {
     console.log(values)
     const elementRuls = /checkbox/g
+
+    const list = data.filter((item) => !item.delete)
+
     const elementsTargetList = Object.keys(values)
     .filter((item) => elementRuls.test(item) && values[item])
     .map((item) => {
@@ -129,7 +132,7 @@ export default function () {
       }
     })
     const payload ={
-      list: data,
+      list,
       presetParameter: {
         MatteTargetGradeRatio: values.MatteTargetGradeRatio,
         ModelFactorRatio: values.ModelFactorRatio
