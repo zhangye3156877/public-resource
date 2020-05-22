@@ -163,7 +163,7 @@ const resultListColumns = [
     dataIndex: 'H2O',
   },
   {
-    title: '库存/顿',
+    title: '库存/吨',
     dataIndex: 'inventory',
   },
   {
@@ -246,7 +246,9 @@ export default function () {
       list,
       presetParameter: {
         MatteTargetGradeRatio: values.MatteTargetGradeRatio,
-        ModelFactorRatio: values.ModelFactorRatio
+        ModelFactorRatioBeta: values.ModelFactorRatioBeta,
+        ModelFactorRatioAlpha: values.ModelFactorRatioAlpha,
+        ModelFactorRatioGamma: values.ModelFactorRatioGamma,
       },
       elementsTargetList
     }
@@ -370,7 +372,7 @@ export default function () {
       editable: true,
     },
     {
-      title: '库存/顿',
+      title: '库存/吨',
       dataIndex: 'inventory',
       editable: true,
     },
@@ -422,8 +424,8 @@ export default function () {
               </Col>
               <Col span={6}>
                 <Form.Item
-                  label="模型因子比重(%)"
-                  name="ModelFactorRatio"
+                  label="模型因子比重alpha"
+                  name="ModelFactorRatioAlpha"
                   rules={[
                     {
                       required: true
@@ -433,21 +435,47 @@ export default function () {
                   <InputNumber />
                 </Form.Item>
               </Col>
-              {/* <Col span={8}>
-
+              <Col span={6}>
                 <Form.Item
-                  label="cc"
-                  name="cc"
+                  label="模型因子比重beta"
+                  name="ModelFactorRatioBeta"
                   rules={[
                     {
-                      required: true,
-                      message: 'Please input your username!',
+                      required: true
                     },
                   ]}
                 >
-                  <Input />
+                  <InputNumber />
                 </Form.Item>
-              </Col> */}
+              </Col>
+              <Col span={6}>
+                <Form.Item
+                  label="模型因子比重gamma"
+                  name="ModelFactorRatioGamma"
+                  rules={[
+                    {
+                      required: true
+                    },
+                  ]}
+                >
+                  <InputNumber />
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row className={styles.row}>
+            <Col span={6}>
+                <Form.Item
+                  label="未命名1"
+                  name="?"
+                  rules={[
+                    {
+                      required: true
+                    },
+                  ]}
+                >
+                  <InputNumber />
+                </Form.Item>
+              </Col>
             </Row>
             <Row className={styles.row}>
               <Col span={6}>
@@ -722,7 +750,7 @@ export default function () {
               </Col>
 
             </Row>
-            <Button htmlType="submit">
+            <Button htmlType="submit" type="primary">
               演算
         </Button>
           </Form>
@@ -737,7 +765,7 @@ export default function () {
                 <p>演算参数</p>
                 <Row className={styles.row}>
                   <Col span={6}>
-                    <Input addonBefore="养料比" defaultValue={result.calculateParameter.oxygenMaterialRatio} />
+                    <Input addonBefore="氧料比" defaultValue={result.calculateParameter.oxygenMaterialPercentage} />
                   </Col>
                 </Row>
               </div>
