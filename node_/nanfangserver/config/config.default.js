@@ -26,7 +26,7 @@ module.exports = appInfo => {
     // domainWhiteList: ['http://127.0.0.1:8080'] 
   }
 
-  //config.cors = { origin: '*', allowMethods: 'GET,HEAD,PUT,POST,DELETE,PATCH' }
+  config.cors = { origin: '*', allowMethods: 'GET,HEAD,PUT,POST,DELETE,PATCH' }
   // add your user config here
   const userConfig = {
     // myAppName: 'egg',

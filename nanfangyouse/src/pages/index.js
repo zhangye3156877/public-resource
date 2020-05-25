@@ -245,7 +245,7 @@ export default function () {
     const payload = {
       list,
       presetParameter: {
-        MatteTargetGradeRatio: values.MatteTargetGradeRatio,
+        MatteTargetGradePercentage: values.MatteTargetGradePercentage,
         ModelFactorRatioBeta: values.ModelFactorRatioBeta,
         ModelFactorRatioAlpha: values.ModelFactorRatioAlpha,
         ModelFactorRatioGamma: values.ModelFactorRatioGamma,
@@ -264,7 +264,7 @@ export default function () {
     })
     xhr.open('POST', 'http://127.0.0.1:7001/api/calculate')
     xhr.setRequestHeader("Content-type", "application/json")
-     xhr.send(JSON.stringify(payload))
+    xhr.send(JSON.stringify(payload))
     // setTimeout(() => {
     //   xhr.send(JSON.stringify(payload))
     // }, 3000)
@@ -276,6 +276,7 @@ export default function () {
   const [data, setData] = useState(fkdata);
   const [result, setResult] = useState(null);
   const [resultShow, setResultShow] = useState(false);
+  const [tableLoading, setTableLoading] = useState(false);
   let prevCountRef = useRef([...data]);
   useEffect(() => {
     prevCountRef.current = [...data];
@@ -392,13 +393,31 @@ export default function () {
   console.log(result, resultShow)
   return (
     <div style={{ padding: '20px' }}>
-      <TableContext.Provider value={{
-        columns,
-        dataSource: data,
-        setData
-      }}>
-        <EditTable />
-      </TableContext.Provider >
+      <div className={styles.row}>
+        <Button type="primary" onClick={() => {
+          setTableLoading(true)
+          const xhr = new XMLHttpRequest();
+          xhr.addEventListener('readystatechange', () => {
+            if (xhr.readyState == 4 && xhr.status === 200) {
+              console.log(JSON.parse(xhr.response));
+              setData(JSON.parse(xhr.responseText));
+              setTableLoading(false)
+            }
+          })
+          xhr.open('GET', 'http://127.0.0.1:7001/api/getInventory')
+          xhr.setRequestHeader("Content-type", "application/json")
+          xhr.send()
+        }}>获取库存</Button>
+      </div>
+      <Spin spinning={tableLoading}>
+        <TableContext.Provider value={{
+          columns,
+          dataSource: data,
+          setData
+        }}>
+          <EditTable />
+        </TableContext.Provider >
+      </Spin>
       <div>
         <p>预设参数</p>
         <div>
@@ -412,7 +431,7 @@ export default function () {
               <Col span={6}>
                 <Form.Item
                   label="冰铜目标品味(%)"
-                  name="MatteTargetGradeRatio"
+                  name="MatteTargetGradePercentage"
                   rules={[
                     {
                       required: true
@@ -462,8 +481,8 @@ export default function () {
                 </Form.Item>
               </Col>
             </Row>
-            <Row className={styles.row}>
-            <Col span={6}>
+            {/* <Row className={styles.row}>
+              <Col span={6}>
                 <Form.Item
                   label="未命名1"
                   name="?"
@@ -476,7 +495,7 @@ export default function () {
                   <InputNumber />
                 </Form.Item>
               </Col>
-            </Row>
+            </Row> */}
             <Row className={styles.row}>
               <Col span={6}>
                 <Space>
@@ -765,7 +784,7 @@ export default function () {
                 <p>演算参数</p>
                 <Row className={styles.row}>
                   <Col span={6}>
-                    <Input addonBefore="氧料比" defaultValue={result.calculateParameter.oxygenMaterialPercentage} />
+                    <Input addonBefore="氧料比(%)" defaultValue={result.calculateParameter.oxygenMaterialPercentage} />
                   </Col>
                 </Row>
               </div>
