@@ -245,10 +245,11 @@ export default function () {
     const payload = {
       list,
       presetParameter: {
-        MatteTargetGradePercentage: values.MatteTargetGradePercentage,
-        ModelFactorRatioBeta: values.ModelFactorRatioBeta,
-        ModelFactorRatioAlpha: values.ModelFactorRatioAlpha,
-        ModelFactorRatioGamma: values.ModelFactorRatioGamma,
+        matteTargetGradePercentage: values.matteTargetGradePercentage,
+        modelFactorBeta: values.modelFactorBeta,
+        modelFactorAlpha: values.modelFactorAlpha,
+        modelFactorGamma: values.modelFactorGamma,
+        maxType: values.maxType
       },
       elementsTargetList
     }
@@ -262,7 +263,7 @@ export default function () {
         setResult(JSON.parse(xhr.responseText))
       }
     })
-    xhr.open('POST', 'http://127.0.0.1:7001/api/calculate')
+    xhr.open('POST', `http://${ip.host}:${ip.port}/api/calculate`)
     xhr.setRequestHeader("Content-type", "application/json")
     xhr.send(JSON.stringify(payload))
     // setTimeout(() => {
@@ -272,11 +273,35 @@ export default function () {
   function onFinishFailed(errorInfo) {
     console.log('Failed:', errorInfo);
   }
+  function getInventory() {
+    setTableLoading(true)
+    const xhr = new XMLHttpRequest();
+    xhr.addEventListener('readystatechange', () => {
+      if (xhr.readyState == 4 && xhr.status === 200) {
+        console.log(JSON.parse(xhr.response));
+        const data = JSON.parse(xhr.responseText).map((item, index) => ({
+          ...item,
+          index,
+          delete: false,
+          inventoryBalance: ''
+        }))
+        setData(data);
+        setTableLoading(false)
+      }
+    })
+    xhr.open('GET', `http://${ip.host}:${ip.port}/api/getInventory`)
+    xhr.setRequestHeader("Content-type", "application/json")
+    xhr.send()
+  }
 
   const [data, setData] = useState(fkdata);
   const [result, setResult] = useState(null);
   const [resultShow, setResultShow] = useState(false);
   const [tableLoading, setTableLoading] = useState(false);
+  const [ip, setIp] = useState({
+    host: '127.0.0.1',
+    port: 7001
+  });
   let prevCountRef = useRef([...data]);
   useEffect(() => {
     prevCountRef.current = [...data];
@@ -394,20 +419,19 @@ export default function () {
   return (
     <div style={{ padding: '20px' }}>
       <div className={styles.row}>
-        <Button type="primary" onClick={() => {
-          setTableLoading(true)
-          const xhr = new XMLHttpRequest();
-          xhr.addEventListener('readystatechange', () => {
-            if (xhr.readyState == 4 && xhr.status === 200) {
-              console.log(JSON.parse(xhr.response));
-              setData(JSON.parse(xhr.responseText));
-              setTableLoading(false)
-            }
-          })
-          xhr.open('GET', 'http://127.0.0.1:7001/api/getInventory')
-          xhr.setRequestHeader("Content-type", "application/json")
-          xhr.send()
-        }}>获取库存</Button>
+        <Space>
+          <Button type="primary" onClick={() => {
+            getInventory()
+          }}>获取库存</Button>
+          <Input style={{ width: '250px' }}  addonBefore="当前请求地址" value={ip.host} onChange={(e) => {setIp({
+            ...ip,
+            host: e.target.value
+          })}} />
+          <Input style={{ width: '150px' }}  addonBefore="当前端口" value={ip.port} onChange={(e) => {setIp({
+            ...ip,
+            port: e.target.value
+          })}} />
+        </Space>
       </div>
       <Spin spinning={tableLoading}>
         <TableContext.Provider value={{
@@ -431,7 +455,7 @@ export default function () {
               <Col span={6}>
                 <Form.Item
                   label="冰铜目标品味(%)"
-                  name="MatteTargetGradePercentage"
+                  name="matteTargetGradePercentage"
                   rules={[
                     {
                       required: true
@@ -444,7 +468,7 @@ export default function () {
               <Col span={6}>
                 <Form.Item
                   label="模型因子比重alpha"
-                  name="ModelFactorRatioAlpha"
+                  name="modelFactorAlpha"
                   rules={[
                     {
                       required: true
@@ -457,7 +481,7 @@ export default function () {
               <Col span={6}>
                 <Form.Item
                   label="模型因子比重beta"
-                  name="ModelFactorRatioBeta"
+                  name="modelFactorBeta"
                   rules={[
                     {
                       required: true
@@ -470,7 +494,7 @@ export default function () {
               <Col span={6}>
                 <Form.Item
                   label="模型因子比重gamma"
-                  name="ModelFactorRatioGamma"
+                  name="modelFactorGamma"
                   rules={[
                     {
                       required: true
@@ -481,11 +505,11 @@ export default function () {
                 </Form.Item>
               </Col>
             </Row>
-            {/* <Row className={styles.row}>
+            <Row className={styles.row}>
               <Col span={6}>
                 <Form.Item
-                  label="未命名1"
-                  name="?"
+                  label="最大类别数"
+                  name="maxType"
                   rules={[
                     {
                       required: true
@@ -495,7 +519,7 @@ export default function () {
                   <InputNumber />
                 </Form.Item>
               </Col>
-            </Row> */}
+            </Row>
             <Row className={styles.row}>
               <Col span={6}>
                 <Space>
@@ -784,7 +808,7 @@ export default function () {
                 <p>演算参数</p>
                 <Row className={styles.row}>
                   <Col span={6}>
-                    <Input addonBefore="氧料比(%)" defaultValue={result.calculateParameter.oxygenMaterialPercentage} />
+                    <Input addonBefore="氧料比(%)" defaultValue={result.calculateParameter.oxygenMaterialRatio} />
                   </Col>
                 </Row>
               </div>
