@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import EditTable, { TableContext } from '@/components/editTable';
-import { Checkbox, Button, Form, Input, InputNumber, Row, Col, Space, Table, Spin, Divider } from 'antd';
+import { Checkbox, Button, Form, Input, InputNumber, Row, Col, Space, Table, Spin, Divider, Tag } from 'antd';
 import styles from './index.css';
 
 
@@ -249,7 +249,15 @@ export default function () {
         modelFactorBeta: values.modelFactorBeta,
         modelFactorAlpha: values.modelFactorAlpha,
         modelFactorGamma: values.modelFactorGamma,
-        maxType: values.maxType
+        maxType: values.maxType,
+        matteFe: values.matteFe,
+        matteS: values.matteS,
+        slagCu: values.slagCu,
+        slagS: values.slagS,
+        slagFe: values.slagFe,
+        slagSiO2: values.slagSiO2,
+        gaPop: values.gaPop,
+        gaEpoch: values.gaEpoch
       },
       elementsTargetList
     }
@@ -258,7 +266,7 @@ export default function () {
     setResult(null)
     setResultShow(true)
     xhr.addEventListener('readystatechange', () => {
-      if (xhr.readyState == 4 && xhr.status === 200) {
+      if (xhr.readyState === 4 && xhr.status === 200) {
         console.log(JSON.parse(xhr.response));
         setResult(JSON.parse(xhr.responseText))
       }
@@ -277,7 +285,7 @@ export default function () {
     setTableLoading(true)
     const xhr = new XMLHttpRequest();
     xhr.addEventListener('readystatechange', () => {
-      if (xhr.readyState == 4 && xhr.status === 200) {
+      if (xhr.readyState === 4 && xhr.status === 200) {
         console.log(JSON.parse(xhr.response));
         const data = JSON.parse(xhr.responseText).map((item, index) => ({
           ...item,
@@ -446,19 +454,20 @@ export default function () {
         </TableContext.Provider >
       </Spin>
       <div>
-        <p>预设参数</p>
+        <p className={styles.childtitle}>预设参数</p>
+        <Tag color="#2db7f5">配料参数</Tag>
         <div>
           <Form
             layout="inline"
-            labelCol={{ span: 12 }}
+            labelCol={{ span: 14 }}
             onFinish={onFinish}
             onFinishFailed={onFinishFailed}
           >
             <Row className={styles.row}>
               <Col span={6}>
-                <Form.Item
-                  label="冰铜目标品味(%)"
-                  name="matteTargetGradePercentage"
+              <Form.Item
+                  label="最大类别数"
+                  name="maxType"
                   rules={[
                     {
                       required: true
@@ -508,11 +517,12 @@ export default function () {
                 </Form.Item>
               </Col>
             </Row>
+            <Tag color="#2db7f5">元素含量参数</Tag>
             <Row className={styles.row}>
               <Col span={6}>
-                <Form.Item
-                  label="最大类别数"
-                  name="maxType"
+              <Form.Item
+                  label="冰铜目标品味(%)"
+                  name="matteTargetGradePercentage"
                   rules={[
                     {
                       required: true
@@ -522,6 +532,118 @@ export default function () {
                   <InputNumber />
                 </Form.Item>
               </Col>
+              <Col span={6}>
+                <Form.Item
+                  label="冰铜铁含量(%)"
+                  name="matteFe"
+                  rules={[
+                    {
+                      required: true
+                    },
+                  ]}
+                >
+                  <InputNumber />
+                </Form.Item>
+              </Col>
+              <Col span={6}>
+                <Form.Item
+                  label="冰铜硫含量(%)"
+                  name="matteS"
+                  rules={[
+                    {
+                      required: true
+                    },
+                  ]}
+                >
+                  <InputNumber />
+                </Form.Item>
+              </Col>
+              <Col span={6}>
+                <Form.Item
+                  label="熔炉渣铜含量(%)"
+                  name="slagCu"
+                  rules={[
+                    {
+                      required: true
+                    },
+                  ]}
+                >
+                  <InputNumber />
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row className={styles.row}>
+              <Col span={6}>
+              <Form.Item
+                  label="熔炉渣硫含量(%)"
+                  name="slagS"
+                  rules={[
+                    {
+                      required: true
+                    },
+                  ]}
+                >
+                  <InputNumber />
+                </Form.Item>
+              </Col>
+              <Col span={6}>
+                <Form.Item
+                  label="熔炉渣铁含量(%)"
+                  name="slagFe"
+                  rules={[
+                    {
+                      required: true
+                    },
+                  ]}
+                >
+                  <InputNumber />
+                </Form.Item>
+              </Col>
+              <Col span={6}>
+                <Form.Item
+                  //labelCol={12}
+                  label="熔炉渣二氧化硅含量(%)"
+                  name="slagSiO2"
+                  rules={[
+                    {
+                      required: true
+                    },
+                  ]}
+                >
+                  <InputNumber />
+                </Form.Item>
+              </Col>
+              
+            </Row>
+            <Tag color="#2db7f5">优化参数</Tag>
+            <Row className={styles.row}>
+              <Col span={6}>
+              <Form.Item
+                  label="优化算法种群数量"
+                  name="gaPop"
+                  rules={[
+                    {
+                      required: true
+                    },
+                  ]}
+                >
+                  <InputNumber />
+                </Form.Item>
+              </Col>
+              <Col span={6}>
+                <Form.Item
+                  label="优化算法迭代次数"
+                  name="gaEpoch"
+                  rules={[
+                    {
+                      required: true
+                    },
+                  ]}
+                >
+                  <InputNumber />
+                </Form.Item>
+              </Col>
+             
             </Row>
             <Row className={styles.row}>
               <Col span={6}>
