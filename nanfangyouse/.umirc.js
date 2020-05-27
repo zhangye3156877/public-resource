@@ -25,7 +25,7 @@ export default {
         webpackChunkName: true,
       },
       //dynamicImport: false,
-      title: 'nanfangyousejs',
+      title: '南方有色配料项目',
       dll: false,
       
       routes: {

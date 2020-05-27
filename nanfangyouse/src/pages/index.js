@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import EditTable, { TableContext } from '@/components/editTable';
-import { Checkbox, Button, Form, Input, InputNumber, Row, Col, Space, Table, Spin } from 'antd';
+import { Checkbox, Button, Form, Input, InputNumber, Row, Col, Space, Table, Spin, Divider } from 'antd';
 import styles from './index.css';
 
 
@@ -15,7 +15,7 @@ const fkdata = [
     Fe: 0,
     S: 0,
     SiO2: 0,
-    Cao: 0,
+    CaO: 0,
     As: 0,
     Zn: 0,
     Pb: 0,
@@ -36,7 +36,7 @@ const fkdata = [
     Fe: 0,
     S: 0,
     SiO2: 0,
-    Cao: 0,
+    CaO: 0,
     As: 0,
     Zn: 0,
     Pb: 0,
@@ -57,7 +57,7 @@ const fkdata = [
     Fe: 0,
     S: 0,
     SiO2: 0,
-    Cao: 0,
+    CaO: 0,
     As: 0,
     Zn: 0,
     Pb: 0,
@@ -78,7 +78,7 @@ const fkdata = [
     Fe: 0,
     S: 0,
     SiO2: 0,
-    Cao: 0,
+    CaO: 0,
     As: 0,
     Zn: 0,
     Pb: 0,
@@ -99,7 +99,7 @@ const fkdata = [
     Fe: 0,
     S: 0,
     SiO2: 0,
-    Cao: 0,
+    CaO: 0,
     As: 0,
     Zn: 0,
     Pb: 0,
@@ -136,8 +136,8 @@ const resultListColumns = [
     title: 'SiO2',
     dataIndex: 'SiO2',
   }, {
-    title: 'Cao',
-    dataIndex: 'Cao',
+    title: 'CaO',
+    dataIndex: 'CaO',
   },
   {
     title: 'As',
@@ -196,8 +196,8 @@ const resultElementsMixtureListColumns = [
     title: 'SiO2',
     dataIndex: 'SiO2',
   }, {
-    title: 'Cao',
-    dataIndex: 'Cao',
+    title: 'CaO',
+    dataIndex: 'CaO',
   },
   {
     title: 'As',
@@ -364,8 +364,8 @@ export default function () {
       dataIndex: 'SiO2',
       editable: true,
     }, {
-      title: 'Cao',
-      dataIndex: 'Cao',
+      title: 'CaO',
+      dataIndex: 'CaO',
       editable: true,
     },
     {
@@ -417,7 +417,10 @@ export default function () {
 
   console.log(result, resultShow)
   return (
-    <div style={{ padding: '20px' }}>
+    <div style={{ padding: '0 20px 20px 20px' }}>
+      <Divider style={{marginTop: '5px'}} />
+      <h1 style={{textAlign: 'center', fontWeight: '900'}}>南方有色配料项目</h1>
+      <Divider />
       <div className={styles.row}>
         <Space>
           <Button type="primary" onClick={() => {
@@ -647,21 +650,21 @@ export default function () {
               <Col span={6}>
                 <Space>
                   <Form.Item
-                    name="checkboxCao"
+                    name="checkboxCaO"
                     valuePropName="checked"
                     noStyle={true}
                   >
                     <Checkbox />
                   </Form.Item>
-                  <span className={styles.elementspan}>Cao(%)</span>
+                  <span className={styles.elementspan}>CaO(%)</span>
                   <Form.Item
-                    name="Cao"
+                    name="CaO"
                     noStyle={true}
                   >
                     <InputNumber />
                   </Form.Item>
                   <Form.Item
-                    name="priorityCao"
+                    name="priorityCaO"
                     noStyle={true}
                   >
                     <InputNumber placeholder="优先级" />
@@ -793,12 +796,15 @@ export default function () {
               </Col>
 
             </Row>
-            <Button htmlType="submit" type="primary">
-              演算
+            <Button htmlType="submit" type="primary" style={{width: '200px'}}>
+              演&nbsp;&nbsp;算
         </Button>
           </Form>
         </div>
       </div>
+      <Divider />
+      <h1 style={{textAlign: 'center', fontWeight: '900'}}>配料输出</h1>  
+      <Divider />
       <div style={{ marginTop: '20px' }}>
         {
           resultShow && (result === null ? <div style={{ paddingTop: 100, textAlign: 'center' }}>
