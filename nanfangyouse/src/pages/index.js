@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import EditTable, { TableContext } from '@/components/editTable';
-import { Checkbox, Button, Form, Input, InputNumber, Row, Col, Space, Table, Spin, Divider, Tag } from 'antd';
+import { Checkbox, Button, Form, Input, InputNumber, Row, Col, Space, Table, Spin, Divider } from 'antd';
 import styles from './index.css';
 
 
@@ -250,12 +250,12 @@ export default function () {
         modelFactorAlpha: values.modelFactorAlpha,
         modelFactorGamma: values.modelFactorGamma,
         maxType: values.maxType,
-        matteFe: values.matteFe,
-        matteS: values.matteS,
-        slagCu: values.slagCu,
-        slagS: values.slagS,
-        slagFe: values.slagFe,
-        slagSiO2: values.slagSiO2,
+        matteFePercentage: values.matteFePercentage,
+        matteSPercentage: values.matteSPercentage,
+        slagCuPercentage: values.slagCuPercentage,
+        slagSPercentage: values.slagSPercentage,
+        slagFePercentage: values.slagFePercentage,
+        slagSiO2Percentage: values.slagSiO2Percentage,
         gaPop: values.gaPop,
         gaEpoch: values.gaEpoch
       },
@@ -426,22 +426,26 @@ export default function () {
   console.log(result, resultShow)
   return (
     <div style={{ padding: '0 20px 20px 20px' }}>
-      <Divider style={{marginTop: '5px'}} />
-      <h1 style={{textAlign: 'center', fontWeight: '900'}}>南方有色配料项目</h1>
+      <Divider style={{ marginTop: '5px' }} />
+      <h1 style={{ textAlign: 'center', fontWeight: '900' }}>南方有色配料项目</h1>
       <Divider />
       <div className={styles.row}>
         <Space>
           <Button type="primary" onClick={() => {
             getInventory()
           }}>获取库存</Button>
-          <Input style={{ width: '250px' }}  addonBefore="当前请求地址" value={ip.host} onChange={(e) => {setIp({
-            ...ip,
-            host: e.target.value
-          })}} />
-          <Input style={{ width: '150px' }}  addonBefore="当前端口" value={ip.port} onChange={(e) => {setIp({
-            ...ip,
-            port: e.target.value
-          })}} />
+          <Input style={{ width: '250px' }} addonBefore="当前请求地址" value={ip.host} onChange={(e) => {
+            setIp({
+              ...ip,
+              host: e.target.value
+            })
+          }} />
+          <Input style={{ width: '150px' }} addonBefore="当前端口" value={ip.port} onChange={(e) => {
+            setIp({
+              ...ip,
+              port: e.target.value
+            })
+          }} />
         </Space>
       </div>
       <Spin spinning={tableLoading}>
@@ -455,72 +459,16 @@ export default function () {
       </Spin>
       <div>
         <p className={styles.childtitle}>预设参数</p>
-        <Tag color="#2db7f5">配料参数</Tag>
         <div>
           <Form
             layout="inline"
-            labelCol={{ span: 14 }}
+            labelCol={{ span: 15 }}
             onFinish={onFinish}
             onFinishFailed={onFinishFailed}
           >
             <Row className={styles.row}>
               <Col span={6}>
-              <Form.Item
-                  label="最大类别数"
-                  name="maxType"
-                  rules={[
-                    {
-                      required: true
-                    },
-                  ]}
-                >
-                  <InputNumber />
-                </Form.Item>
-              </Col>
-              <Col span={6}>
                 <Form.Item
-                  label="模型因子比重alpha"
-                  name="modelFactorAlpha"
-                  rules={[
-                    {
-                      required: true
-                    },
-                  ]}
-                >
-                  <InputNumber />
-                </Form.Item>
-              </Col>
-              <Col span={6}>
-                <Form.Item
-                  label="模型因子比重beta"
-                  name="modelFactorBeta"
-                  rules={[
-                    {
-                      required: true
-                    },
-                  ]}
-                >
-                  <InputNumber />
-                </Form.Item>
-              </Col>
-              <Col span={6}>
-                <Form.Item
-                  label="模型因子比重gamma"
-                  name="modelFactorGamma"
-                  rules={[
-                    {
-                      required: true
-                    },
-                  ]}
-                >
-                  <InputNumber />
-                </Form.Item>
-              </Col>
-            </Row>
-            <Tag color="#2db7f5">元素含量参数</Tag>
-            <Row className={styles.row}>
-              <Col span={6}>
-              <Form.Item
                   label="冰铜目标品味(%)"
                   name="matteTargetGradePercentage"
                   rules={[
@@ -535,7 +483,7 @@ export default function () {
               <Col span={6}>
                 <Form.Item
                   label="冰铜铁含量(%)"
-                  name="matteFe"
+                  name="matteFePercentage"
                   rules={[
                     {
                       required: true
@@ -548,20 +496,7 @@ export default function () {
               <Col span={6}>
                 <Form.Item
                   label="冰铜硫含量(%)"
-                  name="matteS"
-                  rules={[
-                    {
-                      required: true
-                    },
-                  ]}
-                >
-                  <InputNumber />
-                </Form.Item>
-              </Col>
-              <Col span={6}>
-                <Form.Item
-                  label="熔炉渣铜含量(%)"
-                  name="slagCu"
+                  name="matteSPercentage"
                   rules={[
                     {
                       required: true
@@ -574,9 +509,22 @@ export default function () {
             </Row>
             <Row className={styles.row}>
               <Col span={6}>
-              <Form.Item
+                <Form.Item
+                  label="熔炉渣铜含量(%)"
+                  name="slagCuPercentage"
+                  rules={[
+                    {
+                      required: true
+                    },
+                  ]}
+                >
+                  <InputNumber />
+                </Form.Item>
+              </Col>
+              <Col span={6}>
+                <Form.Item
                   label="熔炉渣硫含量(%)"
-                  name="slagS"
+                  name="slagSPercentage"
                   rules={[
                     {
                       required: true
@@ -589,7 +537,8 @@ export default function () {
               <Col span={6}>
                 <Form.Item
                   label="熔炉渣铁含量(%)"
-                  name="slagFe"
+                  name="slagFePercentage"
+                  initialValue={24}
                   rules={[
                     {
                       required: true
@@ -603,7 +552,8 @@ export default function () {
                 <Form.Item
                   //labelCol={12}
                   label="熔炉渣二氧化硅含量(%)"
-                  name="slagSiO2"
+                  name="slagSiO2Percentage"
+                  initialValue={48}
                   rules={[
                     {
                       required: true
@@ -613,14 +563,71 @@ export default function () {
                   <InputNumber />
                 </Form.Item>
               </Col>
-              
             </Row>
-            <Tag color="#2db7f5">优化参数</Tag>
             <Row className={styles.row}>
               <Col span={6}>
-              <Form.Item
+                <Form.Item
+                  label="最大类别数"
+                  name="maxType"
+                  initialValue={4}
+                  rules={[
+                    {
+                      required: true
+                    },
+                  ]}
+                >
+                  <InputNumber />
+                </Form.Item>
+              </Col>
+              <Col span={6}>
+                <Form.Item
+                  label="模型因子比重alpha"
+                  name="modelFactorAlpha"
+                  initialValue={1}
+                  rules={[
+                    {
+                      required: true
+                    },
+                  ]}
+                >
+                  <InputNumber />
+                </Form.Item>
+              </Col>
+              <Col span={6}>
+                <Form.Item
+                  label="模型因子比重beta"
+                  name="modelFactorBeta"
+                  initialValue={1}
+                  rules={[
+                    {
+                      required: true
+                    },
+                  ]}
+                >
+                  <InputNumber />
+                </Form.Item>
+              </Col>
+              <Col span={6}>
+                <Form.Item
+                  label="模型因子比重gamma"
+                  name="modelFactorGamma"
+                  initialValue={1}
+                  rules={[
+                    {
+                      required: true
+                    },
+                  ]}
+                >
+                  <InputNumber />
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row className={styles.row}>
+              <Col span={6}>
+                <Form.Item
                   label="优化算法种群数量"
                   name="gaPop"
+                  initialValue={25}
                   rules={[
                     {
                       required: true
@@ -634,6 +641,7 @@ export default function () {
                 <Form.Item
                   label="优化算法迭代次数"
                   name="gaEpoch"
+                  initialValue={25}
                   rules={[
                     {
                       required: true
@@ -643,7 +651,7 @@ export default function () {
                   <InputNumber />
                 </Form.Item>
               </Col>
-             
+
             </Row>
             <Row className={styles.row}>
               <Col span={6}>
@@ -918,14 +926,14 @@ export default function () {
               </Col>
 
             </Row>
-            <Button htmlType="submit" type="primary" style={{width: '200px'}}>
+            <Button htmlType="submit" type="primary" style={{ width: '200px' }}>
               演&nbsp;&nbsp;算
         </Button>
           </Form>
         </div>
       </div>
       <Divider />
-      <h1 style={{textAlign: 'center', fontWeight: '900'}}>配料输出</h1>  
+      <h1 style={{ textAlign: 'center', fontWeight: '900' }}>配料输出</h1>
       <Divider />
       <div style={{ marginTop: '20px' }}>
         {
