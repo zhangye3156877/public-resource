@@ -19,7 +19,7 @@ class MainController extends Controller {
         }
       ],
       calculateParameter: {
-        oxygenMaterialPercentage: 12.32,
+        oxygenMaterialRatio: 12.32,
       },
       elementsMixtureList: [
         {

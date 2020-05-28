@@ -177,7 +177,7 @@ const resultListColumns = [
 ];
 const resultElementsMixtureListColumns = [
   {
-    title: '入料混合物',
+    title: '入炉混合料',
     dataIndex: 'name',
   },
   {
