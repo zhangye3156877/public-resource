@@ -538,7 +538,7 @@ export default function () {
                 <Form.Item
                   label="熔炉渣铁含量(%)"
                   name="slagFePercentage"
-                  initialValue={24}
+                  initialValue={48}
                   rules={[
                     {
                       required: true
@@ -553,7 +553,7 @@ export default function () {
                   //labelCol={12}
                   label="熔炉渣二氧化硅含量(%)"
                   name="slagSiO2Percentage"
-                  initialValue={48}
+                  initialValue={24}
                   rules={[
                     {
                       required: true
