@@ -23,7 +23,7 @@ const fkdata = [
     Al2O3: 0,
     H2O: 0,
     inventory: 1000,
-    calculatePercentage: '',
+    calculatePercentage: 0,
     inventoryBalance: ''
   },
   {
@@ -44,7 +44,7 @@ const fkdata = [
     Al2O3: 0,
     H2O: 0,
     inventory: 1000,
-    calculatePercentage: '',
+    calculatePercentage: 0,
     inventoryBalance: ''
   },
   {
@@ -65,7 +65,7 @@ const fkdata = [
     Al2O3: 0,
     H2O: 0,
     inventory: 1000,
-    calculatePercentage: '',
+    calculatePercentage: 0,
     inventoryBalance: ''
   },
   {
@@ -86,7 +86,7 @@ const fkdata = [
     Al2O3: 0,
     H2O: 0,
     inventory: 1000,
-    calculatePercentage: '',
+    calculatePercentage: 0,
     inventoryBalance: ''
   },
   {
@@ -107,7 +107,7 @@ const fkdata = [
     Al2O3: 0,
     H2O: 0,
     inventory: 1000,
-    calculatePercentage: '',
+    calculatePercentage: 0,
     inventoryBalance: ''
   },
 ]
@@ -581,7 +581,7 @@ export default function () {
               </Col>
               <Col span={6}>
                 <Form.Item
-                  label="模型因子比重alpha"
+                  label="模型因子alpha"
                   name="modelFactorAlpha"
                   initialValue={1}
                   rules={[
@@ -595,7 +595,7 @@ export default function () {
               </Col>
               <Col span={6}>
                 <Form.Item
-                  label="模型因子比重beta"
+                  label="模型因子beta"
                   name="modelFactorBeta"
                   initialValue={1}
                   rules={[
@@ -609,7 +609,7 @@ export default function () {
               </Col>
               <Col span={6}>
                 <Form.Item
-                  label="模型因子比重gamma"
+                  label="模型因子gamma"
                   name="modelFactorGamma"
                   initialValue={1}
                   rules={[
@@ -944,7 +944,7 @@ export default function () {
                 <p>演算参数</p>
                 <Row className={styles.row}>
                   <Col span={6}>
-                    <Input addonBefore="氧料比(%)" defaultValue={result.calculateParameter.oxygenMaterialRatio} />
+                    <Input addonBefore="氧料比(立方米/吨)" defaultValue={result.calculateParameter.oxygenMaterialRatio} />
                   </Col>
                 </Row>
               </div>
