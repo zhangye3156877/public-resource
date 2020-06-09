@@ -9,6 +9,7 @@ const fkdata = [
     index: 0,
     required: false,
     delete: false,
+    clean: false,
     name: '水星轮',
     number: 10001,
     Cu: 0,
@@ -30,6 +31,7 @@ const fkdata = [
     index: 0,
     required: false,
     delete: false,
+    clean: false,
     name: '莱科塔',
     number: 10002,
     Cu: 0,
@@ -51,6 +53,7 @@ const fkdata = [
     index: 2,
     required: false,
     delete: false,
+    clean: false,
     name: '和盛',
     number: 10003,
     Cu: 0,
@@ -72,6 +75,7 @@ const fkdata = [
     index: 3,
     required: false,
     delete: false,
+    clean: false,
     name: '方舟21',
     number: 10004,
     Cu: 0,
@@ -93,6 +97,7 @@ const fkdata = [
     index: 4,
     required: false,
     delete: false,
+    clean: false,
     name: '江门商人',
     number: 10005,
     Cu: 0,
@@ -274,9 +279,6 @@ export default function () {
     xhr.open('POST', `http://${ip.host}:${ip.port}/api/calculate`)
     xhr.setRequestHeader("Content-type", "application/json")
     xhr.send(JSON.stringify(payload))
-    // setTimeout(() => {
-    //   xhr.send(JSON.stringify(payload))
-    // }, 3000)
   }
   function onFinishFailed(errorInfo) {
     console.log('Failed:', errorInfo);
@@ -339,7 +341,27 @@ export default function () {
           const newData = [...prevCountRef.current]
           newData[index] = { ...record }
           newData[index].delete = !text
-          !text && (newData[index].required = false)
+          if (!text) {
+            newData[index].required = false
+            newData[index].clean = false
+          }
+          setData(newData)
+        }}
+      />
+    },
+    {
+      title: '清库',
+      dataIndex: 'clean',
+      render: (text, record, index) => <Checkbox
+        checked={text}
+        onChange={() => {
+          const newData = [...prevCountRef.current]
+          newData[index] = { ...record }
+          newData[index].clean = !text
+          if (!text) {
+            newData[index].required = true
+            newData[index].delete = false
+          }
           setData(newData)
         }}
       />
@@ -471,6 +493,7 @@ export default function () {
                 <Form.Item
                   label="冰铜目标品味(%)"
                   name="matteTargetGradePercentage"
+                  initialValue={74}
                   rules={[
                     {
                       required: true
@@ -484,6 +507,7 @@ export default function () {
                 <Form.Item
                   label="冰铜铁含量(%)"
                   name="matteFePercentage"
+                  initialValue={3.5}
                   rules={[
                     {
                       required: true
@@ -497,6 +521,7 @@ export default function () {
                 <Form.Item
                   label="冰铜硫含量(%)"
                   name="matteSPercentage"
+                  initialValue={20.84}
                   rules={[
                     {
                       required: true
@@ -512,6 +537,7 @@ export default function () {
                 <Form.Item
                   label="熔炉渣铜含量(%)"
                   name="slagCuPercentage"
+                  initialValue={1.99}
                   rules={[
                     {
                       required: true
@@ -525,6 +551,7 @@ export default function () {
                 <Form.Item
                   label="熔炉渣硫含量(%)"
                   name="slagSPercentage"
+                  initialValue={.45}
                   rules={[
                     {
                       required: true
