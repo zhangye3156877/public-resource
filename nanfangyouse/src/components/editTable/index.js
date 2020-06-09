@@ -40,7 +40,7 @@ const EditableCell = ({
 
   const toggleEdit = () => {
     
-    if (dataIndex === 'calculatePercentage' && record.required === false) {
+    if (dataIndex !== 'calculatePercentage' || record.required === false) {
       return
     }
     setEditing(!editing);
