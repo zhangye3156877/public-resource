@@ -8,4 +8,5 @@ module.exports = app => {
   router.get('/', controller.home.index);
   router.post('/api/calculate', controller.main.calculate);
   router.get('/api/getInventory', controller.main.getInventory);
+  router.post('/api/test', controller.test.testFn);
 };

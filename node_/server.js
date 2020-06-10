@@ -6,7 +6,7 @@ const fs = require('fs');
 const path = require('path');
 const app = new Koa();
 const router = new Router();
-// app.use(cors());
+app.use(cors());
 app.use(koaBody({
     multipart: true,
     formidable: {
@@ -44,4 +44,4 @@ app
   .use(router.routes())
   .use(router.allowedMethods())
 
-app.listen(8080)
+app.listen(7001)
