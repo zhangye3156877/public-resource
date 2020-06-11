@@ -37,6 +37,11 @@ const fkdata = [
     MgO: 0,
     Al2O3: 0,
     H2O: 0,
+    Sb: 0,
+    Ni: 0,
+    Bi: 0,
+    Ag: 0,
+    Au: 0,
     inventory: 1000,
     calculatePercentage: 0,
     inventoryBalance: ''
@@ -59,6 +64,11 @@ const fkdata = [
     MgO: 0,
     Al2O3: 0,
     H2O: 0,
+    Sb: 0,
+    Ni: 0,
+    Bi: 0,
+    Ag: 0,
+    Au: 0,
     inventory: 1000,
     calculatePercentage: 0,
     inventoryBalance: ''
@@ -81,6 +91,11 @@ const fkdata = [
     MgO: 0,
     Al2O3: 0,
     H2O: 0,
+    Sb: 0,
+    Ni: 0,
+    Bi: 0,
+    Ag: 0,
+    Au: 0,
     inventory: 1000,
     calculatePercentage: 0,
     inventoryBalance: ''
@@ -103,6 +118,11 @@ const fkdata = [
     MgO: 0,
     Al2O3: 0,
     H2O: 0,
+    Sb: 0,
+    Ni: 0,
+    Bi: 0,
+    Ag: 0,
+    Au: 0,
     inventory: 1000,
     calculatePercentage: 0,
     inventoryBalance: ''
@@ -125,6 +145,11 @@ const fkdata = [
     MgO: 0,
     Al2O3: 0,
     H2O: 0,
+    Sb: 0,
+    Ni: 0,
+    Bi: 0,
+    Ag: 0,
+    Au: 0,
     inventory: 1000,
     calculatePercentage: 0,
     inventoryBalance: ''
@@ -176,6 +201,26 @@ const elementsMixtureListColumns = [
   {
     title: 'H2O',
     dataIndex: 'H2O',
+  },
+  {
+    title: 'Sb',
+    dataIndex: 'Sb',
+  },
+  {
+    title: 'Bi',
+    dataIndex: 'Bi',
+  },
+  {
+    title: 'Ni',
+    dataIndex: 'Ni',
+  },
+  {
+    title: 'Ag(t/g)',
+    dataIndex: 'Ag',
+  },
+  {
+    title: 'Au(t/g)',
+    dataIndex: 'Au',
   },
   {
     title: '库存/吨',
@@ -232,6 +277,26 @@ const resultListColumns = [
   {
     title: 'H2O',
     dataIndex: 'H2O',
+  },
+  {
+    title: 'Sb',
+    dataIndex: 'Sb',
+  },
+  {
+    title: 'Bi',
+    dataIndex: 'Bi',
+  },
+  {
+    title: 'Ni',
+    dataIndex: 'Ni',
+  },
+  {
+    title: 'Ag(t/g)',
+    dataIndex: 'Ag',
+  },
+  {
+    title: 'Au(t/g)',
+    dataIndex: 'Au',
   },
   {
     title: '库存/吨',
@@ -292,6 +357,26 @@ const resultElementsMixtureListColumns = [
   {
     title: 'H2O',
     dataIndex: 'H2O',
+  },
+  {
+    title: 'Sb',
+    dataIndex: 'Sb',
+  },
+  {
+    title: 'Bi',
+    dataIndex: 'Bi',
+  },
+  {
+    title: 'Ni',
+    dataIndex: 'Ni',
+  },
+  {
+    title: 'Ag(t/g)',
+    dataIndex: 'Ag',
+  },
+  {
+    title: 'Au(t/g)',
+    dataIndex: 'Au',
   },
 ]
 
