@@ -157,7 +157,7 @@ const fkdata = [
 ]
 const elementsMixtureListColumns = [
   {
-    title: '物料总览',
+    title: '库存物料',
     dataIndex: 'name',
   },
   {
@@ -221,11 +221,7 @@ const elementsMixtureListColumns = [
   {
     title: 'Au(t/g)',
     dataIndex: 'Au',
-  },
-  {
-    title: '库存/吨',
-    dataIndex: 'inventory',
-  },
+  }
 ]
 const resultListColumns = [
   {
@@ -415,7 +411,13 @@ export default function () {
         gaPop: values.gaPop,
         gaEpoch: values.gaEpoch
       },
-      elementsTargetList
+      elementsTargetList,
+      modelWeight:{
+        maxOre: values.maxOre,
+        minMaterial: values.minMaterial,
+        maxMaterial:values.maxMaterial,
+        elementsPercentage: values.elementsPercentage
+      }
     }
     console.log(payload)
     const xhr = new XMLHttpRequest()
@@ -440,13 +442,15 @@ export default function () {
     xhr.addEventListener('readystatechange', () => {
       if (xhr.readyState === 4 && xhr.status === 200) {
         console.log(JSON.parse(xhr.response));
-        const data = JSON.parse(xhr.responseText).map((item, index) => ({
+        const result = JSON.parse(xhr.response);
+        const data = result.list.map((item, index) => ({
           ...item,
           index,
           delete: false,
           inventoryBalance: ''
         }))
         setData(data);
+        setMaterialList(result.materialList);
         setTableLoading(false)
       }
     })
@@ -456,6 +460,7 @@ export default function () {
   }
 
   const [data, setData] = useState(fkdata);
+  const [materialList, setMaterialList] = useState([]);
   const [result, setResult] = useState(null);
   const [resultShow, setResultShow] = useState(false);
   const [tableLoading, setTableLoading] = useState(false);
@@ -629,562 +634,564 @@ export default function () {
           className={styles.block}
           rowKey={'name'}
           columns={elementsMixtureListColumns}
-          dataSource={[]}
+          dataSource={(() => {
+            let value = { name: '元素加权平均含量' }
+            materialList.forEach((item) => {
+              value[item.name] = item.percentage
+            })
+            return [value]
+          })()}
           pagination={false}
           bordered
         />
       </Spin>
       <div>
-      <Form
-            // layout="inline"
-            className={styles.block}
-            labelCol={{ span: 15 }}
-            onFinish={onFinish}
-            onFinishFailed={onFinishFailed}
-          >
-            <div>
-        <Tabs defaultActiveKey="1" type="card">
-          <TabPane tab="预设参数" key="1" forceRender>
-            <Row className={styles.row}>
-              <Col span={6}>
-                <Form.Item
-                  label="冰铜目标品味(%)"
-                  name="matteTargetGradePercentage"
-                  initialValue={74}
-                  rules={[
-                    {
-                      required: true
-                    },
-                  ]}
-                >
-                  <InputNumber />
-                </Form.Item>
-              </Col>
-              <Col span={6}>
-                <Form.Item
-                  label="冰铜铁含量(%)"
-                  name="matteFePercentage"
-                  initialValue={3.5}
-                  rules={[
-                    {
-                      required: true
-                    },
-                  ]}
-                >
-                  <InputNumber />
-                </Form.Item>
-              </Col>
-              <Col span={6}>
-                <Form.Item
-                  label="冰铜硫含量(%)"
-                  name="matteSPercentage"
-                  initialValue={20.84}
-                  rules={[
-                    {
-                      required: true
-                    },
-                  ]}
-                >
-                  <InputNumber />
-                </Form.Item>
-              </Col>
-            </Row>
-            <Row className={styles.row}>
-              <Col span={6}>
-                <Form.Item
-                  label="熔炉渣铜含量(%)"
-                  name="slagCuPercentage"
-                  initialValue={1.99}
-                  rules={[
-                    {
-                      required: true
-                    },
-                  ]}
-                >
-                  <InputNumber />
-                </Form.Item>
-              </Col>
-              <Col span={6}>
-                <Form.Item
-                  label="熔炉渣硫含量(%)"
-                  name="slagSPercentage"
-                  initialValue={.45}
-                  rules={[
-                    {
-                      required: true
-                    },
-                  ]}
-                >
-                  <InputNumber />
-                </Form.Item>
-              </Col>
-              <Col span={6}>
-                <Form.Item
-                  label="熔炉渣铁含量(%)"
-                  name="slagFePercentage"
-                  initialValue={48}
-                  rules={[
-                    {
-                      required: true
-                    },
-                  ]}
-                >
-                  <InputNumber />
-                </Form.Item>
-              </Col>
-              <Col span={6}>
-                <Form.Item
-                  //labelCol={12}
-                  label="熔炉渣二氧化硅含量(%)"
-                  name="slagSiO2Percentage"
-                  initialValue={24}
-                  rules={[
-                    {
-                      required: true
-                    },
-                  ]}
-                >
-                  <InputNumber />
-                </Form.Item>
-              </Col>
-            </Row>
-            <Row className={styles.row}>
-              <Col span={6}>
-                <Form.Item
-                  label="最大类别数"
-                  name="maxType"
-                  initialValue={4}
-                  rules={[
-                    {
-                      required: true
-                    },
-                  ]}
-                >
-                  <InputNumber />
-                </Form.Item>
-              </Col>
-              <Col span={6}>
-                <Form.Item
-                  label="模型因子alpha"
-                  name="modelFactorAlpha"
-                  initialValue={1}
-                  rules={[
-                    {
-                      required: true
-                    },
-                  ]}
-                >
-                  <InputNumber />
-                </Form.Item>
-              </Col>
-              <Col span={6}>
-                <Form.Item
-                  label="模型因子beta"
-                  name="modelFactorBeta"
-                  initialValue={1}
-                  rules={[
-                    {
-                      required: true
-                    },
-                  ]}
-                >
-                  <InputNumber />
-                </Form.Item>
-              </Col>
-              <Col span={6}>
-                <Form.Item
-                  label="模型因子gamma"
-                  name="modelFactorGamma"
-                  initialValue={1}
-                  rules={[
-                    {
-                      required: true
-                    },
-                  ]}
-                >
-                  <InputNumber />
-                </Form.Item>
-              </Col>
-            </Row>
-            <Row className={styles.row}>
-              <Col span={6}>
-                <Form.Item
-                  label="优化算法种群数量"
-                  name="gaPop"
-                  initialValue={25}
-                  rules={[
-                    {
-                      required: true
-                    },
-                  ]}
-                >
-                  <InputNumber />
-                </Form.Item>
-              </Col>
-              <Col span={6}>
-                <Form.Item
-                  label="优化算法迭代次数"
-                  name="gaEpoch"
-                  initialValue={25}
-                  rules={[
-                    {
-                      required: true
-                    },
-                  ]}
-                >
-                  <InputNumber />
-                </Form.Item>
-              </Col>
+        <Form
+          // layout="inline"
+          className={styles.block}
+          labelCol={{ span: 15 }}
+          onFinish={onFinish}
+          onFinishFailed={onFinishFailed}
+        >
+          <div>
+            <Tabs defaultActiveKey="1" type="card">
+              <TabPane tab="预设参数" key="1" forceRender>
+                <Row className={styles.row}>
+                  <Col span={6}>
+                    <Form.Item
+                      label="冰铜目标品味(%)"
+                      name="matteTargetGradePercentage"
+                      initialValue={74}
+                      rules={[
+                        {
+                          required: true
+                        },
+                      ]}
+                    >
+                      <InputNumber />
+                    </Form.Item>
+                  </Col>
+                  <Col span={6}>
+                    <Form.Item
+                      label="冰铜铁含量(%)"
+                      name="matteFePercentage"
+                      initialValue={3.5}
+                      rules={[
+                        {
+                          required: true
+                        },
+                      ]}
+                    >
+                      <InputNumber />
+                    </Form.Item>
+                  </Col>
+                  <Col span={6}>
+                    <Form.Item
+                      label="冰铜硫含量(%)"
+                      name="matteSPercentage"
+                      initialValue={20.84}
+                      rules={[
+                        {
+                          required: true
+                        },
+                      ]}
+                    >
+                      <InputNumber />
+                    </Form.Item>
+                  </Col>
+                </Row>
+                <Row className={styles.row}>
+                  <Col span={6}>
+                    <Form.Item
+                      label="熔炉渣铜含量(%)"
+                      name="slagCuPercentage"
+                      initialValue={1.99}
+                      rules={[
+                        {
+                          required: true
+                        },
+                      ]}
+                    >
+                      <InputNumber />
+                    </Form.Item>
+                  </Col>
+                  <Col span={6}>
+                    <Form.Item
+                      label="熔炉渣硫含量(%)"
+                      name="slagSPercentage"
+                      initialValue={.45}
+                      rules={[
+                        {
+                          required: true
+                        },
+                      ]}
+                    >
+                      <InputNumber />
+                    </Form.Item>
+                  </Col>
+                  <Col span={6}>
+                    <Form.Item
+                      label="熔炉渣铁含量(%)"
+                      name="slagFePercentage"
+                      initialValue={48}
+                      rules={[
+                        {
+                          required: true
+                        },
+                      ]}
+                    >
+                      <InputNumber />
+                    </Form.Item>
+                  </Col>
+                  <Col span={6}>
+                    <Form.Item
+                      //labelCol={12}
+                      label="熔炉渣二氧化硅含量(%)"
+                      name="slagSiO2Percentage"
+                      initialValue={24}
+                      rules={[
+                        {
+                          required: true
+                        },
+                      ]}
+                    >
+                      <InputNumber />
+                    </Form.Item>
+                  </Col>
+                </Row>
+                <Row className={styles.row}>
+                  <Col span={6}>
+                    <Form.Item
+                      label="最大类别数"
+                      name="maxType"
+                      initialValue={4}
+                      rules={[
+                        {
+                          required: true
+                        },
+                      ]}
+                    >
+                      <InputNumber />
+                    </Form.Item>
+                  </Col>
+                  <Col span={6}>
+                    <Form.Item
+                      label="模型因子alpha"
+                      name="modelFactorAlpha"
+                      initialValue={1}
+                      rules={[
+                        {
+                          required: true
+                        },
+                      ]}
+                    >
+                      <InputNumber />
+                    </Form.Item>
+                  </Col>
+                  <Col span={6}>
+                    <Form.Item
+                      label="模型因子beta"
+                      name="modelFactorBeta"
+                      initialValue={1}
+                      rules={[
+                        {
+                          required: true
+                        },
+                      ]}
+                    >
+                      <InputNumber />
+                    </Form.Item>
+                  </Col>
+                  <Col span={6}>
+                    <Form.Item
+                      label="模型因子gamma"
+                      name="modelFactorGamma"
+                      initialValue={1}
+                      rules={[
+                        {
+                          required: true
+                        },
+                      ]}
+                    >
+                      <InputNumber />
+                    </Form.Item>
+                  </Col>
+                </Row>
+                <Row className={styles.row}>
+                  <Col span={6}>
+                    <Form.Item
+                      label="优化算法种群数量"
+                      name="gaPop"
+                      initialValue={25}
+                      rules={[
+                        {
+                          required: true
+                        },
+                      ]}
+                    >
+                      <InputNumber />
+                    </Form.Item>
+                  </Col>
+                  <Col span={6}>
+                    <Form.Item
+                      label="优化算法迭代次数"
+                      name="gaEpoch"
+                      initialValue={25}
+                      rules={[
+                        {
+                          required: true
+                        },
+                      ]}
+                    >
+                      <InputNumber />
+                    </Form.Item>
+                  </Col>
 
-            </Row>
-          </TabPane>
-          <TabPane tab="元素含量" key="2" forceRender>
-            <Row className={styles.row}>
-              <Col span={6}>
-                <Space>
-                  <Form.Item
-                    name="checkboxCu"
-                    valuePropName="checked"
-                    noStyle={true}
-                  >
-                    <Checkbox />
-                  </Form.Item>
-                  <span className={styles.elementspan}>Cu(%)</span>
-                  <Form.Item
-                    name="Cu"
-                    noStyle={true}
-                  >
-                    <InputNumber />
-                  </Form.Item>
-                  <Form.Item
-                    name="priorityCu"
-                    noStyle={true}
-                  >
-                    <InputNumber
-                      placeholder="优先级" />
-                  </Form.Item>
-                </Space>
-              </Col>
-              <Col span={6}>
-                <Space>
-                  <Form.Item
-                    name="checkboxSiO2"
-                    valuePropName="checked"
-                    noStyle={true}
-                  >
-                    <Checkbox />
-                  </Form.Item>
-                  <span className={styles.elementspan}>SiO2(%)</span>
-                  <Form.Item
-                    name="SiO2"
-                    noStyle={true}
-                  >
-                    <InputNumber />
-                  </Form.Item>
-                  <Form.Item
-                    name="prioritySiO2"
-                    noStyle={true}
-                  >
-                    <InputNumber placeholder="优先级" />
-                  </Form.Item>
-                </Space>
-              </Col>
-              <Col span={6}>
-                <Space>
-                  <Form.Item
-                    name="checkboxZn"
-                    valuePropName="checked"
-                    noStyle={true}
-                  >
-                    <Checkbox />
-                  </Form.Item>
-                  <span className={styles.elementspan}>Zn(%)</span>
-                  <Form.Item
-                    name="Zn"
-                    noStyle={true}
-                  >
-                    <InputNumber />
-                  </Form.Item>
-                  <Form.Item
-                    name="priorityZn"
-                    noStyle={true}
-                  >
-                    <InputNumber placeholder="优先级" />
-                  </Form.Item>
-                </Space>
-              </Col>
-              <Col span={6}>
-                <Space>
-                  <Form.Item
-                    name="checkboxAl2O3"
-                    valuePropName="checked"
-                    noStyle={true}
-                  >
-                    <Checkbox />
-                  </Form.Item>
-                  <span className={styles.elementspan}>Al2O3(%)</span>
-                  <Form.Item
-                    name="Al2O3"
-                    noStyle={true}
-                  >
-                    <InputNumber />
-                  </Form.Item>
-                  <Form.Item
-                    name="priorityAl2O3"
-                    noStyle={true}
-                  >
-                    <InputNumber placeholder="优先级" />
-                  </Form.Item>
-                </Space>
-              </Col>
-            </Row>
-            <Row className={styles.row}>
-              <Col span={6}>
-                <Space>
-                  <Form.Item
-                    name="checkboxFe"
-                    valuePropName="checked"
-                    noStyle={true}
-                  >
-                    <Checkbox />
-                  </Form.Item>
-                  <span className={styles.elementspan}>Fe(%)</span>
-                  <Form.Item
-                    name="Fe"
-                    noStyle={true}
-                  >
-                    <InputNumber />
-                  </Form.Item>
-                  <Form.Item
-                    name="priorityFe"
-                    noStyle={true}
-                  >
-                    <InputNumber placeholder="优先级" />
-                  </Form.Item>
-                </Space>
-              </Col>
-              <Col span={6}>
-                <Space>
-                  <Form.Item
-                    name="checkboxCaO"
-                    valuePropName="checked"
-                    noStyle={true}
-                  >
-                    <Checkbox />
-                  </Form.Item>
-                  <span className={styles.elementspan}>CaO(%)</span>
-                  <Form.Item
-                    name="CaO"
-                    noStyle={true}
-                  >
-                    <InputNumber />
-                  </Form.Item>
-                  <Form.Item
-                    name="priorityCaO"
-                    noStyle={true}
-                  >
-                    <InputNumber placeholder="优先级" />
-                  </Form.Item>
-                </Space>
-              </Col>
-              <Col span={6}>
-                <Space>
-                  <Form.Item
-                    name="checkboxPb"
-                    valuePropName="checked"
-                    noStyle={true}
-                  >
-                    <Checkbox />
-                  </Form.Item>
-                  <span className={styles.elementspan}>Pb(%)</span>
-                  <Form.Item
-                    name="Pb"
-                    noStyle={true}
-                  >
-                    <InputNumber />
-                  </Form.Item>
-                  <Form.Item
-                    name="priorityPb"
-                    noStyle={true}
-                  >
-                    <InputNumber placeholder="优先级" />
-                  </Form.Item>
-                </Space>
-              </Col>
-              <Col span={6}>
-                <Space>
-                  <Form.Item
-                    name="checkboxH2O"
-                    valuePropName="checked"
-                    noStyle={true}
-                  >
-                    <Checkbox />
-                  </Form.Item>
-                  <span className={styles.elementspan}>H2O(%)</span>
-                  <Form.Item
-                    name="H2O"
-                    noStyle={true}
-                  >
-                    <InputNumber />
-                  </Form.Item>
-                  <Form.Item
-                    name="priorityH2O"
-                    noStyle={true}
-                  >
-                    <InputNumber placeholder="优先级" />
-                  </Form.Item>
-                </Space>
-              </Col>
-            </Row>
-            <Row className={styles.row}>
-              <Col span={6}>
-                <Space>
-                  <Form.Item
-                    name="checkboxS"
-                    valuePropName="checked"
-                    noStyle={true}
-                  >
-                    <Checkbox />
-                  </Form.Item>
-                  <span className={styles.elementspan}>S(%)</span>
-                  <Form.Item
-                    name="S"
-                    noStyle={true}
-                  >
-                    <InputNumber />
-                  </Form.Item>
-                  <Form.Item
-                    name="priorityS"
-                    noStyle={true}
-                  >
-                    <InputNumber placeholder="优先级" />
-                  </Form.Item>
-                </Space>
-              </Col>
-              <Col span={6}>
-                <Space>
-                  <Form.Item
-                    name="checkboxAs"
-                    valuePropName="checked"
-                    noStyle={true}
-                  >
-                    <Checkbox />
-                  </Form.Item>
-                  <span className={styles.elementspan}>As(%)</span>
-                  <Form.Item
-                    name="As"
-                    noStyle={true}
-                  >
-                    <InputNumber />
-                  </Form.Item>
-                  <Form.Item
-                    name="priorityAs"
-                    noStyle={true}
-                  >
-                    <InputNumber placeholder="优先级" />
-                  </Form.Item>
-                </Space>
-              </Col>
-              <Col span={6}>
-                <Space>
-                  <Form.Item
-                    name="checkboxMgO"
-                    valuePropName="checked"
-                    noStyle={true}
-                  >
-                    <Checkbox />
-                  </Form.Item>
-                  <span className={styles.elementspan}>MgO(%)</span>
-                  <Form.Item
-                    name="MgO"
-                    noStyle={true}
-                  >
-                    <InputNumber />
-                  </Form.Item>
-                  <Form.Item
-                    name="priorityMgO"
-                    noStyle={true}
-                  >
-                    <InputNumber placeholder="优先级" />
-                  </Form.Item>
-                </Space>
+                </Row>
+              </TabPane>
+              <TabPane tab="元素含量" key="2" forceRender>
+                <Row className={styles.row}>
+                  <Col span={6}>
+                    <Space>
+                      <Form.Item
+                        name="checkboxCu"
+                        valuePropName="checked"
+                        noStyle={true}
+                      >
+                        <Checkbox />
+                      </Form.Item>
+                      <span className={styles.elementspan}>Cu(%)</span>
+                      <Form.Item
+                        name="Cu"
+                        noStyle={true}
+                      >
+                        <InputNumber />
+                      </Form.Item>
+                      <Form.Item
+                        name="priorityCu"
+                        noStyle={true}
+                      >
+                        <InputNumber
+                          placeholder="优先级" />
+                      </Form.Item>
+                    </Space>
+                  </Col>
+                  <Col span={6}>
+                    <Space>
+                      <Form.Item
+                        name="checkboxSiO2"
+                        valuePropName="checked"
+                        noStyle={true}
+                      >
+                        <Checkbox />
+                      </Form.Item>
+                      <span className={styles.elementspan}>SiO2(%)</span>
+                      <Form.Item
+                        name="SiO2"
+                        noStyle={true}
+                      >
+                        <InputNumber />
+                      </Form.Item>
+                      <Form.Item
+                        name="prioritySiO2"
+                        noStyle={true}
+                      >
+                        <InputNumber placeholder="优先级" />
+                      </Form.Item>
+                    </Space>
+                  </Col>
+                  <Col span={6}>
+                    <Space>
+                      <Form.Item
+                        name="checkboxZn"
+                        valuePropName="checked"
+                        noStyle={true}
+                      >
+                        <Checkbox />
+                      </Form.Item>
+                      <span className={styles.elementspan}>Zn(%)</span>
+                      <Form.Item
+                        name="Zn"
+                        noStyle={true}
+                      >
+                        <InputNumber />
+                      </Form.Item>
+                      <Form.Item
+                        name="priorityZn"
+                        noStyle={true}
+                      >
+                        <InputNumber placeholder="优先级" />
+                      </Form.Item>
+                    </Space>
+                  </Col>
+                  <Col span={6}>
+                    <Space>
+                      <Form.Item
+                        name="checkboxAl2O3"
+                        valuePropName="checked"
+                        noStyle={true}
+                      >
+                        <Checkbox />
+                      </Form.Item>
+                      <span className={styles.elementspan}>Al2O3(%)</span>
+                      <Form.Item
+                        name="Al2O3"
+                        noStyle={true}
+                      >
+                        <InputNumber />
+                      </Form.Item>
+                      <Form.Item
+                        name="priorityAl2O3"
+                        noStyle={true}
+                      >
+                        <InputNumber placeholder="优先级" />
+                      </Form.Item>
+                    </Space>
+                  </Col>
+                </Row>
+                <Row className={styles.row}>
+                  <Col span={6}>
+                    <Space>
+                      <Form.Item
+                        name="checkboxFe"
+                        valuePropName="checked"
+                        noStyle={true}
+                      >
+                        <Checkbox />
+                      </Form.Item>
+                      <span className={styles.elementspan}>Fe(%)</span>
+                      <Form.Item
+                        name="Fe"
+                        noStyle={true}
+                      >
+                        <InputNumber />
+                      </Form.Item>
+                      <Form.Item
+                        name="priorityFe"
+                        noStyle={true}
+                      >
+                        <InputNumber placeholder="优先级" />
+                      </Form.Item>
+                    </Space>
+                  </Col>
+                  <Col span={6}>
+                    <Space>
+                      <Form.Item
+                        name="checkboxCaO"
+                        valuePropName="checked"
+                        noStyle={true}
+                      >
+                        <Checkbox />
+                      </Form.Item>
+                      <span className={styles.elementspan}>CaO(%)</span>
+                      <Form.Item
+                        name="CaO"
+                        noStyle={true}
+                      >
+                        <InputNumber />
+                      </Form.Item>
+                      <Form.Item
+                        name="priorityCaO"
+                        noStyle={true}
+                      >
+                        <InputNumber placeholder="优先级" />
+                      </Form.Item>
+                    </Space>
+                  </Col>
+                  <Col span={6}>
+                    <Space>
+                      <Form.Item
+                        name="checkboxPb"
+                        valuePropName="checked"
+                        noStyle={true}
+                      >
+                        <Checkbox />
+                      </Form.Item>
+                      <span className={styles.elementspan}>Pb(%)</span>
+                      <Form.Item
+                        name="Pb"
+                        noStyle={true}
+                      >
+                        <InputNumber />
+                      </Form.Item>
+                      <Form.Item
+                        name="priorityPb"
+                        noStyle={true}
+                      >
+                        <InputNumber placeholder="优先级" />
+                      </Form.Item>
+                    </Space>
+                  </Col>
+                  <Col span={6}>
+                    <Space>
+                      <Form.Item
+                        name="checkboxH2O"
+                        valuePropName="checked"
+                        noStyle={true}
+                      >
+                        <Checkbox />
+                      </Form.Item>
+                      <span className={styles.elementspan}>H2O(%)</span>
+                      <Form.Item
+                        name="H2O"
+                        noStyle={true}
+                      >
+                        <InputNumber />
+                      </Form.Item>
+                      <Form.Item
+                        name="priorityH2O"
+                        noStyle={true}
+                      >
+                        <InputNumber placeholder="优先级" />
+                      </Form.Item>
+                    </Space>
+                  </Col>
+                </Row>
+                <Row className={styles.row}>
+                  <Col span={6}>
+                    <Space>
+                      <Form.Item
+                        name="checkboxS"
+                        valuePropName="checked"
+                        noStyle={true}
+                      >
+                        <Checkbox />
+                      </Form.Item>
+                      <span className={styles.elementspan}>S(%)</span>
+                      <Form.Item
+                        name="S"
+                        noStyle={true}
+                      >
+                        <InputNumber />
+                      </Form.Item>
+                      <Form.Item
+                        name="priorityS"
+                        noStyle={true}
+                      >
+                        <InputNumber placeholder="优先级" />
+                      </Form.Item>
+                    </Space>
+                  </Col>
+                  <Col span={6}>
+                    <Space>
+                      <Form.Item
+                        name="checkboxAs"
+                        valuePropName="checked"
+                        noStyle={true}
+                      >
+                        <Checkbox />
+                      </Form.Item>
+                      <span className={styles.elementspan}>As(%)</span>
+                      <Form.Item
+                        name="As"
+                        noStyle={true}
+                      >
+                        <InputNumber />
+                      </Form.Item>
+                      <Form.Item
+                        name="priorityAs"
+                        noStyle={true}
+                      >
+                        <InputNumber placeholder="优先级" />
+                      </Form.Item>
+                    </Space>
+                  </Col>
+                  <Col span={6}>
+                    <Space>
+                      <Form.Item
+                        name="checkboxMgO"
+                        valuePropName="checked"
+                        noStyle={true}
+                      >
+                        <Checkbox />
+                      </Form.Item>
+                      <span className={styles.elementspan}>MgO(%)</span>
+                      <Form.Item
+                        name="MgO"
+                        noStyle={true}
+                      >
+                        <InputNumber />
+                      </Form.Item>
+                      <Form.Item
+                        name="priorityMgO"
+                        noStyle={true}
+                      >
+                        <InputNumber placeholder="优先级" />
+                      </Form.Item>
+                    </Space>
 
-              </Col>
+                  </Col>
 
-            </Row>
-          </TabPane>
-          <TabPane tab="模型权重" key="3" forceRender>
-          <Row className={styles.row}>
-              <Col span={6}>
-                <Form.Item
-                  label="最大矿量"
-                  name="x1"
-                  initialValue={1.99}
-                  rules={[
-                    {
-                      required: true
-                    },
-                  ]}
-                >
-                  <InputNumber />
-                </Form.Item>
-              </Col>
-              <Col span={6}>
-                <Form.Item
-                  label="最少物料"
-                  name="x2"
-                  initialValue={.45}
-                  rules={[
-                    {
-                      required: true
-                    },
-                  ]}
-                >
-                  <InputNumber />
-                </Form.Item>
-              </Col>
-              <Col span={6}>
-                <Form.Item
-                  label="元素含量"
-                  name="x3"
-                  initialValue={48}
-                  rules={[
-                    {
-                      required: true
-                    },
-                  ]}
-                >
-                  <InputNumber />
-                </Form.Item>
-              </Col>
-              <Col span={6}>
-                <Form.Item
-                  //labelCol={12}
-                  label="最大物料数量"
-                  name="x4"
-                  initialValue={24}
-                  rules={[
-                    {
-                      required: true
-                    },
-                  ]}
-                >
-                  <InputNumber />
-                </Form.Item>
-              </Col>
-            </Row>
-          </TabPane>
-        </Tabs>
-        </div>
-        <div>
-          
-
-
-          <Button htmlType="submit" type="primary" style={{ width: '200px' }}>
-            演&nbsp;&nbsp;算
-      </Button>
-      
-      </div>
+                </Row>
+              </TabPane>
+              <TabPane tab="模型权重" key="3" forceRender>
+                <Row className={styles.row}>
+                  <Col span={6}>
+                    <Form.Item
+                      label="最大矿量"
+                      name="maxOre"
+                      initialValue={1}
+                      rules={[
+                        {
+                          required: true
+                        },
+                      ]}
+                    >
+                      <InputNumber />
+                    </Form.Item>
+                  </Col>
+                  <Col span={6}>
+                    <Form.Item
+                      label="最少物料"
+                      name="minMaterial"
+                      initialValue={0}
+                      rules={[
+                        {
+                          required: true
+                        },
+                      ]}
+                    >
+                      <InputNumber />
+                    </Form.Item>
+                  </Col>
+                  <Col span={6}>
+                    <Form.Item
+                      //labelCol={12}
+                      label="最大物料数量"
+                      name="maxMaterial"
+                      initialValue={24}
+                      rules={[
+                        {
+                          required: true
+                        },
+                      ]}
+                    >
+                      <InputNumber />
+                    </Form.Item>
+                  </Col>
+                  <Col span={6}>
+                    <Form.Item
+                      label="元素含量"
+                      name="elementsPercentage"
+                      initialValue={0}
+                      rules={[
+                        {
+                          required: true
+                        },
+                      ]}
+                    >
+                      <InputNumber />
+                    </Form.Item>
+                  </Col>
+                </Row>
+              </TabPane>
+            </Tabs>
+          </div>
+          <div>
+            <Button htmlType="submit" type="primary" style={{ width: '200px' }}>
+              演&nbsp;&nbsp;算
+            </Button>
+          </div>
         </Form>
       </div>
       <Divider />
