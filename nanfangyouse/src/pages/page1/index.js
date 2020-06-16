@@ -301,6 +301,7 @@ const resultListColumns = [
   {
     title: '演算比例',
     dataIndex: 'calculatePercentage',
+    editable: true
   },
   {
     title: '库存余量',
@@ -412,10 +413,10 @@ export default function () {
         gaEpoch: values.gaEpoch
       },
       elementsTargetList,
-      modelWeight:{
+      modelWeight: {
         maxOre: values.maxOre,
         minMaterial: values.minMaterial,
-        maxMaterial:values.maxMaterial,
+        maxMaterial: values.maxMaterial,
         elementsPercentage: values.elementsPercentage
       }
     }
@@ -468,6 +469,9 @@ export default function () {
     host: '127.0.0.1',
     port: 7001
   });
+  const setResultList = (data) => {
+    setResult({ ...result, list: [...data] })
+  }
   let prevCountRef = useRef([...data]);
   useEffect(() => {
     prevCountRef.current = [...data];
@@ -602,7 +606,7 @@ export default function () {
   const [columns] = useState(fkcolumns);
 
   return (
-    <div style={{ padding: '0 20px 20px 20px' }}>
+    <div style={{ padding: '0 10px 10px 10px' }}>
       <div className={styles.row}>
         <Space>
           <Button type="primary" onClick={() => {
@@ -1206,18 +1210,59 @@ export default function () {
                 <p>演算参数</p>
                 <Row className={styles.row}>
                   <Col span={6}>
-                    <Input addonBefore="氧料比(立方米/吨)" defaultValue={result.calculateParameter.oxygenMaterialRatio} />
+                    <Input
+                      style={{ width: '250px' }}
+                      addonBefore="氧料比(立方米/吨)"
+                      defaultValue={result.calculateParameter.oxygenMaterialRatio}
+                    />
+                  </Col>
+                  <Col span={6}>
+                    <Input
+                      style={{ width: '250px' }}
+                      addonBefore="总消耗(吨)"
+                      defaultValue={result.calculateParameter.totalConsumedAmount}
+                    />
+                  </Col>
+                  <Col span={6}>
+                    <Input
+                      style={{ width: '250px' }}
+                      addonBefore="总剩余(吨)"
+                      defaultValue={result.calculateParameter.totalLeftOver}
+                    />
+                  </Col>
+                  <Col span={6}>
+                    <Input
+                      style={{ width: '250px' }}
+                      addonBefore="目标得分"
+                      defaultValue={result.calculateParameter.best_y}
+                    />
                   </Col>
                 </Row>
               </div>
               <div>
-                <Table
+                <Button htmlType="submit" type="primary" style={{ width: '200px' }}>
+                  更新
+                  </Button>
+              </div>
+              <div>
+                <div style={{ marginTop: '20px' }}>
+                  <TableContext.Provider
+                    value={{
+                      columns: resultListColumns,
+                      dataSource: result.list,
+                      setData: setResultList
+                    }}>
+                    <EditTable />
+                  </TableContext.Provider >
+                </div>
+                {/* <Table
+                  style={{ marginTop: '20px' }}
                   rowKey={'number'}
                   columns={resultListColumns}
                   dataSource={result.list}
                   pagination={false}
                   bordered
-                />
+                /> */}
               </div>
               <div style={{ marginTop: '20px' }}>
                 <Table

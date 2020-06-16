@@ -119,9 +119,10 @@ function EditTable(props) {
         dataIndex: col.dataIndex,
         title: col.title,
         handleSave: row => {
-
           const newData = [...dataSource];
-          newData[row.index] = { ...row }
+          const index = newData.findIndex(item => row.key === item.key);
+          newData[index] = {...row};
+          //row.index !== undefined && (newData[row.index] = { ...row })
           setData(newData)
         },
       }),
