@@ -14,6 +14,7 @@ import {
   Divider,
   Tabs
 } from 'antd';
+import request from '@/utils/request';
 import styles from './index.less';
 
 const { TabPane } = Tabs
@@ -301,11 +302,16 @@ const resultListColumns = [
   {
     title: '演算比例',
     dataIndex: 'calculatePercentage',
-    editable: true
+    // editable: true
   },
   {
     title: '库存余量',
     dataIndex: 'inventoryBalance',
+  },
+  {
+    title: '调整比例',
+    dataIndex: 'adjustPercentage',
+    editable: true
   },
 ];
 const resultElementsMixtureListColumns = [
@@ -421,43 +427,82 @@ export default function () {
       }
     }
     console.log(payload)
-    const xhr = new XMLHttpRequest()
     setResult(null)
     setResultShow(true)
-    xhr.addEventListener('readystatechange', () => {
-      if (xhr.readyState === 4 && xhr.status === 200) {
-        console.log(JSON.parse(xhr.response));
-        setResult(JSON.parse(xhr.responseText))
+    request({
+      method: 'POST',
+      host: ip.host,
+      port: ip.port,
+      url: 'calculate',
+      payload,
+      cb: (res) => {
+        setResult(res)
       }
     })
-    xhr.open('POST', `http://${ip.host}:${ip.port}/api/calculate`)
-    xhr.setRequestHeader("Content-type", "application/json")
-    xhr.send(JSON.stringify(payload))
+    // const xhr = new XMLHttpRequest()
+    // xhr.addEventListener('readystatechange', () => {
+    //   if (xhr.readyState === 4 && xhr.status === 200) {
+    //     console.log(JSON.parse(xhr.response));
+    //     setResult(JSON.parse(xhr.responseText))
+    //   }
+    // })
+    // xhr.open('POST', `http://${ip.host}:${ip.port}/api/calculate`)
+    // xhr.setRequestHeader("Content-type", "application/json")
+    // xhr.send(JSON.stringify(payload))
+  }
+  function quickUpdate(){
+    request({
+      method: 'POST',
+      host: ip.host,
+      port: ip.port,
+      url: 'quick_update',
+      payload: result,
+      cb: (res) => {
+        setResult(res)
+      }
+    })
   }
   function onFinishFailed(errorInfo) {
     console.log('Failed:', errorInfo);
   }
   function getInventory() {
     setTableLoading(true)
-    const xhr = new XMLHttpRequest();
-    xhr.addEventListener('readystatechange', () => {
-      if (xhr.readyState === 4 && xhr.status === 200) {
-        console.log(JSON.parse(xhr.response));
-        const result = JSON.parse(xhr.response);
-        const data = result.list.map((item, index) => ({
+    request({
+      method: 'GET',
+      host: ip.host,
+      port: ip.port,
+      url: 'getInventory',
+      cb: (res) => {
+        const data = res.list.map((item, index) => ({
           ...item,
           index,
           delete: false,
           inventoryBalance: ''
         }))
         setData(data);
-        setMaterialList(result.materialList);
+        setMaterialList(res.materialList);
         setTableLoading(false)
       }
     })
-    xhr.open('GET', `http://${ip.host}:${ip.port}/api/getInventory`)
-    xhr.setRequestHeader("Content-type", "application/json")
-    xhr.send()
+    // const xhr = new XMLHttpRequest();
+    // xhr.addEventListener('readystatechange', () => {
+    //   if (xhr.readyState === 4 && xhr.status === 200) {
+    //     console.log(JSON.parse(xhr.response));
+    //     const result = JSON.parse(xhr.response);
+    //     const data = result.list.map((item, index) => ({
+    //       ...item,
+    //       index,
+    //       delete: false,
+    //       inventoryBalance: ''
+    //     }))
+    //     setData(data);
+    //     setMaterialList(result.materialList);
+    //     setTableLoading(false)
+    //   }
+    // })
+    // xhr.open('GET', `http://${ip.host}:${ip.port}/api/getInventory`)
+    // xhr.setRequestHeader("Content-type", "application/json")
+    // xhr.send()
   }
 
   const [data, setData] = useState(fkdata);
@@ -470,6 +515,7 @@ export default function () {
     port: 7001
   });
   const setResultList = (data) => {
+    //console.log(data)
     setResult({ ...result, list: [...data] })
   }
   let prevCountRef = useRef([...data]);
@@ -537,60 +583,60 @@ export default function () {
     {
       title: 'Cu',
       dataIndex: 'Cu',
-      editable: true,
+      // editable: true,
     },
     {
       title: 'Fe',
       dataIndex: 'Fe',
-      editable: true,
+      // editable: true,
     },
     {
       title: 'S',
       dataIndex: 'S',
-      editable: true,
+      // editable: true,
     },
     {
       title: 'SiO2',
       dataIndex: 'SiO2',
-      editable: true,
+      // editable: true,
     }, {
       title: 'CaO',
       dataIndex: 'CaO',
-      editable: true,
+      // editable: true,
     },
     {
       title: 'As',
       dataIndex: 'As',
-      editable: true,
+      // editable: true,
     }, {
       title: 'Zn',
       dataIndex: 'Zn',
-      editable: true,
+      // editable: true,
     },
     {
       title: 'Pb',
       dataIndex: 'Pb',
-      editable: true,
+      // editable: true,
     },
     {
       title: 'MgO',
       dataIndex: 'MgO',
-      editable: true,
+      // editable: true,
     },
     {
       title: 'Al2O3',
       dataIndex: 'Al2O3',
-      editable: true,
+      // editable: true,
     },
     {
       title: 'H2O',
       dataIndex: 'H2O',
-      editable: true,
+      // editable: true,
     },
     {
       title: '库存/吨',
       dataIndex: 'inventory',
-      editable: true,
+      // editable: true,
     },
     {
       title: '演算比例',
@@ -1240,7 +1286,11 @@ export default function () {
                 </Row>
               </div>
               <div>
-                <Button htmlType="submit" type="primary" style={{ width: '200px' }}>
+                <Button 
+                  type="primary" 
+                  style={{ width: '200px' }}
+                  onClick={quickUpdate}
+                >
                   更新
                   </Button>
               </div>

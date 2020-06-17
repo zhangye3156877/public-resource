@@ -40,7 +40,7 @@ const EditableCell = ({
 
   const toggleEdit = () => {
     
-    if (dataIndex !== 'calculatePercentage' || record.required === false) {
+    if (record.required === false) {
       return
     }
     setEditing(!editing);
@@ -120,7 +120,7 @@ function EditTable(props) {
         title: col.title,
         handleSave: row => {
           const newData = [...dataSource];
-          const index = newData.findIndex(item => row.key === item.key);
+          const index = newData.findIndex(item => row.number === item.number);
           newData[index] = {...row};
           //row.index !== undefined && (newData[row.index] = { ...row })
           setData(newData)

@@ -9,7 +9,8 @@ class MainController extends Controller {
           name: "水星轮",
           number: 10001,
           inventoryBalance: 1346,
-          calculatePercentage: 31.23
+          calculatePercentage: 31.23,
+          adjustPercentage: 11
         },
         {
           name: "莱科塔",
