@@ -310,7 +310,7 @@ const resultListColumns = [
   },
   {
     title: '调整比例',
-    dataIndex: 'adjustPercentage',
+    dataIndex: 'adjustRatio',
     editable: true
   },
 ];
