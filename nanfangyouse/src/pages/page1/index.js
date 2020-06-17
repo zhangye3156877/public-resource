@@ -439,16 +439,6 @@ export default function () {
         setResult(res)
       }
     })
-    // const xhr = new XMLHttpRequest()
-    // xhr.addEventListener('readystatechange', () => {
-    //   if (xhr.readyState === 4 && xhr.status === 200) {
-    //     console.log(JSON.parse(xhr.response));
-    //     setResult(JSON.parse(xhr.responseText))
-    //   }
-    // })
-    // xhr.open('POST', `http://${ip.host}:${ip.port}/api/calculate`)
-    // xhr.setRequestHeader("Content-type", "application/json")
-    // xhr.send(JSON.stringify(payload))
   }
   function quickUpdate(){
     request({
@@ -484,25 +474,7 @@ export default function () {
         setTableLoading(false)
       }
     })
-    // const xhr = new XMLHttpRequest();
-    // xhr.addEventListener('readystatechange', () => {
-    //   if (xhr.readyState === 4 && xhr.status === 200) {
-    //     console.log(JSON.parse(xhr.response));
-    //     const result = JSON.parse(xhr.response);
-    //     const data = result.list.map((item, index) => ({
-    //       ...item,
-    //       index,
-    //       delete: false,
-    //       inventoryBalance: ''
-    //     }))
-    //     setData(data);
-    //     setMaterialList(result.materialList);
-    //     setTableLoading(false)
-    //   }
-    // })
-    // xhr.open('GET', `http://${ip.host}:${ip.port}/api/getInventory`)
-    // xhr.setRequestHeader("Content-type", "application/json")
-    // xhr.send()
+
   }
 
   const [data, setData] = useState(fkdata);
@@ -632,6 +604,26 @@ export default function () {
       title: 'H2O',
       dataIndex: 'H2O',
       // editable: true,
+    },
+    {
+      title: 'Sb',
+      dataIndex: 'Sb',
+    },
+    {
+      title: 'Bi',
+      dataIndex: 'Bi',
+    },
+    {
+      title: 'Ni',
+      dataIndex: 'Ni',
+    },
+    {
+      title: 'Ag(t/g)',
+      dataIndex: 'Ag',
+    },
+    {
+      title: 'Au(t/g)',
+      dataIndex: 'Au',
     },
     {
       title: '库存/吨',

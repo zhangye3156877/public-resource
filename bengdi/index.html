@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .box{
+      width: 400px;
+      height: 400px;
+      position: relative;
+      overflow: hidden;
+    }
+    .box img{
+      width: 100px;
+      height: 100px;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      margin: 0 auto;
+    }
+    .danmu{
+      width: fit-content;
+      position: absolute;
+      top: 10px;
+      font-weight: 900;
+      font-size: 20px;
+      animation: a 2s linear infinite;
+    }
+    @keyframes a {
+      from{
+        left: 600px;
+      }
+      to{
+        left: -200px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <div class="danmu">愈畅妹妹最美</div>
+    <img src="./timg.gif" alt="">
+  </div>
+</body>
+<script>
+  const v = document.querySelector('.box');
+  const colors = ['blue', 'green', 'red', 'yellow', 'pink', 'orange', 'gray', 'purple']
+  let i = 0;
+  setInterval(() => {
+    i > colors.length - 1 && (i = 0)
+    v.style.backgroundColor = colors[i]
+    i++
+  })
+</script>
+</html>
