@@ -36,6 +36,40 @@ class MainController extends Controller {
     console.log(ctx.request.body)
     ctx.body = JSON.stringify(data);
   }
+  async quickupdate() {
+    const { ctx } = this;
+    const data = {
+      list: [
+        {
+          name: "水星轮",
+          number: 10001,
+          inventoryBalance: 999,
+          calculatePercentage: 99,
+          adjustPercentage: 11
+        },
+        {
+          name: "莱科塔",
+          number: 10002,
+          inventoryBalance: 999,
+          calculatePercentage: 99
+        }
+      ],
+      calculateParameter: {
+        oxygenMaterialRatio: 12.32,
+      },
+      elementsMixtureList: [
+        {
+          name: "Cu",
+          percentage: 24.01
+        },
+        {
+          name: "Fe",
+          percentage: 31.02
+        }
+      ]
+    }
+    ctx.body = JSON.stringify(data);
+  }
 
   async getInventory() {
     const { ctx } = this;
