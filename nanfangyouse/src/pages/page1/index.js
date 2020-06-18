@@ -1251,28 +1251,28 @@ export default function () {
                     <Input
                       style={{ width: '250px' }}
                       addonBefore="氧料比(立方米/吨)"
-                      defaultValue={result.calculateParameter.oxygenMaterialRatio}
+                      value={result.calculateParameter.oxygenMaterialRatio}
                     />
                   </Col>
                   <Col span={6}>
                     <Input
                       style={{ width: '250px' }}
                       addonBefore="总消耗(吨)"
-                      defaultValue={result.calculateParameter.totalConsumedAmount}
+                      value={result.calculateParameter.totalConsumedAmount}
                     />
                   </Col>
                   <Col span={6}>
                     <Input
                       style={{ width: '250px' }}
                       addonBefore="总剩余(吨)"
-                      defaultValue={result.calculateParameter.totalLeftOver}
+                      value={result.calculateParameter.totalLeftOver}
                     />
                   </Col>
                   <Col span={6}>
                     <Input
                       style={{ width: '250px' }}
                       addonBefore="目标得分"
-                      defaultValue={result.calculateParameter.best_y}
+                      value={result.calculateParameter.best_y}
                     />
                   </Col>
                 </Row>

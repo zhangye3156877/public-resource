@@ -21,6 +21,9 @@ class MainController extends Controller {
       ],
       calculateParameter: {
         oxygenMaterialRatio: 12.32,
+        totalConsumedAmount:12.32,
+        totalLeftOver:12.32,
+        best_y: 12.32
       },
       elementsMixtureList: [
         {
@@ -56,6 +59,9 @@ class MainController extends Controller {
       ],
       calculateParameter: {
         oxygenMaterialRatio: 12.32,
+        totalConsumedAmount:1,
+        totalLeftOver:1,
+        best_y: 1
       },
       elementsMixtureList: [
         {
