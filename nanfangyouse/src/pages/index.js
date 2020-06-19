@@ -1,19 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Tabs, Divider, Card } from 'antd';
-import { connect } from 'dva';
 import Page1 from '@/pages/page1';
 import Page2 from '@/pages/page2'
 //import styles from './index.css';
 
 const { TabPane } = Tabs;
-function H(props) {
-  const { config, dispatch } = props;
-  dispatch({
-    type: 'global/changeConfig',
-    payload: {
-      host: '11111'
-    }
-  })
+export default function() {
+
   return (
     <div>
       <Divider style={{ marginTop: '5px' }} />
@@ -27,8 +20,6 @@ function H(props) {
         <TabPane tab="新增配方" key="1">
           <Card>
             <Page1
-              config={config}
-              dispatch={dispatch}
             />
           </Card>
         </TabPane>
@@ -41,13 +32,3 @@ function H(props) {
     </div>
   )
 }
-
-
-function mapStateToProps(state) {
-  const { config } = state.global;
-  return {
-    config
-  };
-}
-
-export default connect(mapStateToProps)(H);

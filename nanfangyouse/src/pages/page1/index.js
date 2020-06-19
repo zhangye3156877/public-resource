@@ -14,6 +14,7 @@ import {
   Divider,
   Tabs
 } from 'antd';
+import { connect } from 'dva';
 import request from '@/utils/request';
 import {list1_1, columns1_1, columns1_2, columns1_3} from '@/utils/data';
 import styles from './index.less';
@@ -25,8 +26,9 @@ const elementsMixtureListColumns = [...columns1_1];
 const resultListColumns = [...columns1_2];
 const resultElementsMixtureListColumns = [columns1_3];
 
-export default function (props) {
-  console.log(props.config)
+function H(props) {
+  const {config, dispatch} = props;
+  console.log(config)
   function onFinish(values) {
     console.log(values)
     const elementRuls = /checkbox/g
@@ -73,8 +75,8 @@ export default function (props) {
     setResultShow(true)
     request({
       method: 'POST',
-      host: ip.host,
-      port: ip.port,
+      host: config.host,
+      port: config.port,
       url: 'calculate',
       payload,
       cb: (res) => {
@@ -85,8 +87,8 @@ export default function (props) {
   function quickUpdate(){
     request({
       method: 'POST',
-      host: ip.host,
-      port: ip.port,
+      host: config.host,
+      port: config.port,
       url: 'quick_update',
       payload: result,
       cb: (res) => {
@@ -101,8 +103,8 @@ export default function (props) {
     setTableLoading(true)
     request({
       method: 'GET',
-      host: ip.host,
-      port: ip.port,
+      host: config.host,
+      port: config.port,
       url: 'getInventory',
       cb: (res) => {
         const data = res.list.map((item, index) => ({
@@ -124,10 +126,6 @@ export default function (props) {
   const [result, setResult] = useState(null);
   const [resultShow, setResultShow] = useState(false);
   const [tableLoading, setTableLoading] = useState(false);
-  const [ip, setIp] = useState({
-    host: '127.0.0.1',
-    port: 7001
-  });
   const setResultList = (data) => {
     //console.log(data)
     setResult({ ...result, list: [...data] })
@@ -292,22 +290,15 @@ export default function (props) {
           <Button type="primary" onClick={() => {
             getInventory()
           }}>获取库存</Button>
-          <Input style={{ width: '250px' }} addonBefore="当前请求地址" value={props.config.host} onChange={(e) => {
-            // setIp({
-            //   ...ip,
-            //   host: e.target.value
-            // })
-            console.log(e.target.value, props.dispatch)
-            props.dispatch({
-              type: 'changeConfig',
-              payload: {
-                host: e.target.value
-              }
+          <Input style={{ width: '250px' }} addonBefore="当前请求地址" value={config.host} onChange={(e) => {
+            dispatch({
+              type: 'global/changeConfig',
+              host: e.target.value
             })
           }} />
-          <Input style={{ width: '150px' }} addonBefore="当前端口" value={props.config.port} onChange={(e) => {
-            setIp({
-              ...ip,
+          <Input style={{ width: '150px' }} addonBefore="当前端口" value={config.port} onChange={(e) => {
+            dispatch({
+              type: 'global/changeConfig',
               port: e.target.value
             })
           }} />
@@ -976,3 +967,10 @@ export default function (props) {
     </div>
   );
 }
+function mapStateToProps(state) {
+  const { config } = state.global;
+  return {
+    config
+  };
+}
+export default connect(mapStateToProps)(H);

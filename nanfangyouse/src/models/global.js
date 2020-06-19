@@ -8,12 +8,12 @@ export default {
   },
   reducers: {
     changeConfig(state, payload) {
-      console.log(payload)
+      
       return {
         ...state, 
         config: {
-          ...state.config,
-          ...payload
+          host: payload.host || '127.0.0.1',
+          port: payload.port || 7001
         }
       };
     },
