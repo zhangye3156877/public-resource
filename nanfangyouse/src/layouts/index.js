@@ -1,6 +1,7 @@
-//import styles from './index.css';
+import withRouter from 'umi/withRouter';
 
 function BasicLayout(props) {
+  console.log(props)
   return (
     <div>
       {props.children}
@@ -8,4 +9,4 @@ function BasicLayout(props) {
   );
 }
 
-export default BasicLayout;
+export default withRouter(BasicLayout);

@@ -25,8 +25,8 @@ const elementsMixtureListColumns = [...columns1_1];
 const resultListColumns = [...columns1_2];
 const resultElementsMixtureListColumns = [columns1_3];
 
-export default function () {
-
+export default function (props) {
+  console.log(props.config)
   function onFinish(values) {
     console.log(values)
     const elementRuls = /checkbox/g
@@ -292,13 +292,20 @@ export default function () {
           <Button type="primary" onClick={() => {
             getInventory()
           }}>获取库存</Button>
-          <Input style={{ width: '250px' }} addonBefore="当前请求地址" value={ip.host} onChange={(e) => {
-            setIp({
-              ...ip,
-              host: e.target.value
+          <Input style={{ width: '250px' }} addonBefore="当前请求地址" value={props.config.host} onChange={(e) => {
+            // setIp({
+            //   ...ip,
+            //   host: e.target.value
+            // })
+            console.log(e.target.value, props.dispatch)
+            props.dispatch({
+              type: 'changeConfig',
+              payload: {
+                host: e.target.value
+              }
             })
           }} />
-          <Input style={{ width: '150px' }} addonBefore="当前端口" value={ip.port} onChange={(e) => {
+          <Input style={{ width: '150px' }} addonBefore="当前端口" value={props.config.port} onChange={(e) => {
             setIp({
               ...ip,
               port: e.target.value
