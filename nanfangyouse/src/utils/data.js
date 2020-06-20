@@ -274,6 +274,10 @@ export const list2_1 =  [
   },
 ]
 
+export const list2_2 = [
+  
+]
+
 export const columns1_1 = [
   {
     title: '库存物料',

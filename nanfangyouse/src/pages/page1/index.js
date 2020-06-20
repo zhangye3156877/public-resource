@@ -28,7 +28,7 @@ const resultElementsMixtureListColumns = [columns1_3];
 
 function H(props) {
   const {config, dispatch} = props;
-  console.log(config)
+  
   function onFinish(values) {
     console.log(values)
     const elementRuls = /checkbox/g

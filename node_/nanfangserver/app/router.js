@@ -9,4 +9,5 @@ module.exports = app => {
   router.post('/api/calculate', controller.main.calculate);
   router.get('/api/getInventory', controller.main.getInventory);
   router.post('/api/quick_update', controller.main.quickupdate)
+  router.get('/api/getFormula', controller.main.getFormula);
 };
