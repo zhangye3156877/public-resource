@@ -14,15 +14,16 @@ import {
   Divider,
   Tabs
 } from 'antd';
-import {connect} from 'dva';
+import { connect } from 'dva';
 import request from '@/utils/request';
-import {list2_1, columns1_3} from '@/utils/data';
+import { list2_1, columns1_3 } from '@/utils/data';
 import styles from '../index.less';
 
 const { TabPane } = Tabs;
 const fkdata = [...list2_1];
 
 function P(props) {
+  const {config, dispatch} = props;
   const columns = [
     {
       title: '必选',
@@ -128,55 +129,81 @@ function P(props) {
       title: 'Au(t/g)',
       dataIndex: 'Au',
     },
-    
+
   ];
 
   const [data, setData] = useState(fkdata);
-  const [materialList, setMaterialList] = useState([{name: '配方1'}, {name: '配方2'}]);
+  const [materialList, setMaterialList] = useState([{ name: '配方1' }, { name: '配方2' }]);
+  const [tableLoading, setTableLoading] = useState(false);
   let prevCountRef = useRef([...data]);
   useEffect(() => {
     prevCountRef.current = [...data];
   }, [data])
-  
-  function getInfo(){
 
+  function getInfo() {
+    setTableLoading(true)
+    request({
+      method: 'GET',
+      host: config.host,
+      port: config.port,
+      url: 'getFormula',
+      cb: (res) => {
+        const data = res.list;
+        setData(data);
+        const materialList = res.materialList.map((item) => {
+          const o  = {};
+          item.elementsList.forEach((i) => {
+            console.log(i)
+            o[i.name] = i.percentage;
+          })
+          return {
+            name: '配方' +item.formula,
+            ...o
+          }
+        })
+        setMaterialList(materialList);
+        setTableLoading(false)
+      }
+    })
   }
   function onFinish(values) {
     console.log(values)
   }
-  function onFinishFailed(err){
+  function onFinishFailed(err) {
     console.log(err)
   }
 
-  return(
+  return (
     <div style={{ padding: '0 10px 10px 10px' }}>
       <div>
-      <div className={styles.block}>
-        <Button type="primary" 
-          onClick={() => {
-            getInfo()
-          }}>
-          获取
+        <div style={{marginBottom: '10px'}}>
+          <Button type="primary"
+            onClick={() => {
+              getInfo()
+            }}>
+            获取
         </Button>
-      </div>
-      <TableContext.Provider value={{
-          columns,
-          dataSource: data,
-          setData
-        }}>
-          <EditTable />
-        </TableContext.Provider >
-        <Table
-          className={styles.block}
-          rowKey={'name'}
-          columns={columns1_3}
-          dataSource={materialList}
-          pagination={false}
-          bordered
-        />
+        </div>
+        <Spin spinning={tableLoading}>
+          <TableContext.Provider value={{
+            columns,
+            dataSource: data,
+            setData
+          }}>
+            <EditTable />
+          </TableContext.Provider >
+          <Table
+            className={styles.block}
+            rowKey={'name'}
+            columns={columns1_3}
+            dataSource={materialList}
+            pagination={false}
+            bordered
+          />
+        </Spin>
       </div>
       <div>
-      <Form
+        <Form
           // layout="inline"
           className={styles.block}
           labelCol={{ span: 15 }}
@@ -379,7 +406,7 @@ function P(props) {
 
                 </Row>
               </TabPane>
-              
+
               <TabPane tab="氧料比" key="2" forceRender>
                 <Row className={styles.row}>
                   <Col span={6}>
@@ -420,7 +447,7 @@ function P(props) {
             </Button>
           </div>
         </Form>
-      </div> 
+      </div>
     </div>
   )
 }
