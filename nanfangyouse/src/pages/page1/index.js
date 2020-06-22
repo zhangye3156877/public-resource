@@ -16,7 +16,7 @@ import {
 } from 'antd';
 import { connect } from 'dva';
 import request from '@/utils/request';
-import {list1_1, columns1_1, columns1_2, columns1_3} from '@/utils/data';
+import { list1_1, columns1_1, columns1_2, columns1_3 } from '@/utils/data';
 import styles from './index.less';
 
 const { TabPane } = Tabs
@@ -24,11 +24,11 @@ const { TabPane } = Tabs
 const fkdata = [...list1_1];
 const elementsMixtureListColumns = [...columns1_1];
 const resultListColumns = [...columns1_2];
-const resultElementsMixtureListColumns = [columns1_3];
+const resultElementsMixtureListColumns = [...columns1_3];
 
 function H(props) {
-  const {config, dispatch} = props;
-  
+  const { config, dispatch } = props;
+
   function onFinish(values) {
     console.log(values)
     const elementRuls = /checkbox/g
@@ -84,7 +84,7 @@ function H(props) {
       }
     })
   }
-  function quickUpdate(){
+  function quickUpdate() {
     request({
       method: 'POST',
       host: config.host,
@@ -918,8 +918,8 @@ function H(props) {
                 </Row>
               </div>
               <div>
-                <Button 
-                  type="primary" 
+                <Button
+                  type="primary"
                   style={{ width: '200px' }}
                   onClick={quickUpdate}
                 >
@@ -937,26 +937,21 @@ function H(props) {
                     <EditTable />
                   </TableContext.Provider >
                 </div>
-                {/* <Table
-                  style={{ marginTop: '20px' }}
-                  rowKey={'number'}
-                  columns={resultListColumns}
-                  dataSource={result.list}
-                  pagination={false}
-                  bordered
-                /> */}
               </div>
               <div style={{ marginTop: '20px' }}>
                 <Table
                   rowKey={'name'}
                   columns={resultElementsMixtureListColumns}
-                  dataSource={(() => {
-                    let value = { name: '参数' }
-                    result.elementsMixtureList.forEach((item) => {
-                      value[item.name] = item.percentage
-                    })
-                    return [value]
-                  })()}
+                  dataSource={
+                    (() => {
+                      let value = { name: '参数' }
+                      result.elementsMixtureList.forEach((item) => {
+                        value[item.name] = item.percentage
+                      })
+                      console.log(value)
+                      return [value]
+                    })()
+                  }
                   pagination={false}
                   bordered
                 />

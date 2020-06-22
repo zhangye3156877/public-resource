@@ -21,9 +21,10 @@ import styles from '../index.less';
 
 const { TabPane } = Tabs;
 const fkdata = [...list2_1];
+const resultElementsMixtureListColumns = [...columns1_3];
 
 function P(props) {
-  const {config, dispatch} = props;
+  const { config, dispatch } = props;
   const columns = [
     {
       title: '必选',
@@ -133,8 +134,10 @@ function P(props) {
   ];
 
   const [data, setData] = useState(fkdata);
+  const [result, setResult] = useState(null);
   const [materialList, setMaterialList] = useState([{ name: '配方1' }, { name: '配方2' }]);
   const [tableLoading, setTableLoading] = useState(false);
+  const [resultShow, setResultShow] = useState(false);
   let prevCountRef = useRef([...data]);
   useEffect(() => {
     prevCountRef.current = [...data];
@@ -151,13 +154,13 @@ function P(props) {
         const data = res.list;
         setData(data);
         const materialList = res.materialList.map((item) => {
-          const o  = {};
+          const o = {};
           item.elementsList.forEach((i) => {
             console.log(i)
             o[i.name] = i.percentage;
           })
           return {
-            name: '配方' +item.formula,
+            name: '配方' + item.formula,
             ...o
           }
         })
@@ -167,7 +170,45 @@ function P(props) {
     })
   }
   function onFinish(values) {
-    console.log(values)
+    
+    const payload = {
+      // list,
+      // presetParameter: {
+      //   matteTargetGradePercentage: values.matteTargetGradePercentage,
+      //   modelFactorBeta: values.modelFactorBeta,
+      //   modelFactorAlpha: values.modelFactorAlpha,
+      //   modelFactorGamma: values.modelFactorGamma,
+      //   maxType: values.maxType,
+      //   matteFePercentage: values.matteFePercentage,
+      //   matteSPercentage: values.matteSPercentage,
+      //   slagCuPercentage: values.slagCuPercentage,
+      //   slagSPercentage: values.slagSPercentage,
+      //   slagFePercentage: values.slagFePercentage,
+      //   slagSiO2Percentage: values.slagSiO2Percentage,
+      //   gaPop: values.gaPop,
+      //   gaEpoch: values.gaEpoch
+      // },
+      // elementsTargetList,
+      // modelWeight: {
+      //   maxOre: values.maxOre,
+      //   minMaterial: values.minMaterial,
+      //   maxMaterial: values.maxMaterial,
+      //   elementsPercentage: values.elementsPercentage
+      // }
+    }
+    console.log(payload)
+    setResult(null)
+    setResultShow(true)
+    request({
+      method: 'POST',
+      host: config.host,
+      port: config.port,
+      url: 'quick_adjust',
+      payload,
+      cb: (res) => {
+        setResult(res)
+      }
+    })
   }
   function onFinishFailed(err) {
     console.log(err)
@@ -176,7 +217,7 @@ function P(props) {
   return (
     <div style={{ padding: '0 10px 10px 10px' }}>
       <div>
-        <div style={{marginBottom: '10px'}}>
+        <div style={{ marginBottom: '10px' }}>
           <Button type="primary"
             onClick={() => {
               getInfo()
@@ -206,7 +247,7 @@ function P(props) {
         <Form
           // layout="inline"
           className={styles.block}
-          labelCol={{ span: 15 }}
+          labelCol={{ span: 12 }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
         >
@@ -214,10 +255,10 @@ function P(props) {
             <Tabs defaultActiveKey="1" type="card">
               <TabPane tab="预设参数" key="1" forceRender>
                 <Row className={styles.row}>
-                  <Col span={6}>
+                  <Col span={4}>
                     <Form.Item
-                      label="冰铜目标品味(%)"
-                      name="matteTargetGradePercentage"
+                      label="冰铜品味(%)"
+                      name="matteGradePercentage"
                       initialValue={74}
                       rules={[
                         {
@@ -228,9 +269,9 @@ function P(props) {
                       <InputNumber />
                     </Form.Item>
                   </Col>
-                  <Col span={6}>
+                  <Col span={4}>
                     <Form.Item
-                      label="冰铜铁含量(%)"
+                      label="最大物料数量"
                       name="matteFePercentage"
                       initialValue={3.5}
                       rules={[
@@ -242,10 +283,38 @@ function P(props) {
                       <InputNumber />
                     </Form.Item>
                   </Col>
-                  <Col span={6}>
+                  <Col span={4}>
                     <Form.Item
-                      label="冰铜硫含量(%)"
+                      label="给料矿量(t/h)"
                       name="matteSPercentage"
+                      initialValue={20.84}
+                      rules={[
+                        {
+                          required: true
+                        },
+                      ]}
+                    >
+                      <InputNumber />
+                    </Form.Item>
+                  </Col>
+                  <Col span={4}>
+                    <Form.Item
+                      label="氧浓(%)"
+                      name="yangnong"
+                      initialValue={20.84}
+                      rules={[
+                        {
+                          required: true
+                        },
+                      ]}
+                    >
+                      <InputNumber />
+                    </Form.Item>
+                  </Col>
+                  <Col span={4}>
+                    <Form.Item
+                      label="粒煤"
+                      name="limei"
                       initialValue={20.84}
                       rules={[
                         {
@@ -258,9 +327,37 @@ function P(props) {
                   </Col>
                 </Row>
                 <Row className={styles.row}>
-                  <Col span={6}>
+                  <Col span={4}>
                     <Form.Item
-                      label="熔炉渣铜含量(%)"
+                      label="Fe(%)"
+                      name="FePercentage"
+                      initialValue={1.99}
+                      rules={[
+                        {
+                          required: true
+                        },
+                      ]}
+                    >
+                      <InputNumber />
+                    </Form.Item>
+                  </Col>
+                  <Col span={4}>
+                    <Form.Item
+                      label="Cu(%)"
+                      name="CuPercentage"
+                      initialValue={1.99}
+                      rules={[
+                        {
+                          required: true
+                        },
+                      ]}
+                    >
+                      <InputNumber />
+                    </Form.Item>
+                  </Col>
+                  <Col span={4}>
+                    <Form.Item
+                      label="渣中Cu含量(%)"
                       name="slagCuPercentage"
                       initialValue={1.99}
                       rules={[
@@ -272,9 +369,9 @@ function P(props) {
                       <InputNumber />
                     </Form.Item>
                   </Col>
-                  <Col span={6}>
+                  <Col span={4}>
                     <Form.Item
-                      label="熔炉渣硫含量(%)"
+                      label="渣中S含量(%)"
                       name="slagSPercentage"
                       initialValue={.45}
                       rules={[
@@ -286,9 +383,9 @@ function P(props) {
                       <InputNumber />
                     </Form.Item>
                   </Col>
-                  <Col span={6}>
+                  <Col span={4}>
                     <Form.Item
-                      label="熔炉渣铁含量(%)"
+                      label="渣中Fe含量(%)"
                       name="slagFePercentage"
                       initialValue={48}
                       rules={[
@@ -300,10 +397,10 @@ function P(props) {
                       <InputNumber />
                     </Form.Item>
                   </Col>
-                  <Col span={6}>
+                  <Col span={4}>
                     <Form.Item
                       //labelCol={12}
-                      label="熔炉渣二氧化硅含量(%)"
+                      label="渣中SiO2含量(%)"
                       name="slagSiO2Percentage"
                       initialValue={24}
                       rules={[
@@ -316,65 +413,7 @@ function P(props) {
                     </Form.Item>
                   </Col>
                 </Row>
-                <Row className={styles.row}>
-                  <Col span={6}>
-                    <Form.Item
-                      label="最大类别数"
-                      name="maxType"
-                      initialValue={4}
-                      rules={[
-                        {
-                          required: true
-                        },
-                      ]}
-                    >
-                      <InputNumber />
-                    </Form.Item>
-                  </Col>
-                  <Col span={6}>
-                    <Form.Item
-                      label="模型因子alpha"
-                      name="modelFactorAlpha"
-                      initialValue={1}
-                      rules={[
-                        {
-                          required: true
-                        },
-                      ]}
-                    >
-                      <InputNumber />
-                    </Form.Item>
-                  </Col>
-                  <Col span={6}>
-                    <Form.Item
-                      label="模型因子beta"
-                      name="modelFactorBeta"
-                      initialValue={1}
-                      rules={[
-                        {
-                          required: true
-                        },
-                      ]}
-                    >
-                      <InputNumber />
-                    </Form.Item>
-                  </Col>
-                  <Col span={6}>
-                    <Form.Item
-                      label="模型因子gamma"
-                      name="modelFactorGamma"
-                      initialValue={1}
-                      rules={[
-                        {
-                          required: true
-                        },
-                      ]}
-                    >
-                      <InputNumber />
-                    </Form.Item>
-                  </Col>
-                </Row>
-                <Row className={styles.row}>
+                {/* <Row className={styles.row}>
                   <Col span={6}>
                     <Form.Item
                       label="优化算法种群数量"
@@ -403,8 +442,7 @@ function P(props) {
                       <InputNumber />
                     </Form.Item>
                   </Col>
-
-                </Row>
+                </Row> */}
               </TabPane>
 
               <TabPane tab="氧料比" key="2" forceRender>
@@ -447,6 +485,76 @@ function P(props) {
             </Button>
           </div>
         </Form>
+        <div>
+          <Divider />
+          <h1 style={{ textAlign: 'center', fontWeight: '900' }}>配方输出</h1>
+          <Divider />
+          <div style={{ marginTop: '20px' }}>
+            {
+              resultShow && (result === null ? <div style={{ paddingTop: 100, textAlign: 'center' }}>
+                <Spin size="large" />
+              </div> : <div>
+                  <div>
+                    <p>演算参数</p>
+                    <Row className={styles.row}>
+                      <Col span={6}>
+                        <Input
+                          style={{ width: '250px' }}
+                          addonBefore="氧料比(立方米/吨)"
+                          value={result.calculateParameter.oxygenMaterialRatio}
+                        />
+                      </Col>
+                      <Col span={6}>
+                        <Input
+                          style={{ width: '250px' }}
+                          addonBefore="总消耗(吨)"
+                          value={result.calculateParameter.totalConsumedAmount}
+                        />
+                      </Col>
+                      <Col span={6}>
+                        <Input
+                          style={{ width: '250px' }}
+                          addonBefore="总剩余(吨)"
+                          value={result.calculateParameter.totalLeftOver}
+                        />
+                      </Col>
+                      <Col span={6}>
+                        <Input
+                          style={{ width: '250px' }}
+                          addonBefore="目标得分"
+                          value={result.calculateParameter.best_y}
+                        />
+                      </Col>
+                    </Row>
+                  </div>
+                  <div>
+                    {/* <Button
+                      type="primary"
+                      style={{ width: '200px' }}
+                      onClick={quickUpdate}
+                    >
+                      更新
+                  </Button> */}
+                  </div>
+                  <div style={{ marginTop: '20px' }}>
+                    <Table
+                      rowKey={'name'}
+                      columns={resultElementsMixtureListColumns}
+                      dataSource={(() => {
+                        let value = { name: '参数' }
+                        result.elementsMixtureList.forEach((item) => {
+                          value[item.name] = item.percentage
+                        })
+                        return [value]
+                      })()}
+                      pagination={false}
+                      bordered
+                    />
+                  </div>
+                </div>)
+            }
+          </div>
+        </div>
       </div>
     </div>
   )

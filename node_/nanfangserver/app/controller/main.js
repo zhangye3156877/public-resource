@@ -386,6 +386,28 @@ class MainController extends Controller {
     }
     ctx.body = JSON.stringify(data);
   }
+  async quickAdjust() {
+    const {ctx} = this;
+    const data = {
+      calculateParameter: {
+        oxygenMaterialRatio: 12.32,
+        totalConsumedAmount:12.32,
+        totalLeftOver:12.32,
+        best_y: 12.32
+      },
+      elementsMixtureList: [
+        {
+          name: "Cu",
+          percentage: 24.01
+        },
+        {
+          name: "Fe",
+          percentage: 31.02
+        }
+      ]
+    }
+    ctx.body = JSON.stringify(data);
+  }
 }
 
 module.exports = MainController;
