@@ -500,28 +500,28 @@ function P(props) {
                       <Col span={6}>
                         <Input
                           style={{ width: '250px' }}
-                          addonBefore="氧料比(立方米/吨)"
+                          addonBefore={<span>氧料比(Nm<sup>3</sup>/t)</span>}
                           value={result.calculateParameter.oxygenMaterialRatio}
                         />
                       </Col>
                       <Col span={6}>
                         <Input
                           style={{ width: '250px' }}
-                          addonBefore="总消耗(吨)"
+                          addonBefore="总矿量(吨)"
                           value={result.calculateParameter.totalConsumedAmount}
                         />
                       </Col>
                       <Col span={6}>
                         <Input
                           style={{ width: '250px' }}
-                          addonBefore="总剩余(吨)"
+                          addonBefore={<span>一次风量m<sup>3</sup>/h</span>}
                           value={result.calculateParameter.totalLeftOver}
                         />
                       </Col>
                       <Col span={6}>
                         <Input
                           style={{ width: '250px' }}
-                          addonBefore="目标得分"
+                          addonBefore="S/Cu(%)"
                           value={result.calculateParameter.best_y}
                         />
                       </Col>
