@@ -170,31 +170,27 @@ function P(props) {
     })
   }
   function onFinish(values) {
-    
+    const list = data
+    console.log(list)
     const payload = {
-      // list,
-      // presetParameter: {
-      //   matteTargetGradePercentage: values.matteTargetGradePercentage,
-      //   modelFactorBeta: values.modelFactorBeta,
-      //   modelFactorAlpha: values.modelFactorAlpha,
-      //   modelFactorGamma: values.modelFactorGamma,
-      //   maxType: values.maxType,
-      //   matteFePercentage: values.matteFePercentage,
-      //   matteSPercentage: values.matteSPercentage,
-      //   slagCuPercentage: values.slagCuPercentage,
-      //   slagSPercentage: values.slagSPercentage,
-      //   slagFePercentage: values.slagFePercentage,
-      //   slagSiO2Percentage: values.slagSiO2Percentage,
-      //   gaPop: values.gaPop,
-      //   gaEpoch: values.gaEpoch
-      // },
-      // elementsTargetList,
-      // modelWeight: {
-      //   maxOre: values.maxOre,
-      //   minMaterial: values.minMaterial,
-      //   maxMaterial: values.maxMaterial,
-      //   elementsPercentage: values.elementsPercentage
-      // }
+      list,
+      presetParameter: {
+        matteGradePercentage: values.matteGradePercentage,
+        maxMaterial: values.maxMaterial,
+        ore: values.ore,
+        oxygenPercentage: values.oxygenPercentage,
+        slagCuPercentage: values.slagCuPercentage,
+        slagSPercentage: values.slagSPercentage,
+        slagFePercentage: values.slagFePercentage,
+        slagSiO2Percentage: values.slagSiO2Percentage,
+        peaCoal: values.peaCoal,
+        FePercentage: values.FePercentage,
+        CuPercentage: values.CuPercentage
+      },
+      oxygenMaterialRatio: {
+        formula1: values.formula1,
+        formula2: values.formula2,
+      }
     }
     console.log(payload)
     setResult(null)
@@ -450,29 +446,29 @@ function P(props) {
                   <Col span={6}>
                     <Form.Item
                       label="配方1"
-                      name="oxygenMaterialRatioFormula1"
-                      initialValue={0}
-                      rules={[
-                        {
-                          required: true
-                        },
-                      ]}
+                      name="formula1"
+                      initialValue=''
+                      // rules={[
+                      //   {
+                      //     required: true
+                      //   },
+                      // ]}
                     >
-                      <InputNumber />
+                      <Input />
                     </Form.Item>
                   </Col>
                   <Col span={6}>
                     <Form.Item
                       label="配方2"
-                      name="oxygenMaterialRatioFormula2"
-                      initialValue={0}
-                      rules={[
-                        {
-                          required: true
-                        },
-                      ]}
+                      name="formula2"
+                      initialValue=''
+                      // rules={[
+                      //   {
+                      //     required: true
+                      //   },
+                      // ]}
                     >
-                      <InputNumber />
+                      <Input />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -508,21 +504,21 @@ function P(props) {
                         <Input
                           style={{ width: '250px' }}
                           addonBefore="总矿量(吨)"
-                          value={result.calculateParameter.totalConsumedAmount}
+                          value={result.calculateParameter.totalOre}
                         />
                       </Col>
                       <Col span={6}>
                         <Input
                           style={{ width: '250px' }}
                           addonBefore={<span>一次风量m<sup>3</sup>/h</span>}
-                          value={result.calculateParameter.totalLeftOver}
+                          value={result.calculateParameter.paFlow}
                         />
                       </Col>
                       <Col span={6}>
                         <Input
                           style={{ width: '250px' }}
                           addonBefore="S/Cu(%)"
-                          value={result.calculateParameter.best_y}
+                          value={result.calculateParameter.SCuRatio}
                         />
                       </Col>
                     </Row>
@@ -531,21 +527,21 @@ function P(props) {
                         <Input
                           style={{ width: '250px' }}
                           addonBefore="冰铜量(吨)"
-                          value={result.calculateParameter.oxygenMaterialRatio}
+                          value={result.calculateParameter.totalMatte}
                         />
                       </Col>
                       <Col span={6}>
                         <Input
                           style={{ width: '250px' }}
                           addonBefore="渣量(吨)"
-                          value={result.calculateParameter.totalConsumedAmount}
+                          value={result.calculateParameter.totalSlag}
                         />
                       </Col>
                       <Col span={6}>
                         <Input
                           style={{ width: '250px' }}
                           addonBefore="石英石(吨)"
-                          value={result.calculateParameter.totalLeftOver}
+                          value={result.calculateParameter.totalQuartz}
                         />
                       </Col>
                     </Row>

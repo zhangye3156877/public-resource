@@ -138,7 +138,6 @@ export const list1_1 = [
 
 export const list2_1 =  [
   {
-    index: 0,
     required: false,
     name: '水星轮',
     number: 10001,
@@ -165,7 +164,6 @@ export const list2_1 =  [
     formula: 1
   },
   {
-    index: 0,
     required: false,
     name: '莱科塔',
     number: 10002,
@@ -192,7 +190,6 @@ export const list2_1 =  [
     formula: 1
   },
   {
-    index: 2,
     required: false,
     name: '和盛',
     number: 10003,
@@ -219,7 +216,6 @@ export const list2_1 =  [
     formula: 1
   },
   {
-    index: 3,
     required: false,
     name: '方舟21',
     number: 10004,
@@ -246,7 +242,6 @@ export const list2_1 =  [
     formula: 1
   },
   {
-    index: 4,
     required: false,
     name: '江门商人',
     number: 10005,

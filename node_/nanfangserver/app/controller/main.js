@@ -390,10 +390,13 @@ class MainController extends Controller {
     const {ctx} = this;
     const data = {
       calculateParameter: {
-        oxygenMaterialRatio: 12.32,
-        totalConsumedAmount:12.32,
-        totalLeftOver:12.32,
-        best_y: 12.32
+        oxygenMaterialRatio: 199,
+        totalOre: 11,
+        paFlow: 22,
+        SCuRatio: 33,
+        totalMatte: 44,
+        totalSlag: 55,
+        totalQuartz: 66
       },
       elementsMixtureList: [
         {
