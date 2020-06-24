@@ -24,7 +24,7 @@ const fkdata = [...list2_1];
 const resultElementsMixtureListColumns = [...columns1_3];
 
 function P(props) {
-  const { config, dispatch } = props;
+  const { config } = props;
   const columns = [
     {
       title: '必选',
@@ -272,7 +272,7 @@ function P(props) {
                   <Col span={4}>
                     <Form.Item
                       label="最大物料数量"
-                      name="matteFePercentage"
+                      name="maxMaterial"
                       initialValue={3.5}
                       rules={[
                         {
@@ -286,7 +286,7 @@ function P(props) {
                   <Col span={4}>
                     <Form.Item
                       label="给料矿量(t/h)"
-                      name="matteSPercentage"
+                      name="ore"
                       initialValue={20.84}
                       rules={[
                         {
@@ -300,7 +300,7 @@ function P(props) {
                   <Col span={4}>
                     <Form.Item
                       label="氧浓(%)"
-                      name="yangnong"
+                      name="oxygenPercentage"
                       initialValue={20.84}
                       rules={[
                         {
@@ -314,7 +314,7 @@ function P(props) {
                   <Col span={4}>
                     <Form.Item
                       label="粒煤"
-                      name="limei"
+                      name="peaCoal"
                       initialValue={20.84}
                       rules={[
                         {
@@ -523,6 +523,29 @@ function P(props) {
                           style={{ width: '250px' }}
                           addonBefore="S/Cu(%)"
                           value={result.calculateParameter.best_y}
+                        />
+                      </Col>
+                    </Row>
+                    <Row className={styles.row}>
+                      <Col span={6}>
+                        <Input
+                          style={{ width: '250px' }}
+                          addonBefore="冰铜量(吨)"
+                          value={result.calculateParameter.oxygenMaterialRatio}
+                        />
+                      </Col>
+                      <Col span={6}>
+                        <Input
+                          style={{ width: '250px' }}
+                          addonBefore="渣量(吨)"
+                          value={result.calculateParameter.totalConsumedAmount}
+                        />
+                      </Col>
+                      <Col span={6}>
+                        <Input
+                          style={{ width: '250px' }}
+                          addonBefore="石英石(吨)"
+                          value={result.calculateParameter.totalLeftOver}
                         />
                       </Col>
                     </Row>
