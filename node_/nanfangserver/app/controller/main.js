@@ -389,6 +389,21 @@ class MainController extends Controller {
   async quickAdjust() {
     const {ctx} = this;
     const data = {
+      list: [
+        {
+          name: "水星轮",
+          number: 10001,
+          inventoryBalance: 1346,
+          calculatePercentage: 31.23,
+          adjustPercentage: 11
+        },
+        {
+          name: "莱科塔",
+          number: 10002,
+          inventoryBalance: 5686,
+          calculatePercentage: 51.23
+        }
+      ],
       calculateParameter: {
         oxygenMaterialRatio: 199,
         totalOre: 11,

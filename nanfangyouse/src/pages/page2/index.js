@@ -16,12 +16,13 @@ import {
 } from 'antd';
 import { connect } from 'dva';
 import request from '@/utils/request';
-import { list2_1, columns1_3 } from '@/utils/data';
+import { list2_1, columns1_2, columns1_3 } from '@/utils/data';
 import styles from '../index.less';
 
 const { TabPane } = Tabs;
 const fkdata = [...list2_1];
 const resultElementsMixtureListColumns = [...columns1_3];
+const resultListColumns = [...columns1_2];
 
 function P(props) {
   const { config } = props;
@@ -218,7 +219,7 @@ function P(props) {
             onClick={() => {
               getInfo()
             }}>
-            获取
+            获取订单
         </Button>
         </div>
         <Spin spinning={tableLoading}>
@@ -448,11 +449,11 @@ function P(props) {
                       label="配方1"
                       name="formula1"
                       initialValue=''
-                      // rules={[
-                      //   {
-                      //     required: true
-                      //   },
-                      // ]}
+                    // rules={[
+                    //   {
+                    //     required: true
+                    //   },
+                    // ]}
                     >
                       <Input />
                     </Form.Item>
@@ -462,11 +463,11 @@ function P(props) {
                       label="配方2"
                       name="formula2"
                       initialValue=''
-                      // rules={[
-                      //   {
-                      //     required: true
-                      //   },
-                      // ]}
+                    // rules={[
+                    //   {
+                    //     required: true
+                    //   },
+                    // ]}
                     >
                       <Input />
                     </Form.Item>
@@ -477,13 +478,13 @@ function P(props) {
           </div>
           <div>
             <Button htmlType="submit" type="primary" style={{ width: '200px' }}>
-              演&nbsp;&nbsp;算
+              推荐
             </Button>
           </div>
         </Form>
         <div>
           <Divider />
-          <h1 style={{ textAlign: 'center', fontWeight: '900' }}>配方输出</h1>
+          <h1 style={{ textAlign: 'center', fontWeight: '900' }}>衔接输出</h1>
           <Divider />
           <div style={{ marginTop: '20px' }}>
             {
@@ -547,13 +548,16 @@ function P(props) {
                     </Row>
                   </div>
                   <div>
-                    {/* <Button
-                      type="primary"
-                      style={{ width: '200px' }}
-                      onClick={quickUpdate}
-                    >
-                      更新
-                  </Button> */}
+                    <div style={{ marginTop: '20px' }}>
+                      <TableContext.Provider
+                        value={{
+                          columns: resultListColumns,
+                          dataSource: result.list,
+                          setData: () => {}
+                        }}>
+                        <EditTable />
+                      </TableContext.Provider >
+                    </div>
                   </div>
                   <div style={{ marginTop: '20px' }}>
                     <Table
