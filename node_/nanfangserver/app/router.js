@@ -10,5 +10,5 @@ module.exports = app => {
   router.get('/api/getInventory', controller.main.getInventory);
   router.post('/api/quick_update', controller.main.quickupdate)
   router.get('/api/getFormula', controller.main.getFormula);
-  router.post('/api/quick_adjust', controller.main.quickAdjust);
+  router.post('/api/quick_recommend', controller.main.quickAdjust);
 };

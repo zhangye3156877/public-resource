@@ -49,9 +49,6 @@ function H(props) {
       list,
       presetParameter: {
         matteTargetGradePercentage: values.matteTargetGradePercentage,
-        modelFactorBeta: values.modelFactorBeta,
-        modelFactorAlpha: values.modelFactorAlpha,
-        modelFactorGamma: values.modelFactorGamma,
         maxType: values.maxType,
         matteFePercentage: values.matteFePercentage,
         matteSPercentage: values.matteSPercentage,
@@ -59,15 +56,14 @@ function H(props) {
         slagSPercentage: values.slagSPercentage,
         slagFePercentage: values.slagFePercentage,
         slagSiO2Percentage: values.slagSiO2Percentage,
-        gaPop: values.gaPop,
-        gaEpoch: values.gaEpoch
       },
       elementsTargetList,
       modelWeight: {
-        maxOre: values.maxOre,
-        minMaterial: values.minMaterial,
-        maxMaterial: values.maxMaterial,
-        elementsPercentage: values.elementsPercentage
+        gaPop: values.gaPop,
+        gaEpoch: values.gaEpoch,
+        modelFactorBeta: values.modelFactorBeta,
+        modelFactorAlpha: values.modelFactorAlpha,
+        modelFactorGamma: values.modelFactorGamma,
       }
     }
     console.log(payload)
@@ -350,7 +346,7 @@ function H(props) {
                         },
                       ]}
                     >
-                      <InputNumber />
+                      <InputNumber step={0.01} />
                     </Form.Item>
                   </Col>
                   <Col span={6}>
@@ -358,13 +354,14 @@ function H(props) {
                       label="冰铜铁含量(%)"
                       name="matteFePercentage"
                       initialValue={3.5}
+                      step={.01}
                       rules={[
                         {
                           required: true
                         },
                       ]}
                     >
-                      <InputNumber />
+                      <InputNumber step={0.01} />
                     </Form.Item>
                   </Col>
                   <Col span={6}>
@@ -378,14 +375,14 @@ function H(props) {
                         },
                       ]}
                     >
-                      <InputNumber />
+                      <InputNumber step={0.01} />
                     </Form.Item>
                   </Col>
                 </Row>
                 <Row className={styles.row}>
                   <Col span={6}>
                     <Form.Item
-                      label="熔炉渣铜含量(%)"
+                      label="渣中铜含量(%)"
                       name="slagCuPercentage"
                       initialValue={1.99}
                       rules={[
@@ -394,12 +391,12 @@ function H(props) {
                         },
                       ]}
                     >
-                      <InputNumber />
+                      <InputNumber step={0.01} />
                     </Form.Item>
                   </Col>
                   <Col span={6}>
                     <Form.Item
-                      label="熔炉渣硫含量(%)"
+                      label="渣中硫含量(%)"
                       name="slagSPercentage"
                       initialValue={.45}
                       rules={[
@@ -408,12 +405,12 @@ function H(props) {
                         },
                       ]}
                     >
-                      <InputNumber />
+                      <InputNumber step={0.01} />
                     </Form.Item>
                   </Col>
                   <Col span={6}>
                     <Form.Item
-                      label="熔炉渣铁含量(%)"
+                      label="渣中铁含量(%)"
                       name="slagFePercentage"
                       initialValue={48}
                       rules={[
@@ -422,13 +419,13 @@ function H(props) {
                         },
                       ]}
                     >
-                      <InputNumber />
+                      <InputNumber step={0.01} />
                     </Form.Item>
                   </Col>
                   <Col span={6}>
                     <Form.Item
                       //labelCol={12}
-                      label="熔炉渣二氧化硅含量(%)"
+                      label="渣中二氧化硅含量(%)"
                       name="slagSiO2Percentage"
                       initialValue={24}
                       rules={[
@@ -437,7 +434,7 @@ function H(props) {
                         },
                       ]}
                     >
-                      <InputNumber />
+                      <InputNumber step={0.01} />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -453,81 +450,12 @@ function H(props) {
                         },
                       ]}
                     >
-                      <InputNumber />
+                      <InputNumber step={0.01} />
                     </Form.Item>
                   </Col>
-                  <Col span={6}>
-                    <Form.Item
-                      label="模型因子alpha"
-                      name="modelFactorAlpha"
-                      initialValue={1}
-                      rules={[
-                        {
-                          required: true
-                        },
-                      ]}
-                    >
-                      <InputNumber />
-                    </Form.Item>
-                  </Col>
-                  <Col span={6}>
-                    <Form.Item
-                      label="模型因子beta"
-                      name="modelFactorBeta"
-                      initialValue={1}
-                      rules={[
-                        {
-                          required: true
-                        },
-                      ]}
-                    >
-                      <InputNumber />
-                    </Form.Item>
-                  </Col>
-                  <Col span={6}>
-                    <Form.Item
-                      label="模型因子gamma"
-                      name="modelFactorGamma"
-                      initialValue={1}
-                      rules={[
-                        {
-                          required: true
-                        },
-                      ]}
-                    >
-                      <InputNumber />
-                    </Form.Item>
-                  </Col>
+                  
                 </Row>
                 <Row className={styles.row}>
-                  <Col span={6}>
-                    <Form.Item
-                      label="优化算法种群数量"
-                      name="gaPop"
-                      initialValue={25}
-                      rules={[
-                        {
-                          required: true
-                        },
-                      ]}
-                    >
-                      <InputNumber />
-                    </Form.Item>
-                  </Col>
-                  <Col span={6}>
-                    <Form.Item
-                      label="优化算法迭代次数"
-                      name="gaEpoch"
-                      initialValue={25}
-                      rules={[
-                        {
-                          required: true
-                        },
-                      ]}
-                    >
-                      <InputNumber />
-                    </Form.Item>
-                  </Col>
 
                 </Row>
               </TabPane>
@@ -547,7 +475,7 @@ function H(props) {
                         name="Cu"
                         noStyle={true}
                       >
-                        <InputNumber />
+                        <InputNumber step={0.01} />
                       </Form.Item>
                       <Form.Item
                         name="priorityCu"
@@ -572,7 +500,7 @@ function H(props) {
                         name="SiO2"
                         noStyle={true}
                       >
-                        <InputNumber />
+                        <InputNumber step={0.01} />
                       </Form.Item>
                       <Form.Item
                         name="prioritySiO2"
@@ -596,7 +524,7 @@ function H(props) {
                         name="Zn"
                         noStyle={true}
                       >
-                        <InputNumber />
+                        <InputNumber step={0.01} />
                       </Form.Item>
                       <Form.Item
                         name="priorityZn"
@@ -620,7 +548,7 @@ function H(props) {
                         name="Al2O3"
                         noStyle={true}
                       >
-                        <InputNumber />
+                        <InputNumber step={0.01} />
                       </Form.Item>
                       <Form.Item
                         name="priorityAl2O3"
@@ -646,7 +574,7 @@ function H(props) {
                         name="Fe"
                         noStyle={true}
                       >
-                        <InputNumber />
+                        <InputNumber step={0.01} />
                       </Form.Item>
                       <Form.Item
                         name="priorityFe"
@@ -670,7 +598,7 @@ function H(props) {
                         name="CaO"
                         noStyle={true}
                       >
-                        <InputNumber />
+                        <InputNumber step={0.01} />
                       </Form.Item>
                       <Form.Item
                         name="priorityCaO"
@@ -694,7 +622,7 @@ function H(props) {
                         name="Pb"
                         noStyle={true}
                       >
-                        <InputNumber />
+                        <InputNumber step={0.01} />
                       </Form.Item>
                       <Form.Item
                         name="priorityPb"
@@ -718,7 +646,7 @@ function H(props) {
                         name="H2O"
                         noStyle={true}
                       >
-                        <InputNumber />
+                        <InputNumber step={0.01} />
                       </Form.Item>
                       <Form.Item
                         name="priorityH2O"
@@ -744,7 +672,7 @@ function H(props) {
                         name="S"
                         noStyle={true}
                       >
-                        <InputNumber />
+                        <InputNumber step={0.01} />
                       </Form.Item>
                       <Form.Item
                         name="priorityS"
@@ -768,7 +696,7 @@ function H(props) {
                         name="As"
                         noStyle={true}
                       >
-                        <InputNumber />
+                        <InputNumber step={0.01} />
                       </Form.Item>
                       <Form.Item
                         name="priorityAs"
@@ -792,7 +720,7 @@ function H(props) {
                         name="MgO"
                         noStyle={true}
                       >
-                        <InputNumber />
+                        <InputNumber step={0.01} />
                       </Form.Item>
                       <Form.Item
                         name="priorityMgO"
@@ -806,12 +734,12 @@ function H(props) {
 
                 </Row>
               </TabPane>
-              <TabPane tab="模型权重" key="3" forceRender>
+              <TabPane tab="模型参数" key="3" forceRender>
                 <Row className={styles.row}>
-                  <Col span={6}>
+                <Col span={6}>
                     <Form.Item
                       label="最大矿量"
-                      name="maxOre"
+                      name="modelFactorAlpha"
                       initialValue={1}
                       rules={[
                         {
@@ -819,50 +747,65 @@ function H(props) {
                         },
                       ]}
                     >
-                      <InputNumber />
+                      <InputNumber step={0.01} />
                     </Form.Item>
                   </Col>
                   <Col span={6}>
                     <Form.Item
-                      label="最少物料"
-                      name="minMaterial"
-                      initialValue={0}
+                      label="最少剩余"
+                      name="modelFactorBeta"
+                      initialValue={1}
                       rules={[
                         {
                           required: true
                         },
                       ]}
                     >
-                      <InputNumber />
-                    </Form.Item>
-                  </Col>
-                  <Col span={6}>
-                    <Form.Item
-                      //labelCol={12}
-                      label="最大物料数量"
-                      name="maxMaterial"
-                      initialValue={24}
-                      rules={[
-                        {
-                          required: true
-                        },
-                      ]}
-                    >
-                      <InputNumber />
+                      <InputNumber step={0.01} />
                     </Form.Item>
                   </Col>
                   <Col span={6}>
                     <Form.Item
                       label="元素含量"
-                      name="elementsPercentage"
-                      initialValue={0}
+                      name="modelFactorGamma"
+                      initialValue={1}
                       rules={[
                         {
                           required: true
                         },
                       ]}
                     >
-                      <InputNumber />
+                      <InputNumber step={0.01} />
+                    </Form.Item>
+                  </Col>
+                </Row>
+                <Row className={styles.row}>
+                <Col span={6}>
+                    <Form.Item
+                      label="优化算法种群数量"
+                      name="gaPop"
+                      initialValue={25}
+                      rules={[
+                        {
+                          required: true
+                        },
+                      ]}
+                    >
+                      <InputNumber step={0.01} />
+                    </Form.Item>
+                  </Col>
+                  <Col span={6}>
+                    <Form.Item
+                      label="优化算法迭代次数"
+                      name="gaEpoch"
+                      initialValue={25}
+                      rules={[
+                        {
+                          required: true
+                        },
+                      ]}
+                    >
+                      <InputNumber step={0.01} />
                     </Form.Item>
                   </Col>
                 </Row>
