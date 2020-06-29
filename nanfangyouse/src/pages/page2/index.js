@@ -183,16 +183,16 @@ function P(props) {
       presetParameter: {
         matteTargetGradePercentage: values.matteTargetGradePercentage,
         maxType: values.maxType,
+        consumedAmount: values.consumedAmount,
+        peaCoal: values.peaCoal,
+        oxygenPeaCoalRatio: values.oxygenPeaCoalRatio,
+        FeSiO2Ratio: values.FeSiO2Ratio,
         matteFePercentage: values.matteFePercentage,
         matteSPercentage: values.matteSPercentage,
-        maxMaterial: values.maxMaterial,
-        ore: values.ore,
-        oxygenPercentage: values.oxygenPercentage,
         slagCuPercentage: values.slagCuPercentage,
         slagSPercentage: values.slagSPercentage,
         slagFePercentage: values.slagFePercentage,
         slagSiO2Percentage: values.slagSiO2Percentage,
-        peaCoal: values.peaCoal,
       },
       oxygenMaterialRatio: {
         formula1: values.formula1,
@@ -270,7 +270,7 @@ function P(props) {
             <Tabs defaultActiveKey="1" type="card">
               <TabPane tab="预设参数" key="1" forceRender>
                 <Row className={styles.row}>
-                  <Col span={4}>
+                  <Col span={6}>
                     <Form.Item
                       label="冰铜目标品味(%)"
                       name="matteTargetGradePercentage"
@@ -284,38 +284,10 @@ function P(props) {
                       <InputNumber step={0.01} />
                     </Form.Item>
                   </Col>
-                  <Col span={4}>
+                  <Col span={6}>
                     <Form.Item
                       label="冰铜铁含量(%)"
                       name="matteFePercentage"
-                      initialValue={1.99}
-                      rules={[
-                        {
-                          required: true
-                        },
-                      ]}
-                    >
-                      <InputNumber step={0.01} />
-                    </Form.Item>
-                  </Col>
-                  <Col span={4}>
-                    <Form.Item
-                      label="冰铜硫含量(%)"
-                      name="matteSPercentage"
-                      initialValue={1.99}
-                      rules={[
-                        {
-                          required: true
-                        },
-                      ]}
-                    >
-                      <InputNumber step={0.01} />
-                    </Form.Item>
-                  </Col>
-                  <Col span={4}>
-                    <Form.Item
-                      label="最大物料数量"
-                      name="maxMaterial"
                       initialValue={3.5}
                       rules={[
                         {
@@ -326,38 +298,10 @@ function P(props) {
                       <InputNumber step={0.01} />
                     </Form.Item>
                   </Col>
-                  <Col span={4}>
+                  <Col span={6}>
                     <Form.Item
-                      label="给料矿量(t/h)"
-                      name="consumedAmount"
-                      initialValue={20.84}
-                      rules={[
-                        {
-                          required: true
-                        },
-                      ]}
-                    >
-                      <InputNumber step={0.01} />
-                    </Form.Item>
-                  </Col>
-                  <Col span={4}>
-                    <Form.Item
-                      label="氧浓(%)"
-                      name="oxygenPercentage"
-                      initialValue={20.84}
-                      rules={[
-                        {
-                          required: true
-                        },
-                      ]}
-                    >
-                      <InputNumber step={0.01} />
-                    </Form.Item>
-                  </Col>
-                  <Col span={4}>
-                    <Form.Item
-                      label="粒煤"
-                      name="peaCoal"
+                      label="冰铜硫含量(%)"
+                      name="matteSPercentage"
                       initialValue={20.84}
                       rules={[
                         {
@@ -370,8 +314,7 @@ function P(props) {
                   </Col>
                 </Row>
                 <Row className={styles.row}>
-
-                  <Col span={4}>
+                  <Col span={6}>
                     <Form.Item
                       label="渣中铜含量(%)"
                       name="slagCuPercentage"
@@ -385,7 +328,7 @@ function P(props) {
                       <InputNumber step={0.01} />
                     </Form.Item>
                   </Col>
-                  <Col span={4}>
+                  <Col span={6}>
                     <Form.Item
                       label="渣中硫含量(%)"
                       name="slagSPercentage"
@@ -399,7 +342,7 @@ function P(props) {
                       <InputNumber step={0.01} />
                     </Form.Item>
                   </Col>
-                  <Col span={4}>
+                  <Col span={6}>
                     <Form.Item
                       label="渣中铁含量(%)"
                       name="slagFePercentage"
@@ -413,9 +356,8 @@ function P(props) {
                       <InputNumber step={0.01} />
                     </Form.Item>
                   </Col>
-                  <Col span={4}>
+                  <Col span={6}>
                     <Form.Item
-                      //labelCol={12}
                       label="渣中二氧化硅含量(%)"
                       name="slagSiO2Percentage"
                       initialValue={24}
@@ -429,22 +371,92 @@ function P(props) {
                     </Form.Item>
                   </Col>
                 </Row>
+                <Row className={styles.row}>
+                  <Col span={6}>
+                    <Form.Item
+                      label={<span>粒煤单位耗氧量(Nm<sup>3</sup>/t)</span>}
+                      name="oxygenPeaCoalRatio"
+                      initialValue={1100}
+                      rules={[
+                        {
+                          required: true
+                        },
+                      ]}
+                    >
+                      <InputNumber step={0.01} />
+                    </Form.Item>
+                  </Col>
+                  <Col span={6}>
+                    <Form.Item
+                      label="粒煤(t/h)"
+                      name="peaCoal"
+                      initialValue={1.5}
+                      rules={[
+                        {
+                          required: true
+                        },
+                      ]}
+                    >
+                      <InputNumber step={0.01} />
+                    </Form.Item>
+                  </Col>
+                  <Col span={6}>
+                    <Form.Item
+                      label="Fe/SiO2"
+                      name="FeSiO2Ratio"
+                      initialValue={2}
+                      rules={[
+                        {
+                          required: true
+                        },
+                      ]}
+                    >
+                      <InputNumber step={0.01} />
+                    </Form.Item>
+                  </Col>
+                  <Col span={6}>
+                    <Form.Item
+                      label="给矿量(t/h)"
+                      name="consumedAmount"
+                      initialValue={150}
+                      rules={[
+                        {
+                          required: true
+                        },
+                      ]}
+                    >
+                      <InputNumber step={0.01} />
+                    </Form.Item>
+                  </Col>
+                </Row>
+                <Row className={styles.row}>
+                  <Col span={6}>
+                    <Form.Item
+                      label="最大类别数"
+                      name="maxType"
+                      initialValue={4}
+                      rules={[
+                        {
+                          required: true
+                        },
+                      ]}
+                    >
+                      <InputNumber />
+                    </Form.Item>
+                  </Col>
+                </Row>
               </TabPane>
-
-              <TabPane tab="氧料比" key="2" forceRender>
+            </Tabs>
+            <Tabs defaultActiveKey="1" type="card">
+              <TabPane tab="氧料比" key="1" forceRender>
                 <Row className={styles.row}>
                   <Col span={6}>
                     <Form.Item
                       label="配方1"
                       name="formula1"
                       initialValue=''
-                    // rules={[
-                    //   {
-                    //     required: true
-                    //   },
-                    // ]}
                     >
-                      <Input />
+                      <Input disabled/>
                     </Form.Item>
                   </Col>
                   <Col span={6}>
@@ -452,13 +464,8 @@ function P(props) {
                       label="配方2"
                       name="formula2"
                       initialValue=''
-                    // rules={[
-                    //   {
-                    //     required: true
-                    //   },
-                    // ]}
                     >
-                      <Input />
+                      <Input disabled />
                     </Form.Item>
                   </Col>
                 </Row>
