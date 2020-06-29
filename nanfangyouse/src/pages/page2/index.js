@@ -213,6 +213,18 @@ function P(props) {
       }
     })
   }
+  function quickUpdate() {
+    request({
+      method: 'POST',
+      host: config.host,
+      port: config.port,
+      url: 'quick_update2',
+      payload: result,
+      cb: (res) => {
+        setResult(res)
+      }
+    })
+  }
   function onFinishFailed(err) {
     console.log(err)
   }
@@ -358,7 +370,7 @@ function P(props) {
                   </Col>
                 </Row>
                 <Row className={styles.row}>
-                  
+
                   <Col span={4}>
                     <Form.Item
                       label="渣中铜含量(%)"
@@ -523,6 +535,15 @@ function P(props) {
                         />
                       </Col>
                     </Row>
+                  </div>
+                  <div>
+                    <Button
+                      type="primary"
+                      style={{ width: '200px' }}
+                      onClick={quickUpdate}
+                    >
+                      更新
+                  </Button>
                   </div>
                   <div>
                     <div style={{ marginTop: '20px' }}>
