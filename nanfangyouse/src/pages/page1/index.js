@@ -50,6 +50,10 @@ function H(props) {
       presetParameter: {
         matteTargetGradePercentage: values.matteTargetGradePercentage,
         maxType: values.maxType,
+        consumedAmount: values.consumedAmount,
+        peaCoal: values.peaCoal,
+        oxygenPeaCoalRatio: values.oxygenPeaCoalRatio,
+        FeSiO2Ratio: values.FeSiO2Ratio,
         matteFePercentage: values.matteFePercentage,
         matteSPercentage: values.matteSPercentage,
         slagCuPercentage: values.slagCuPercentage,
@@ -441,9 +445,9 @@ function H(props) {
                 <Row className={styles.row}>
                   <Col span={6}>
                     <Form.Item
-                      label="最大类别数"
-                      name="maxType"
-                      initialValue={4}
+                      label={<span>粒煤单位耗氧量(Nm<sup>3</sup>/t)</span>}
+                      name="oxygenPeaCoalRatio"
+                      initialValue={1100}
                       rules={[
                         {
                           required: true
@@ -453,9 +457,64 @@ function H(props) {
                       <InputNumber step={0.01} />
                     </Form.Item>
                   </Col>
-                  
+                  <Col span={6}>
+                    <Form.Item
+                      label="粒煤(t/h)"
+                      name="peaCoal"
+                      initialValue={1.5}
+                      rules={[
+                        {
+                          required: true
+                        },
+                      ]}
+                    >
+                      <InputNumber step={0.01} />
+                    </Form.Item>
+                  </Col>
+                  <Col span={6}>
+                    <Form.Item
+                      label="Fe/SiO2"
+                      name="FeSiO2Ratio"
+                      initialValue={2}
+                      rules={[
+                        {
+                          required: true
+                        },
+                      ]}
+                    >
+                      <InputNumber step={0.01} />
+                    </Form.Item>
+                  </Col>
+                  <Col span={6}>
+                    <Form.Item
+                      label="给矿量(t/h)"
+                      name="consumedAmount"
+                      initialValue={150}
+                      rules={[
+                        {
+                          required: true
+                        },
+                      ]}
+                    >
+                      <InputNumber step={0.01} />
+                    </Form.Item>
+                  </Col>
                 </Row>
                 <Row className={styles.row}>
+                  <Col span={6}>
+                    <Form.Item
+                      label="最大类别数"
+                      name="maxType"
+                      initialValue={4}
+                      rules={[
+                        {
+                          required: true
+                        },
+                      ]}
+                    >
+                      <InputNumber />
+                    </Form.Item>
+                  </Col>
 
                 </Row>
               </TabPane>
@@ -736,7 +795,7 @@ function H(props) {
               </TabPane>
               <TabPane tab="模型参数" key="3" forceRender>
                 <Row className={styles.row}>
-                <Col span={6}>
+                  <Col span={6}>
                     <Form.Item
                       label="最大矿量"
                       name="modelFactorAlpha"
@@ -780,7 +839,7 @@ function H(props) {
                   </Col>
                 </Row>
                 <Row className={styles.row}>
-                <Col span={6}>
+                  <Col span={6}>
                     <Form.Item
                       label="优化算法种群数量"
                       name="gaPop"
@@ -840,7 +899,7 @@ function H(props) {
                   <Col span={6}>
                     <Input
                       style={{ width: '250px' }}
-                      addonBefore="总消耗(吨)"
+                      addonBefore="总消耗矿量(吨)"
                       value={result.calculateParameter.totalConsumedAmount}
                     />
                   </Col>
@@ -856,6 +915,45 @@ function H(props) {
                       style={{ width: '250px' }}
                       addonBefore="目标得分"
                       value={result.calculateParameter.best_y}
+                    />
+                  </Col>
+                </Row>
+                <Row className={styles.row}>
+                  <Col span={6}>
+                    <Input
+                      style={{ width: '250px' }}
+                      addonBefore={<span>一次风量m<sup>3</sup>/h</span>}
+                      value={result.calculateParameter.paFlow}
+                    />
+                  </Col>
+                  <Col span={6}>
+                    <Input
+                      style={{ width: '250px' }}
+                      addonBefore="S/Cu(%)"
+                      value={result.calculateParameter.SCuRatio}
+                    />
+                  </Col>
+                  <Col span={6}>
+                    <Input
+                      style={{ width: '250px' }}
+                      addonBefore="冰铜量(吨)"
+                      value={result.calculateParameter.totalMatte}
+                    />
+                  </Col>
+                  <Col span={6}>
+                    <Input
+                      style={{ width: '250px' }}
+                      addonBefore="渣量(吨)"
+                      value={result.calculateParameter.totalSlag}
+                    />
+                  </Col>
+                </Row>
+                <Row className={styles.row}>
+                  <Col span={6}>
+                    <Input
+                      style={{ width: '250px' }}
+                      addonBefore="石英石(吨)"
+                      value={result.calculateParameter.totalQuartz}
                     />
                   </Col>
                 </Row>

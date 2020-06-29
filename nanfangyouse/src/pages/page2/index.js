@@ -138,6 +138,12 @@ function P(props) {
   const [materialList, setMaterialList] = useState([{ name: '配方1' }, { name: '配方2' }]);
   const [tableLoading, setTableLoading] = useState(false);
   const [resultShow, setResultShow] = useState(false);
+
+  const setResultList = (data) => {
+    //console.log(data)
+    setResult({ ...result, list: [...data] })
+  }
+
   let prevCountRef = useRef([...data]);
   useEffect(() => {
     prevCountRef.current = [...data];
@@ -311,7 +317,7 @@ function P(props) {
                   <Col span={4}>
                     <Form.Item
                       label="给料矿量(t/h)"
-                      name="ore"
+                      name="consumedAmount"
                       initialValue={20.84}
                       rules={[
                         {
@@ -475,8 +481,8 @@ function P(props) {
                       <Col span={6}>
                         <Input
                           style={{ width: '250px' }}
-                          addonBefore="总矿量(吨)"
-                          value={result.calculateParameter.totalOre}
+                          addonBefore="总消耗矿量(吨)"
+                          value={result.calculateParameter.totalConsumedAmount}
                         />
                       </Col>
                       <Col span={6}>
@@ -524,7 +530,7 @@ function P(props) {
                         value={{
                           columns: resultListColumns,
                           dataSource: result.list,
-                          setData: () => {}
+                          setData: setResultList
                         }}>
                         <EditTable />
                       </TableContext.Provider >
