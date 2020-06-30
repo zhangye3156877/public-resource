@@ -132,9 +132,10 @@ function P(props) {
       dataIndex: 'ProductionTime',
     },
   ];
-
+  console.log(form)
   const [data, setData] = useState(fkdata);
   const [result, setResult] = useState(null);
+  const [formula, setFormula] = useState(['', '']);
   const [materialList, setMaterialList] = useState([{ name: '配方1' }, { name: '配方2' }]);
   const [tableLoading, setTableLoading] = useState(false);
   const [resultShow, setResultShow] = useState(false);
@@ -162,7 +163,6 @@ function P(props) {
         const materialList = res.materialList.map((item) => {
           const o = {};
           item.elementsList.forEach((i) => {
-            console.log(i)
             o[i.name] = i.percentage;
           })
           return {
@@ -170,6 +170,7 @@ function P(props) {
             ...o
           }
         })
+        setFormula(Object.values(res.oxygenMaterialRatio))
         setMaterialList(materialList);
         setTableLoading(false)
       }
@@ -228,7 +229,7 @@ function P(props) {
   function onFinishFailed(err) {
     console.log(err)
   }
-
+  
   return (
     <div style={{ padding: '0 10px 10px 10px' }}>
       <div>
@@ -454,16 +455,16 @@ function P(props) {
                     <Form.Item
                       label="配方1"
                       name="formula1"
-                      initialValue=''
+                      //value={formula[0]}
                     >
-                      <Input disabled/>
+                      <Input disabled />
                     </Form.Item>
                   </Col>
                   <Col span={6}>
                     <Form.Item
                       label="配方2"
                       name="formula2"
-                      initialValue=''
+                      //value={formula[1]}
                     >
                       <Input disabled />
                     </Form.Item>
@@ -500,10 +501,20 @@ function P(props) {
                       <Col span={6}>
                         <Input
                           style={{ width: '250px' }}
-                          addonBefore="总消耗矿量(吨)"
+                          addonBefore="总消耗(吨)"
                           value={result.calculateParameter.totalConsumedAmount}
                         />
                       </Col>
+                      <Col span={6}>
+                        <Input
+                          style={{ width: '250px' }}
+                          addonBefore="总剩余(吨)"
+                          value={result.calculateParameter.totalLeftOver}
+                        />
+                      </Col>
+
+                    </Row>
+                    <Row className={styles.row}>
                       <Col span={6}>
                         <Input
                           style={{ width: '250px' }}
@@ -518,8 +529,6 @@ function P(props) {
                           value={result.calculateParameter.SCuRatio}
                         />
                       </Col>
-                    </Row>
-                    <Row className={styles.row}>
                       <Col span={6}>
                         <Input
                           style={{ width: '250px' }}
@@ -534,6 +543,8 @@ function P(props) {
                           value={result.calculateParameter.totalSlag}
                         />
                       </Col>
+                    </Row>
+                    <Row className={styles.row}>
                       <Col span={6}>
                         <Input
                           style={{ width: '250px' }}

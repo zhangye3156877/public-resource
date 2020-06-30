@@ -343,6 +343,10 @@ class MainController extends Controller {
           formula: '1'
         },
       ],
+      oxygenMaterialRatio: {
+        formula1: "配方1",
+        formula2: "配方2"
+      },
       materialList: [
         {
           formula: '1',
@@ -410,7 +414,7 @@ class MainController extends Controller {
       ],
       calculateParameter: {
         oxygenMaterialRatio: 199,
-        totalOre: 11,
+        totalConsumedAmount: 11,
         paFlow: 22,
         SCuRatio: 33,
         totalMatte: 44,
@@ -450,7 +454,7 @@ class MainController extends Controller {
       ],
       calculateParameter: {
         oxygenMaterialRatio: 999,
-        totalOre: 999,
+        totalConsumedAmount: 999,
         paFlow: 999,
         SCuRatio: 999,
         totalMatte: 999,

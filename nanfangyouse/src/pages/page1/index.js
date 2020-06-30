@@ -899,7 +899,7 @@ function H(props) {
                   <Col span={6}>
                     <Input
                       style={{ width: '250px' }}
-                      addonBefore="总消耗矿量(吨)"
+                      addonBefore="总消耗(吨)"
                       value={result.calculateParameter.totalConsumedAmount}
                     />
                   </Col>
