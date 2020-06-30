@@ -23,7 +23,12 @@ class MainController extends Controller {
         oxygenMaterialRatio: 12.32,
         totalConsumedAmount:12.32,
         totalLeftOver:12.32,
-        best_y: 12.32
+        best_y: 12.32,
+        paFlow: 11,
+        SCuRatio: 10,
+        totalMatte: 10,
+        totalSlag: 10,
+        totalQuartz: 10
       },
       elementsMixtureList: [
         {
@@ -41,27 +46,26 @@ class MainController extends Controller {
   }
   async quickupdate() {
     const { ctx } = this;
+    const {list} = ctx.request.body;
+    const list_ = list.map((item) => {
+      return {
+        ...item,
+        inventoryBalance: 999,
+        calculatePercentage: 99
+      }
+    })
     const data = {
-      list: [
-        {
-          name: "水星轮",
-          number: 10001,
-          inventoryBalance: 999,
-          calculatePercentage: 99,
-          adjustPercentage: 11
-        },
-        {
-          name: "莱科塔",
-          number: 10002,
-          inventoryBalance: 999,
-          calculatePercentage: 99
-        }
-      ],
+      list: list_,
       calculateParameter: {
         oxygenMaterialRatio: 12.32,
         totalConsumedAmount:1,
         totalLeftOver:1,
-        best_y: 1
+        best_y: 1,
+        paFlow: 11,
+        SCuRatio: 99,
+        totalMatte: 99,
+        totalSlag: 99,
+        totalQuartz: 99
       },
       elementsMixtureList: [
         {
