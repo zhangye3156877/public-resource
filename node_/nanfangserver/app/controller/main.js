@@ -229,7 +229,7 @@ class MainController extends Controller {
       list: [
         {
           index: 0,
-          required: true,
+          cohesion: true,
           name: '水星轮',
           number: 10001,
           Cu: 1,
@@ -251,7 +251,7 @@ class MainController extends Controller {
         },
         {
           index: 0,
-          required: false,
+          cohesion: false,
           name: '莱科塔',
           number: 10002,
           Cu: 13,
@@ -273,7 +273,7 @@ class MainController extends Controller {
         },
         {
           index: 2,
-          required: true,
+          cohesion: true,
           name: '和盛',
           number: 10003,
           Cu: 16,
@@ -295,7 +295,7 @@ class MainController extends Controller {
         },
         {
           index: 3,
-          required: false,
+          cohesion: false,
           name: '方舟21',
           number: 10004,
           Cu: 20,
@@ -313,11 +313,11 @@ class MainController extends Controller {
           calculatePercentage: '',
           inventoryBalance: '',
           ProductionTime: 1000,
-          formula: '1'
+          formula: '2'
         },
         {
           index: 4,
-          required: false,
+          cohesion: false,
           name: '江门商人',
           number: 10005,
           Cu: 30,
@@ -341,6 +341,33 @@ class MainController extends Controller {
           inventoryBalance: '',
           ProductionTime: 1000,
           formula: '1'
+        },
+        {
+          index: 4,
+          cohesion: false,
+          name: '江门商人',
+          number: 10005,
+          Cu: 30,
+          Fe: 30,
+          S: 30,
+          SiO2: 30,
+          CaO: 30,
+          As: 30,
+          Zn: 30,
+          Pb: 30,
+          MgO: 30,
+          Al2O3: 30,
+          H2O: 30,
+          Sb:30,
+          Bi:30,
+          Ni:30,
+          Ag:30,
+          Au:30,
+          inventory: 30,
+          calculatePercentage: '',
+          inventoryBalance: '',
+          ProductionTime: 1000,
+          formula: '2'
         },
       ],
       oxygenMaterialRatio: {
@@ -430,7 +457,8 @@ class MainController extends Controller {
           name: "Fe",
           percentage: 31.02
         }
-      ]
+      ],
+      recommended: '推荐的结果'
     }
     ctx.body = JSON.stringify(data);
   }
@@ -470,7 +498,8 @@ class MainController extends Controller {
           name: "Fe",
           percentage: 99
         }
-      ]
+      ],
+      recommended: '推荐的结果更新'
     }
     ctx.body = JSON.stringify(data);
   }

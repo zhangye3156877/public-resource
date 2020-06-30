@@ -4,7 +4,8 @@ export default {
     config: {
       host: '127.0.0.1',
       port: 7001
-    }
+    },
+    page1List: []
   },
   reducers: {
     changeConfig(state, payload) {

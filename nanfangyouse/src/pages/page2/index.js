@@ -12,7 +12,8 @@ import {
   Table,
   Spin,
   Divider,
-  Tabs
+  Tabs,
+  message
 } from 'antd';
 import { connect } from 'dva';
 import request from '@/utils/request';
@@ -28,14 +29,26 @@ function P(props) {
   const { config } = props;
   const columns = [
     {
-      title: '必选',
-      dataIndex: 'required',
+      title: '衔接',
+      dataIndex: 'cohesion',
       render: (text, record, index) => <Checkbox
         checked={text}
         onChange={() => {
           const newData = [...prevCountRef.current]
+          if (newData[index].formula == 2) {
+            return message.warning('允许的衔接方向：新->旧，如果需要可以将订单1、2交换位置')
+          }
+          const canCheck = newData.some((item, i) => {
+            if (i === index) {
+              return false
+            }
+            return newData[index].name === item.name
+          })
+          if (canCheck) {
+            return message.warning('对于新旧订单都有的物料，其衔接在实际料斗加料中自动完成')
+          }
           newData[index] = { ...record }
-          newData[index].required = !text
+          newData[index].cohesion = !text
           setData(newData)
         }}
       />
@@ -126,16 +139,16 @@ function P(props) {
     {
       title: '库存余量',
       dataIndex: 'inventoryBalance',
+      editable: true,
     },
     {
       title: '生产时间',
       dataIndex: 'ProductionTime',
     },
   ];
-  console.log(form)
+  const [form] = Form.useForm();
   const [data, setData] = useState(fkdata);
   const [result, setResult] = useState(null);
-  const [formula, setFormula] = useState(['', '']);
   const [materialList, setMaterialList] = useState([{ name: '配方1' }, { name: '配方2' }]);
   const [tableLoading, setTableLoading] = useState(false);
   const [resultShow, setResultShow] = useState(false);
@@ -170,7 +183,10 @@ function P(props) {
             ...o
           }
         })
-        setFormula(Object.values(res.oxygenMaterialRatio))
+        form.setFieldsValue({
+          formula1: res.oxygenMaterialRatio.formula1,
+          formula2: res.oxygenMaterialRatio.formula2,
+        })
         setMaterialList(materialList);
         setTableLoading(false)
       }
@@ -181,6 +197,7 @@ function P(props) {
     console.log(list)
     const payload = {
       list,
+      oldList: JSON.parse(sessionStorage.getItem('page1list')),
       presetParameter: {
         matteTargetGradePercentage: values.matteTargetGradePercentage,
         maxType: values.maxType,
@@ -229,7 +246,7 @@ function P(props) {
   function onFinishFailed(err) {
     console.log(err)
   }
-  
+
   return (
     <div style={{ padding: '0 10px 10px 10px' }}>
       <div>
@@ -261,11 +278,20 @@ function P(props) {
       </div>
       <div>
         <Form
-          // layout="inline"
+          form={form}
           className={styles.block}
           labelCol={{ span: 12 }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
+        // onValuesChange={(key) => {
+        //   const k = Object.keys(key)[0];
+        //   if (key.formula1 || key.formula2) {
+        //     console.log(form.getFieldValue(k))
+        //     form.setFieldsValue({
+        //       [k]: form.getFieldValue(k)
+        //     })
+        //   }
+        // }}
         >
           <div>
             <Tabs defaultActiveKey="1" type="card">
@@ -455,18 +481,18 @@ function P(props) {
                     <Form.Item
                       label="配方1"
                       name="formula1"
-                      //value={formula[0]}
+                    //value={formula[0]}
                     >
-                      <Input disabled />
+                      <Input />
                     </Form.Item>
                   </Col>
                   <Col span={6}>
                     <Form.Item
                       label="配方2"
                       name="formula2"
-                      //value={formula[1]}
+                    //value={formula[1]}
                     >
-                      <Input disabled />
+                      <Input />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -489,6 +515,13 @@ function P(props) {
                 <Spin size="large" />
               </div> : <div>
                   <div>
+                    <p>推荐衔接结构</p>
+                    <Input
+                      style={{ width: '250px' }}
+                      value={result.recommended}
+                    />
+                  </div>
+                  <div style={{ marginTop: '20px' }}>
                     <p>演算参数</p>
                     <Row className={styles.row}>
                       <Col span={6}>

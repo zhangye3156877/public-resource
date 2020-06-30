@@ -130,6 +130,10 @@ function H(props) {
     //console.log(data)
     setResult({ ...result, list: [...data] })
   }
+  const setData_ = (data) => {
+    setData(data);
+    sessionStorage.setItem('page1list', JSON.stringify(data));
+  }
   let prevCountRef = useRef([...data]);
   useEffect(() => {
     prevCountRef.current = [...data];
@@ -146,7 +150,7 @@ function H(props) {
           newData[index] = { ...record }
           newData[index].required = !text
           !text && (newData[index].delete = false)
-          setData(newData)
+          setData_(newData)
         }}
       />
     },
@@ -163,7 +167,7 @@ function H(props) {
             newData[index].required = false
             newData[index].clean = false
           }
-          setData(newData)
+          setData_(newData)
         }}
       />
     },
@@ -180,7 +184,7 @@ function H(props) {
             newData[index].required = true
             newData[index].delete = false
           }
-          setData(newData)
+          setData_(newData)
         }}
       />
     },
@@ -308,7 +312,7 @@ function H(props) {
         <TableContext.Provider value={{
           columns,
           dataSource: data,
-          setData
+          setData: setData_
         }}>
           <EditTable />
         </TableContext.Provider >
