@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <img src="" alt="">
+  <input type="file" id="t">
+  <button id="btn">上传</button>
+  <div>
+    <img src="http://localhost:7002/getImg" alt="" id="img">
+  </div>
+</body>
+<script>
+  const t = document.querySelector('#t')
+  const btn = document.querySelector('#btn');
+  const img = document.querySelector('#img');
+  const ff = new FormData();
+  t.addEventListener('change', function(e){
+    console.log(e.target.files[0])
+    ff.append('file', e.target.files[0]);
+    const reader = new FileReader();
+    reader.readAsDataURL(e.target.files[0]);
+    reader.onload = function(e) {
+      img.src = e.target.result;
+    }
+  })
+  btn.addEventListener('click', function() {
+    const ajax = new XMLHttpRequest();
+    ajax.addEventListener('readystatechange', () => {
+    if (ajax.readyState === 4 && ajax.status === 200) {
+      alert('服务完成')
+      console.log(JSON.parse(ajax.response));
+    }
+  })
+    ajax.open('POST','http://localhost:7002/uploadfile')
+    ajax.send(ff)
+  })
+</script>
+</html>
