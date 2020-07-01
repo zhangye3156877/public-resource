@@ -28,14 +28,18 @@
         config.cb && config.cb(ajax.response);
       }
     })
+    config.responseType && (ajax.responseType = config.responseType);
     ajax.open(config.method, config.url)
     ajax.send(config.data || null)
   }
   request({
     method: 'GET',
     url:'http://localhost:7002/getImg',
+    responseType: 'blob',
     cb: (data) => {
+      // const blob = new Blob([data], {type: 'image/jpeg'})
       imgData = data;
+      console.log(data)
     }
   })
   t.addEventListener('change', function (e) {
