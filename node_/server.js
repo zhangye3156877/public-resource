@@ -28,15 +28,14 @@ router.post('/test', async (ctx) => {
   ctx.body = 'test success'
 })
 router.post('/uploadfile', async (ctx, next) => {
-  const file = ctx.request.files.file;
+  const file = ctx.request.files.file2;
   const reader = fs.createReadStream(file.path);
-  
   reader.on('data', (chunk) => {
   console.log('读取文件数据:', chunk);
 })
-  let filePath = path.join(__dirname, 'public') + `/${file.name}`;
-  const upStream = fs.createWriteStream(filePath);
-  reader.pipe(upStream);
+  // let filePath = path.join(__dirname, 'public') + `/${file.name}`;
+  // const upStream = fs.createWriteStream(filePath);
+  // reader.pipe(upStream);
   return ctx.body = ctx.request.files;
 });
 
