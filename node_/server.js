@@ -38,7 +38,7 @@ router.post('/uploadfile', async (ctx, next) => {
   //let filePath = path.join(__dirname, 'public') + `/${file2.name}`;
   let filePath = path.join(__dirname, 'public') + `/z.jpeg`;
   const upStream = fs.createWriteStream(filePath);
-  reader.pipe(upStream);
+  //reader.pipe(upStream);
 
   //return ctx.body = ctx.request.files;
   // fs.readFile(file.path, (err, data) => {
@@ -47,7 +47,7 @@ router.post('/uploadfile', async (ctx, next) => {
   // fs.readFile(file2.path, (err, data) => {
   //   console.log(data);
   // })
-  ctx.body = 'ok'
+  ctx.body = [file, file2]
 });
 
 app
