@@ -50,6 +50,7 @@ function H(props) {
       presetParameter: {
         matteTargetGradePercentage: values.matteTargetGradePercentage,
         maxType: values.maxType,
+        oxygenConcentration: values.oxygenConcentration,
         consumedAmount: values.consumedAmount,
         peaCoal: values.peaCoal,
         oxygenPeaCoalRatio: values.oxygenPeaCoalRatio,
@@ -278,11 +279,12 @@ function H(props) {
       title: '演算比例',
       dataIndex: 'calculatePercentage',
       editable: true,
+      step: 0.01
     },
-    {
-      title: '库存余量',
-      dataIndex: 'inventoryBalance',
-    },
+    // {
+    //   title: '库存余量',
+    //   dataIndex: 'inventoryBalance',
+    // },
   ];
 
   const [columns] = useState(fkcolumns);
@@ -519,7 +521,20 @@ function H(props) {
                       <InputNumber />
                     </Form.Item>
                   </Col>
-
+                  <Col span={6}>
+                    <Form.Item
+                      label="氧浓度(%)"
+                      name="oxygenConcentration"
+                      initialValue={85}
+                      rules={[
+                        {
+                          required: true
+                        },
+                      ]}
+                    >
+                      <InputNumber step={0.01} />
+                    </Form.Item>
+                  </Col>
                 </Row>
               </TabPane>
               <TabPane tab="元素含量" key="2" forceRender>
@@ -792,9 +807,7 @@ function H(props) {
                         <InputNumber placeholder="优先级" />
                       </Form.Item>
                     </Space>
-
                   </Col>
-
                 </Row>
               </TabPane>
               <TabPane tab="模型参数" key="3" forceRender>
@@ -810,7 +823,7 @@ function H(props) {
                         },
                       ]}
                     >
-                      <InputNumber step={0.01} />
+                      <InputNumber />
                     </Form.Item>
                   </Col>
                   <Col span={6}>
@@ -824,7 +837,7 @@ function H(props) {
                         },
                       ]}
                     >
-                      <InputNumber step={0.01} />
+                      <InputNumber />
                     </Form.Item>
                   </Col>
                   <Col span={6}>
@@ -838,7 +851,7 @@ function H(props) {
                         },
                       ]}
                     >
-                      <InputNumber step={0.01} />
+                      <InputNumber />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -854,7 +867,7 @@ function H(props) {
                         },
                       ]}
                     >
-                      <InputNumber step={0.01} />
+                      <InputNumber />
                     </Form.Item>
                   </Col>
                   <Col span={6}>
@@ -868,7 +881,7 @@ function H(props) {
                         },
                       ]}
                     >
-                      <InputNumber step={0.01} />
+                      <InputNumber />
                     </Form.Item>
                   </Col>
                 </Row>

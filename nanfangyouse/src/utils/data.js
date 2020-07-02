@@ -138,7 +138,7 @@ export const list1_1 = [
 
 export const list2_1 =  [
   {
-    required: false,
+    cohesion: false,
     name: '水星轮',
     number: 10001,
     Cu: 0,
@@ -164,7 +164,7 @@ export const list2_1 =  [
     formula: 1
   },
   {
-    required: false,
+    cohesion: false,
     name: '莱科塔',
     number: 10002,
     Cu: 0,
@@ -190,7 +190,7 @@ export const list2_1 =  [
     formula: 1
   },
   {
-    required: false,
+    cohesion: false,
     name: '和盛',
     number: 10003,
     Cu: 0,
@@ -216,7 +216,7 @@ export const list2_1 =  [
     formula: 1
   },
   {
-    required: false,
+    cohesion: false,
     name: '方舟21',
     number: 10004,
     Cu: 0,
@@ -242,7 +242,7 @@ export const list2_1 =  [
     formula: 1
   },
   {
-    required: false,
+    cohesion: false,
     name: '江门商人',
     number: 10005,
     Cu: 0,
@@ -429,7 +429,8 @@ export const columns1_2 = [
   {
     title: '调整比例',
     dataIndex: 'adjustRatio',
-    editable: true
+    editable: true,
+    step: .01
   },
 ];
 

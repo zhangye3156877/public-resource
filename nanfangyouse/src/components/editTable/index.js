@@ -27,8 +27,10 @@ const EditableCell = ({
   dataIndex,
   record,
   handleSave,
+  step,
   ...restProps
 }) => {
+  
   const [editing, setEditing] = useState(false);
   const inputRef = useRef();
   const form = useContext(EditableContext);
@@ -39,10 +41,10 @@ const EditableCell = ({
   }, [editing]);
 
   const toggleEdit = () => {
-    
     if (record.required === false) {
       return
     }
+    
     setEditing(!editing);
     form.setFieldsValue({
       [dataIndex]: record[dataIndex],
@@ -76,10 +78,10 @@ const EditableCell = ({
           ]}
         >
           <InputNumber
-            
             ref={inputRef}
             onPressEnter={save}
             onBlur={save}
+            step={step || 1}
           />
         </Form.Item>
       ) : (
@@ -118,6 +120,7 @@ function EditTable(props) {
         editable: col.editable,
         dataIndex: col.dataIndex,
         title: col.title,
+        step: col.step,
         handleSave: row => {
           const newData = [...dataSource];
           const index = newData.findIndex(item => row.number === item.number);

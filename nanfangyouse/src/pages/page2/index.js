@@ -23,7 +23,9 @@ import styles from '../index.less';
 const { TabPane } = Tabs;
 const fkdata = [...list2_1];
 const resultElementsMixtureListColumns = [...columns1_3];
-const resultListColumns = [...columns1_2];
+const resultListColumns = columns1_2.filter((item) => {
+  return item.dataIndex !== 'inventory'
+});
 
 function P(props) {
   const { config } = props;
@@ -128,16 +130,12 @@ function P(props) {
       dataIndex: 'Au',
     },
     {
-      title: '库存/吨',
-      dataIndex: 'inventory',
-    },
-    {
       title: '演算比例',
       dataIndex: 'calculatePercentage',
       //editable: true,
     },
     {
-      title: '库存余量',
+      title: '库存余量(盘点库存)',
       dataIndex: 'inventoryBalance',
       editable: true,
     },
@@ -201,6 +199,7 @@ function P(props) {
       presetParameter: {
         matteTargetGradePercentage: values.matteTargetGradePercentage,
         maxType: values.maxType,
+        oxygenConcentration: values.oxygenConcentration,
         consumedAmount: values.consumedAmount,
         peaCoal: values.peaCoal,
         oxygenPeaCoalRatio: values.oxygenPeaCoalRatio,
@@ -308,7 +307,7 @@ function P(props) {
                         },
                       ]}
                     >
-                      <InputNumber step={0.01} />
+                      <InputNumber step={0.01} disabled/>
                     </Form.Item>
                   </Col>
                   <Col span={6}>
@@ -322,7 +321,7 @@ function P(props) {
                         },
                       ]}
                     >
-                      <InputNumber step={0.01} />
+                      <InputNumber step={0.01} disabled/>
                     </Form.Item>
                   </Col>
                   <Col span={6}>
@@ -336,7 +335,7 @@ function P(props) {
                         },
                       ]}
                     >
-                      <InputNumber step={0.01} />
+                      <InputNumber step={0.01} disabled/>
                     </Form.Item>
                   </Col>
                 </Row>
@@ -352,7 +351,7 @@ function P(props) {
                         },
                       ]}
                     >
-                      <InputNumber step={0.01} />
+                      <InputNumber step={0.01} disabled/>
                     </Form.Item>
                   </Col>
                   <Col span={6}>
@@ -366,7 +365,7 @@ function P(props) {
                         },
                       ]}
                     >
-                      <InputNumber step={0.01} />
+                      <InputNumber step={0.01} disabled/>
                     </Form.Item>
                   </Col>
                   <Col span={6}>
@@ -380,7 +379,7 @@ function P(props) {
                         },
                       ]}
                     >
-                      <InputNumber step={0.01} />
+                      <InputNumber step={0.01} disabled/>
                     </Form.Item>
                   </Col>
                   <Col span={6}>
@@ -394,7 +393,7 @@ function P(props) {
                         },
                       ]}
                     >
-                      <InputNumber step={0.01} />
+                      <InputNumber step={0.01} disabled/>
                     </Form.Item>
                   </Col>
                 </Row>
@@ -410,7 +409,7 @@ function P(props) {
                         },
                       ]}
                     >
-                      <InputNumber step={0.01} />
+                      <InputNumber step={0.01} disabled/>
                     </Form.Item>
                   </Col>
                   <Col span={6}>
@@ -424,7 +423,7 @@ function P(props) {
                         },
                       ]}
                     >
-                      <InputNumber step={0.01} />
+                      <InputNumber step={0.01} disabled/>
                     </Form.Item>
                   </Col>
                   <Col span={6}>
@@ -438,7 +437,7 @@ function P(props) {
                         },
                       ]}
                     >
-                      <InputNumber step={0.01} />
+                      <InputNumber step={0.01} disabled/>
                     </Form.Item>
                   </Col>
                   <Col span={6}>
@@ -452,7 +451,7 @@ function P(props) {
                         },
                       ]}
                     >
-                      <InputNumber step={0.01} />
+                      <InputNumber step={0.01} disabled/>
                     </Form.Item>
                   </Col>
                 </Row>
@@ -468,7 +467,21 @@ function P(props) {
                         },
                       ]}
                     >
-                      <InputNumber />
+                      <InputNumber disabled/>
+                    </Form.Item>
+                  </Col>
+                  <Col span={6}>
+                    <Form.Item
+                      label="氧浓度(%)"
+                      name="oxygenConcentration"
+                      initialValue={85}
+                      rules={[
+                        {
+                          required: true
+                        },
+                      ]}
+                    >
+                      <InputNumber step={0.01} disabled/>
                     </Form.Item>
                   </Col>
                 </Row>
@@ -481,18 +494,24 @@ function P(props) {
                     <Form.Item
                       label="配方1"
                       name="formula1"
-                    //value={formula[0]}
                     >
-                      <Input />
+                      <Input disabled/>
                     </Form.Item>
                   </Col>
                   <Col span={6}>
                     <Form.Item
                       label="配方2"
                       name="formula2"
-                    //value={formula[1]}
                     >
-                      <Input />
+                      <Input disabled/>
+                    </Form.Item>
+                  </Col>
+                  <Col span={6}>
+                    <Form.Item
+                      label="配方*"
+                      name="formula*"
+                    >
+                      <Input disabled/>
                     </Form.Item>
                   </Col>
                 </Row>
