@@ -10,13 +10,15 @@ class MainController extends Controller {
           number: 10001,
           inventoryBalance: 1346,
           calculatePercentage: 31.23,
-          adjustPercentage: 11
+          adjustPercentage: 11,
+          productionTime: 1000,
         },
         {
           name: "莱科塔",
           number: 10002,
           inventoryBalance: 5686,
-          calculatePercentage: 51.23
+          calculatePercentage: 51.23,
+          productionTime: 1000,
         }
       ],
       calculateParameter: {
@@ -227,8 +229,8 @@ class MainController extends Controller {
     const { ctx } = this;
     const data = {
       list: [
+       [
         {
-          index: 0,
           cohesion: true,
           name: '水星轮',
           number: 10001,
@@ -246,11 +248,10 @@ class MainController extends Controller {
           inventory: 12,
           calculatePercentage: '',
           inventoryBalance: '',
-          ProductionTime: 1000,
+          productionTime: 1000,
           formula: '1'
         },
         {
-          index: 0,
           cohesion: false,
           name: '莱科塔',
           number: 10002,
@@ -268,11 +269,10 @@ class MainController extends Controller {
           inventory: 1000,
           calculatePercentage: '',
           inventoryBalance: '',
-          ProductionTime: 1000,
+          productionTime: 1000,
           formula: '1'
         },
         {
-          index: 2,
           cohesion: true,
           name: '和盛',
           number: 10003,
@@ -290,11 +290,10 @@ class MainController extends Controller {
           inventory: 16,
           calculatePercentage: '',
           inventoryBalance: '',
-          ProductionTime: 1000,
+          productionTime: 1000,
           formula: '1'
         },
         {
-          index: 3,
           cohesion: false,
           name: '方舟21',
           number: 10004,
@@ -312,11 +311,10 @@ class MainController extends Controller {
           inventory: 20,
           calculatePercentage: '',
           inventoryBalance: '',
-          ProductionTime: 1000,
+          productionTime: 1000,
           formula: '2'
         },
         {
-          index: 4,
           cohesion: false,
           name: '江门商人',
           number: 10005,
@@ -339,14 +337,13 @@ class MainController extends Controller {
           inventory: 30,
           calculatePercentage: '',
           inventoryBalance: '',
-          ProductionTime: 1000,
+          productionTime: 1000,
           formula: '1'
         },
         {
-          index: 4,
           cohesion: false,
           name: '江门商人',
-          number: 10005,
+          number: 10006,
           Cu: 30,
           Fe: 30,
           S: 30,
@@ -366,9 +363,85 @@ class MainController extends Controller {
           inventory: 30,
           calculatePercentage: '',
           inventoryBalance: '',
-          ProductionTime: 1000,
+          productionTime: 1000,
           formula: '2'
         },
+       ],
+       [
+        {
+          delete: false,
+          name: '表2项目1',
+          number: 10007,
+          Cu: 20,
+          Fe: 20,
+          S: 20,
+          SiO2: 20,
+          CaO: 20,
+          As: 20,
+          Zn: 20,
+          Pb: 20,
+          MgO: 20,
+          Al2O3: 20,
+          H2O: 20,
+          inventory: 20,
+          calculatePercentage: '',
+          inventoryBalance: '',
+          productionTime: 1000,
+          formula: '2'
+        },
+        {
+          delete: false,
+          name: '表2项目2',
+          number: 10008,
+          Cu: 30,
+          Fe: 30,
+          S: 30,
+          SiO2: 30,
+          CaO: 30,
+          As: 30,
+          Zn: 30,
+          Pb: 30,
+          MgO: 30,
+          Al2O3: 30,
+          H2O: 30,
+          Sb:30,
+          Bi:30,
+          Ni:30,
+          Ag:30,
+          Au:30,
+          inventory: 30,
+          calculatePercentage: '',
+          inventoryBalance: '',
+          productionTime: 1000,
+          formula: '1'
+        },
+        {
+          delete: false,
+          name: '表2项目3',
+          number: 10009,
+          Cu: 30,
+          Fe: 30,
+          S: 30,
+          SiO2: 30,
+          CaO: 30,
+          As: 30,
+          Zn: 30,
+          Pb: 30,
+          MgO: 30,
+          Al2O3: 30,
+          H2O: 30,
+          Sb:30,
+          Bi:30,
+          Ni:30,
+          Ag:30,
+          Au:30,
+          inventory: 30,
+          calculatePercentage: '',
+          inventoryBalance: '',
+          productionTime: 1000,
+          formula: '2'
+        },
+       ]
       ],
       oxygenMaterialRatio: {
         formula1: '配方1',
@@ -429,15 +502,19 @@ class MainController extends Controller {
         {
           name: "水星轮",
           number: 10001,
+          Cu:9,
           inventoryBalance: 1346,
           calculatePercentage: 31.23,
-          adjustPercentage: 11
+          adjustPercentage: 11,
+          productionTime: 1000,
         },
         {
           name: "莱科塔",
           number: 10002,
+          Fe: 8,
           inventoryBalance: 5686,
-          calculatePercentage: 51.23
+          calculatePercentage: 51.23,
+          productionTime: 1001,
         }
       ],
       calculateParameter: {

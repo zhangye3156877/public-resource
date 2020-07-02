@@ -8,7 +8,7 @@ import {
   InputNumber,
   Row,
   Col,
-  Space,
+  Switch,
   Table,
   Spin,
   Divider,
@@ -31,14 +31,45 @@ const resultListColumns = columns1_2.filter((item) => {
 
 function P(props) {
   const { config } = props;
+  
+  const [form] = Form.useForm();
+  const [data, setData] = useState(fkdata);
+  const [result, setResult] = useState(null);
+  const [manual, setManual] = useState(false);
+  const [materialList, setMaterialList] = useState([{ name: '配方1' }, { name: '配方2' }]);
+  const [tableLoading, setTableLoading] = useState(false);
+  const [resultShow, setResultShow] = useState(false);
+
+  const setResultList = (data) => {
+    setResult({ ...result, list: [...data] })
+  }
+  function setData_(payload, type) {
+    const list = [...data];
+    list[type] = payload;
+    setData(list);
+  }
+  function setManual_(payload) {
+    setManual(payload)
+    // const newData = data.map(item => {
+    //   return item.map(i => {
+    //     const nI = i;
+    //     'cohesion' in nI && (nI.cohesion = true);
+    //     'delete' in nI && (nI.delete = true);
+    //     return nI
+    //   })
+    // })
+    // setData(newData)
+  }
   const columns = [
     {
       title: '衔接',
       dataIndex: 'cohesion',
       render: (text, record, index) => <Checkbox
         checked={text}
+        disabled={manual}
         onChange={() => {
-          const newData = [...prevCountRef.current]
+          const newData = [...prevCountRef.current[0]];
+          
           if (newData[index].formula == 2) {
             return message.warning('允许的衔接方向：新->旧，如果需要可以将订单1、2交换位置')
           }
@@ -52,8 +83,23 @@ function P(props) {
             return message.warning('对于新旧订单都有的物料，其衔接在实际料斗加料中自动完成')
           }
           newData[index] = { ...record }
-          newData[index].cohesion = !text
-          setData(newData)
+          newData[index].cohesion = !text;
+          setData_(newData, 0)
+        }}
+      />
+    },
+    {
+      title: '排除',
+      dataIndex: 'delete',
+      render: (text, record, index) => <Checkbox
+        checked={text}
+        disabled={manual}
+        onChange={() => {
+          const newData = [...prevCountRef.current[1]];
+          newData[index] = { ...record }
+          newData[index].delete = !text
+          console.log(newData)
+          setData_(newData, 1)
         }}
       />
     },
@@ -144,24 +190,13 @@ function P(props) {
     },
     {
       title: '生产时间',
-      dataIndex: 'ProductionTime',
+      dataIndex: 'productionTime',
     },
   ];
-  const [form] = Form.useForm();
-  const [data, setData] = useState(fkdata);
-  const [result, setResult] = useState(null);
-  const [materialList, setMaterialList] = useState([{ name: '配方1' }, { name: '配方2' }]);
-  const [tableLoading, setTableLoading] = useState(false);
-  const [resultShow, setResultShow] = useState(false);
-
-  const setResultList = (data) => {
-    //console.log(data)
-    setResult({ ...result, list: [...data] })
-  }
-
   let prevCountRef = useRef([...data]);
   useEffect(() => {
-    prevCountRef.current = [...data];
+    const n = JSON.parse(JSON.stringify(data));
+    prevCountRef.current = n;
   }, [data])
 
   function getInfo() {
@@ -223,6 +258,13 @@ function P(props) {
     console.log(payload)
     setResult(null)
     setResultShow(true)
+    // if (manual){
+    //   const rusult_ = result ?? {}
+    //   rusult_.list = 
+    //   return setResult({
+
+    //   })
+    // }
     request({
       method: 'POST',
       host: config.host,
@@ -261,14 +303,33 @@ function P(props) {
             获取订单
         </Button>
         </div>
+        <div style={{ display: 'flex', alignItems: 'center' ,margin: '10px 0'}}>
+          <span style={{fontSize: '14px', marginRight: '10px'}}>手动:</span>
+          <Switch checked={manual} onChange={setManual_} />
+        </div>
         <Spin spinning={tableLoading}>
+          <div>
           <TableContext.Provider value={{
-            columns,
-            dataSource: data,
-            setData
+            columns: columns.slice(0, 1).concat(columns.slice(2)),
+            dataSource: data[0],
+            setData: (payload) => {
+              setData_(payload, 0)
+            }
           }}>
             <EditTable />
           </TableContext.Provider >
+          </div>
+          <div style={{marginTop: '20px'}}>
+          <TableContext.Provider value={{
+            columns: columns.slice(1, 2).concat(columns.slice(2)),
+            dataSource: data[1],
+            setData: (payload) => {
+              setData_(payload, 1)
+            }
+          }}>
+            <EditTable />
+          </TableContext.Provider >
+          </div>
           <Table
             className={styles.block}
             rowKey={'name'}
@@ -286,15 +347,6 @@ function P(props) {
           labelCol={{ span: 12 }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
-        // onValuesChange={(key) => {
-        //   const k = Object.keys(key)[0];
-        //   if (key.formula1 || key.formula2) {
-        //     console.log(form.getFieldValue(k))
-        //     form.setFieldsValue({
-        //       [k]: form.getFieldValue(k)
-        //     })
-        //   }
-        // }}
         >
           <div>
             <Tabs defaultActiveKey="1" type="card">
@@ -524,7 +576,7 @@ function P(props) {
           </div>
           <div>
             <Button htmlType="submit" type="primary" style={{ width: '200px' }}>
-              推荐
+              {manual ? '确定手选内容' : '推荐'}
             </Button>
           </div>
         </Form>
@@ -551,21 +603,21 @@ function P(props) {
                         <Input
                           style={{ width: '250px' }}
                           addonBefore={<span>氧料比(Nm<sup>3</sup>/t)</span>}
-                          value={result.calculateParameter.oxygenMaterialRatio}
+                          value={result.calculateParameter?.oxygenMaterialRatio}
                         />
                       </Col>
                       <Col span={6}>
                         <Input
                           style={{ width: '250px' }}
                           addonBefore="总消耗(吨)"
-                          value={result.calculateParameter.totalConsumedAmount}
+                          value={result.calculateParameter?.totalConsumedAmount}
                         />
                       </Col>
                       <Col span={6}>
                         <Input
                           style={{ width: '250px' }}
                           addonBefore="总剩余(吨)"
-                          value={result.calculateParameter.totalLeftOver}
+                          value={result.calculateParameter?.totalLeftOver}
                         />
                       </Col>
 
@@ -575,28 +627,28 @@ function P(props) {
                         <Input
                           style={{ width: '250px' }}
                           addonBefore={<span>一次风量m<sup>3</sup>/h</span>}
-                          value={result.calculateParameter.paFlow}
+                          value={result.calculateParameter?.paFlow}
                         />
                       </Col>
                       <Col span={6}>
                         <Input
                           style={{ width: '250px' }}
                           addonBefore="S/Cu(%)"
-                          value={result.calculateParameter.SCuRatio}
+                          value={result.calculateParameter?.SCuRatio}
                         />
                       </Col>
                       <Col span={6}>
                         <Input
                           style={{ width: '250px' }}
                           addonBefore="冰铜量(吨)"
-                          value={result.calculateParameter.totalMatte}
+                          value={result.calculateParameter?.totalMatte}
                         />
                       </Col>
                       <Col span={6}>
                         <Input
                           style={{ width: '250px' }}
                           addonBefore="渣量(吨)"
-                          value={result.calculateParameter.totalSlag}
+                          value={result.calculateParameter?.totalSlag}
                         />
                       </Col>
                     </Row>
@@ -605,7 +657,7 @@ function P(props) {
                         <Input
                           style={{ width: '250px' }}
                           addonBefore="石英石(吨)"
-                          value={result.calculateParameter.totalQuartz}
+                          value={result.calculateParameter?.totalQuartz}
                         />
                       </Col>
                     </Row>
