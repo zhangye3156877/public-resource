@@ -371,8 +371,9 @@ class MainController extends Controller {
         },
       ],
       oxygenMaterialRatio: {
-        formula1: "配方1",
-        formula2: "配方2"
+        formula1: '配方1',
+        formula2: '配方2',
+        'formula*': '配方3'
       },
       materialList: [
         {
@@ -458,7 +459,7 @@ class MainController extends Controller {
           percentage: 31.02
         }
       ],
-      recommended: '推荐的结果'
+      recommended: '推荐的结果 \n 推荐的结果 \n 推荐的结果 \n 推荐的结果 \n'
     }
     ctx.body = JSON.stringify(data);
   }

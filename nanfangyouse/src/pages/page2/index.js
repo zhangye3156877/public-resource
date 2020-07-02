@@ -21,6 +21,8 @@ import { list2_1, columns1_2, columns1_3 } from '@/utils/data';
 import styles from '../index.less';
 
 const { TabPane } = Tabs;
+const { TextArea } = Input;
+
 const fkdata = [...list2_1];
 const resultElementsMixtureListColumns = [...columns1_3];
 const resultListColumns = columns1_2.filter((item) => {
@@ -132,7 +134,8 @@ function P(props) {
     {
       title: '演算比例',
       dataIndex: 'calculatePercentage',
-      //editable: true,
+      editable: true,
+      step: .01
     },
     {
       title: '库存余量(盘点库存)',
@@ -184,6 +187,7 @@ function P(props) {
         form.setFieldsValue({
           formula1: res.oxygenMaterialRatio.formula1,
           formula2: res.oxygenMaterialRatio.formula2,
+          'formula*': res.oxygenMaterialRatio['formula*']
         })
         setMaterialList(materialList);
         setTableLoading(false)
@@ -495,7 +499,7 @@ function P(props) {
                       label="配方1"
                       name="formula1"
                     >
-                      <Input disabled/>
+                      <Input />
                     </Form.Item>
                   </Col>
                   <Col span={6}>
@@ -503,7 +507,7 @@ function P(props) {
                       label="配方2"
                       name="formula2"
                     >
-                      <Input disabled/>
+                      <Input />
                     </Form.Item>
                   </Col>
                   <Col span={6}>
@@ -511,7 +515,7 @@ function P(props) {
                       label="配方*"
                       name="formula*"
                     >
-                      <Input disabled/>
+                      <Input />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -534,9 +538,9 @@ function P(props) {
                 <Spin size="large" />
               </div> : <div>
                   <div>
-                    <p>推荐衔接结构</p>
-                    <Input
-                      style={{ width: '250px' }}
+                    <p>结果说明</p>
+                    <TextArea
+                      autoSize
                       value={result.recommended}
                     />
                   </div>
