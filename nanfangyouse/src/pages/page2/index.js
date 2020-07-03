@@ -70,9 +70,6 @@ function P(props) {
         onChange={() => {
           const newData = [...prevCountRef.current[0]];
           
-          if (newData[index].formula == 2) {
-            return message.warning('允许的衔接方向：新->旧，如果需要可以将订单1、2交换位置')
-          }
           const canCheck = newData.some((item, i) => {
             if (i === index) {
               return false
@@ -100,6 +97,20 @@ function P(props) {
           newData[index].delete = !text
           console.log(newData)
           setData_(newData, 1)
+        }}
+      />
+    },
+    {
+      title: '手选',
+      dataIndex: 'manual',
+      render: (text, record, index) => <Checkbox
+        checked={text}
+        disabled={!manual}
+        onChange={() => {
+          const newData = record.formula == 1 ? [...prevCountRef.current[0]] : [...prevCountRef.current[1]];
+          newData[index] = { ...record }
+          newData[index].manual = !text
+          setData_(newData, record.formula == 1 ? 0: 1)
         }}
       />
     },
@@ -259,28 +270,9 @@ function P(props) {
     setResult(null)
     setResultShow(true)
     if (manual){
+      const list = [...data.flat()].filter((item) => item.manual);
       const result_ = {
-        list: [
-          {
-            name: "水星轮",
-            number: 10001,
-            Cu:9,
-            inventoryBalance: 1346,
-            calculatePercentage: 31.23,
-            adjustPercentage: 11,
-            productionTime: 1000,
-            adjustRatio: 11
-          },
-          {
-            name: "莱科塔",
-            number: 10002,
-            Fe: 8,
-            inventoryBalance: 5686,
-            calculatePercentage: 51.23,
-            productionTime: 1001,
-            adjustRatio: '12'
-          }
-        ],
+        list,
         calculateParameter: {
           oxygenMaterialRatio: '',
           totalConsumedAmount: '',
@@ -343,7 +335,10 @@ function P(props) {
           <TableContext.Provider value={{
             columns: (() => {
               const c = columns.slice(0, 1).concat(columns.slice(2));
-              c[c.length - 2].title = '希望继续消耗的库存';
+              c[c.length - 2] = {
+                title: '希望继续消耗的库存',
+                dataIndex: c[c.length - 2].dataIndex
+              };
               console.log(c)
               return c;
             })(),
@@ -359,7 +354,10 @@ function P(props) {
           <TableContext.Provider value={{
             columns: (() => {
               const c = columns.slice(1, 2).concat(columns.slice(2));
-              c[c.length - 2].title = '配方2生产后理论剩余';
+              c[c.length - 2] = {
+                title: '配方2生产后理论剩余',
+                dataIndex: c[c.length - 2].dataIndex
+              };
               return c
             })(),
             dataSource: data[1],
@@ -630,7 +628,7 @@ function P(props) {
                 <Spin size="large" />
               </div> : <div>
                   <div>
-                    <p>结果说明</p>
+                    <p style={{fontSize: '18px'}}>结果说明</p>
                     <TextArea
                       autoSize
                       value={result.recommended}

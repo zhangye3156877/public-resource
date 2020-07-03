@@ -295,27 +295,6 @@ class MainController extends Controller {
         },
         {
           cohesion: false,
-          name: '方舟21',
-          number: 10004,
-          Cu: 20,
-          Fe: 20,
-          S: 20,
-          SiO2: 20,
-          CaO: 20,
-          As: 20,
-          Zn: 20,
-          Pb: 20,
-          MgO: 20,
-          Al2O3: 20,
-          H2O: 20,
-          inventory: 20,
-          calculatePercentage: '',
-          inventoryBalance: '',
-          productionTime: 1000,
-          formula: '2'
-        },
-        {
-          cohesion: false,
           name: '江门商人',
           number: 10005,
           Cu: 30,
@@ -339,6 +318,29 @@ class MainController extends Controller {
           inventoryBalance: '',
           productionTime: 1000,
           formula: '1'
+        },
+       ],
+       [
+        {
+          cohesion: false,
+          name: '方舟21',
+          number: 10004,
+          Cu: 20,
+          Fe: 20,
+          S: 20,
+          SiO2: 20,
+          CaO: 20,
+          As: 20,
+          Zn: 20,
+          Pb: 20,
+          MgO: 20,
+          Al2O3: 20,
+          H2O: 20,
+          inventory: 20,
+          calculatePercentage: '',
+          inventoryBalance: '',
+          productionTime: 1000,
+          formula: '2'
         },
         {
           cohesion: false,
@@ -366,8 +368,6 @@ class MainController extends Controller {
           productionTime: 1000,
           formula: '2'
         },
-       ],
-       [
         {
           delete: false,
           name: '表2项目1',
@@ -413,7 +413,7 @@ class MainController extends Controller {
           calculatePercentage: '',
           inventoryBalance: 222,
           productionTime: 1000,
-          formula: '1'
+          formula: '2'
         },
         {
           delete: false,
