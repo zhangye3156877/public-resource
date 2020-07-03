@@ -184,7 +184,7 @@ function P(props) {
       step: .01
     },
     {
-      title: '库存余量(盘点库存)',
+      title: '',
       dataIndex: 'inventoryBalance',
       editable: true,
     },
@@ -258,13 +258,43 @@ function P(props) {
     console.log(payload)
     setResult(null)
     setResultShow(true)
-    // if (manual){
-    //   const rusult_ = result ?? {}
-    //   rusult_.list = 
-    //   return setResult({
-
-    //   })
-    // }
+    if (manual){
+      const result_ = {
+        list: [
+          {
+            name: "水星轮",
+            number: 10001,
+            Cu:9,
+            inventoryBalance: 1346,
+            calculatePercentage: 31.23,
+            adjustPercentage: 11,
+            productionTime: 1000,
+            adjustRatio: 11
+          },
+          {
+            name: "莱科塔",
+            number: 10002,
+            Fe: 8,
+            inventoryBalance: 5686,
+            calculatePercentage: 51.23,
+            productionTime: 1001,
+            adjustRatio: '12'
+          }
+        ],
+        calculateParameter: {
+          oxygenMaterialRatio: '',
+          totalConsumedAmount: '',
+          paFlow: '',
+          SCuRatio: '',
+          totalMatte: '',
+          totalSlag: '',
+          totalQuartz: ''
+        },
+        elementsMixtureList: [],
+        recommended: ''
+      }
+      return setResult(result_)
+    }
     request({
       method: 'POST',
       host: config.host,
@@ -304,13 +334,19 @@ function P(props) {
         </Button>
         </div>
         <div style={{ display: 'flex', alignItems: 'center' ,margin: '10px 0'}}>
-          <span style={{fontSize: '14px', marginRight: '10px'}}>手动:</span>
+          <span style={{fontSize: '14px', marginRight: '10px'}}>自动</span>
           <Switch checked={manual} onChange={setManual_} />
+          <span style={{fontSize: '14px', marginLeft: '10px'}}>手动</span>
         </div>
         <Spin spinning={tableLoading}>
           <div>
           <TableContext.Provider value={{
-            columns: columns.slice(0, 1).concat(columns.slice(2)),
+            columns: (() => {
+              const c = columns.slice(0, 1).concat(columns.slice(2));
+              c[c.length - 2].title = '希望继续消耗的库存';
+              console.log(c)
+              return c;
+            })(),
             dataSource: data[0],
             setData: (payload) => {
               setData_(payload, 0)
@@ -321,7 +357,11 @@ function P(props) {
           </div>
           <div style={{marginTop: '20px'}}>
           <TableContext.Provider value={{
-            columns: columns.slice(1, 2).concat(columns.slice(2)),
+            columns: (() => {
+              const c = columns.slice(1, 2).concat(columns.slice(2));
+              c[c.length - 2].title = '配方2生产后理论剩余';
+              return c
+            })(),
             dataSource: data[1],
             setData: (payload) => {
               setData_(payload, 1)
@@ -551,7 +591,7 @@ function P(props) {
                       label="配方1"
                       name="formula1"
                     >
-                      <Input />
+                      <Input disabled />
                     </Form.Item>
                   </Col>
                   <Col span={6}>
@@ -559,7 +599,7 @@ function P(props) {
                       label="配方2"
                       name="formula2"
                     >
-                      <Input />
+                      <Input disabled />
                     </Form.Item>
                   </Col>
                   <Col span={6}>
@@ -567,7 +607,7 @@ function P(props) {
                       label="配方*"
                       name="formula*"
                     >
-                      <Input />
+                      <Input disabled/>
                     </Form.Item>
                   </Col>
                 </Row>
@@ -620,7 +660,6 @@ function P(props) {
                           value={result.calculateParameter?.totalLeftOver}
                         />
                       </Col>
-
                     </Row>
                     <Row className={styles.row}>
                       <Col span={6}>

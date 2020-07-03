@@ -385,7 +385,7 @@ class MainController extends Controller {
           H2O: 20,
           inventory: 20,
           calculatePercentage: '',
-          inventoryBalance: '',
+          inventoryBalance: 111,
           productionTime: 1000,
           formula: '2'
         },
@@ -411,7 +411,7 @@ class MainController extends Controller {
           Au:30,
           inventory: 30,
           calculatePercentage: '',
-          inventoryBalance: '',
+          inventoryBalance: 222,
           productionTime: 1000,
           formula: '1'
         },
@@ -507,6 +507,7 @@ class MainController extends Controller {
           calculatePercentage: 31.23,
           adjustPercentage: 11,
           productionTime: 1000,
+          adjustRatio: 11
         },
         {
           name: "莱科塔",
@@ -515,6 +516,7 @@ class MainController extends Controller {
           inventoryBalance: 5686,
           calculatePercentage: 51.23,
           productionTime: 1001,
+          adjustRatio: '12'
         }
       ],
       calculateParameter: {
@@ -524,7 +526,8 @@ class MainController extends Controller {
         SCuRatio: 33,
         totalMatte: 44,
         totalSlag: 55,
-        totalQuartz: 66
+        totalQuartz: 66,
+        totalLeftOver: 900
       },
       elementsMixtureList: [
         {
