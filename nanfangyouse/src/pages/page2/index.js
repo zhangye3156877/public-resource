@@ -241,7 +241,11 @@ function P(props) {
     })
   }
   function onFinish(values) {
-    const list = data
+    const list = data.map(item => {
+      return item.filter(i => {
+        return !('delete' in i && i.delete === true)
+      })
+    })
     console.log(list)
     const payload = {
       list,
