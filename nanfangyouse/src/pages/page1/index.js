@@ -911,6 +911,7 @@ function H(props) {
                       style={{ width: '250px' }}
                       addonBefore="氧料比(立方米/吨)"
                       value={result.calculateParameter.oxygenMaterialRatio}
+                      disabled
                     />
                   </Col>
                   <Col span={6}>
@@ -918,6 +919,7 @@ function H(props) {
                       style={{ width: '250px' }}
                       addonBefore="总消耗(吨)"
                       value={result.calculateParameter.totalConsumedAmount}
+                      disabled
                     />
                   </Col>
                   <Col span={6}>
@@ -925,6 +927,7 @@ function H(props) {
                       style={{ width: '250px' }}
                       addonBefore="总剩余(吨)"
                       value={result.calculateParameter.totalLeftOver}
+                      disabled
                     />
                   </Col>
                   <Col span={6}>
@@ -932,6 +935,7 @@ function H(props) {
                       style={{ width: '250px' }}
                       addonBefore="目标得分"
                       value={result.calculateParameter.best_y}
+                      disabled
                     />
                   </Col>
                 </Row>
@@ -941,6 +945,7 @@ function H(props) {
                       style={{ width: '250px' }}
                       addonBefore={<span>一次风量m<sup>3</sup>/h</span>}
                       value={result.calculateParameter.paFlow}
+                      disabled
                     />
                   </Col>
                   <Col span={6}>
@@ -948,6 +953,7 @@ function H(props) {
                       style={{ width: '250px' }}
                       addonBefore="S/Cu(%)"
                       value={result.calculateParameter.SCuRatio}
+                      disabled
                     />
                   </Col>
                   <Col span={6}>
@@ -955,6 +961,7 @@ function H(props) {
                       style={{ width: '250px' }}
                       addonBefore="冰铜量(吨)"
                       value={result.calculateParameter.totalMatte}
+                      disabled
                     />
                   </Col>
                   <Col span={6}>
@@ -962,6 +969,7 @@ function H(props) {
                       style={{ width: '250px' }}
                       addonBefore="渣量(吨)"
                       value={result.calculateParameter.totalSlag}
+                      disabled
                     />
                   </Col>
                 </Row>
@@ -971,6 +979,7 @@ function H(props) {
                       style={{ width: '250px' }}
                       addonBefore="石英石(吨)"
                       value={result.calculateParameter.totalQuartz}
+                      disabled
                     />
                   </Col>
                 </Row>
