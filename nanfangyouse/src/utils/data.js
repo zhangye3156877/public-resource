@@ -624,12 +624,73 @@ export const columns3_1 = [
     dataIndex: 'currentIncomeDry',
   },
   {
+    title: '本期收入Cu(%)',
+    dataIndex: 'currentIncomePercentageCu',
+  },
+  {
     title: '本期收入Cu(t)',
     dataIndex: 'currentIncomeCu',
   },
   {
-    title: '本期收入Ag(kg)',
-    dataIndex: 'currentIncomeDry',
+    title: '本期收入Ag(g/t)',
+    dataIndex: 'currentIncomeUnitageAg',
   },
+  {
+    title: '本期收入Ag(kg)',
+    dataIndex: 'currentIncomeAg',
+  },
+  {
+    title: '本期收入Au(g/t)',
+    dataIndex: 'currentIncomeUnitageAu',
+  },
+  {
+    title: '本期收入Au(kg)',
+    dataIndex: 'currentIncomeAu',
+  },
+  {
+    title: '本期结存 干量(t)',
+    dataIndex: 'currentBalanceDry',
+  },
+  {
+    title: '本期结存Cu(%)',
+    dataIndex: 'currentBalancePercentageCu',
+  },
+  {
+    title: '本期结存Cu(t)',
+    dataIndex: 'currentBalanceCu',
+  },
+  {
+    title: '本期结存Ag(g/t)',
+    dataIndex: 'currentBalanceUnitageAg',
+  },
+  {
+    title: '本期结存Ag(kg)',
+    dataIndex: 'currentBalanceAg',
+  },
+  {
+    title: '本期结存Au(g/t)',
+    dataIndex: 'currentBalanceUnitageAu',
+  },
+  {
+    title: '本期结存Au(kg)',
+    dataIndex: 'currentBalanceAu',
+  },
+  {
+    title: '本期使用 干量(t)',
+    dataIndex: 'currentCostDry',
+  },
+  {
+    title: '本期使用Cu(t)',
+    dataIndex: 'currentCostCu',
+  },
+  {
+    title: '本期使用Ag(kg)',
+    dataIndex: 'currentCostAg',
+  },
+  {
+    title: '本期使用Au(kg)',
+    dataIndex: 'currentCostAu',
+  },
+
 ]
 

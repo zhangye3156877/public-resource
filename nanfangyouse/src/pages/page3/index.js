@@ -16,20 +16,27 @@ import {
   message
 } from 'antd';
 import { connect } from 'dva';
-import { columns1_3 } from '@/utils/data';
+import { columns3_1 } from '@/utils/data';
 import request from '@/utils/request';
+import styles from '../index.less';
+import selfStyle from './index.less';
 
 function P(props) {
+  const [form] = Form.useForm();
+  const [initialData, setInitialData] = useState(null);
+  const [resizeData, setResizeData] = useState(null);
+
   return (
     <div>
-      <div className={styles.row}>
-      {/* <TableContext.Provider value={{
-          columns:,
-          dataSource: data,
-          setData: setData_
+      <div 
+      className={`${styles.row} ${selfStyle.tableWrapper}`}>
+      <TableContext.Provider value={{
+          columns: columns3_1,
+          dataSource: initialData,
+          setData: setInitialData
         }}>
           <EditTable />
-        </TableContext.Provider > */}
+        </TableContext.Provider >
       </div>
     </div>
   )
