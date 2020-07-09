@@ -590,4 +590,46 @@ export const columns1_3 = [
   },
 ]
 
+export const columns3_1 = [
+  {
+    title: '物料分类',
+    dataIndex: 'material',
+  },
+  {
+    title: '物料编码',
+    dataIndex: 'number',
+  },
+  {
+    title: '物料名称',
+    dataIndex: 'name',
+  },
+  {
+    title: '上期结存干量(t)',
+    dataIndex: 'lastBalanceDry',
+  },
+  {
+    title: '上期结存Cu(t)',
+    dataIndex: 'lastBalanceCu',
+  },
+  {
+    title: '上期结存Ag(kg)',
+    dataIndex: 'lastBalanceAg',
+  },
+  {
+    title: '上期结存Au(kg)',
+    dataIndex: 'lastBalanceAu',
+  },
+  {
+    title: '本期收入干量(t)',
+    dataIndex: 'currentIncomeDry',
+  },
+  {
+    title: '本期收入Cu(t)',
+    dataIndex: 'currentIncomeCu',
+  },
+  {
+    title: '本期收入Ag(kg)',
+    dataIndex: 'currentIncomeDry',
+  },
+]
 

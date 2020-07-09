@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Tabs, Divider, Card } from 'antd';
 import Page1 from '@/pages/page1';
-import Page2 from '@/pages/page2'
+import Page2 from '@/pages/page2';
+import Page3 from '@/pages/page3';
 //import styles from './index.css';
 
 const { TabPane } = Tabs;
@@ -26,6 +27,11 @@ export default function() {
         <TabPane tab="配方衔接" key="2">
           <Card>
             <Page2 />
+          </Card>
+        </TabPane>
+        <TabPane tab="金属平衡" key="3">
+          <Card>
+            <Page3 />
           </Card>
         </TabPane>
       </Tabs>

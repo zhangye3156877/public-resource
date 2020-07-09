@@ -319,7 +319,7 @@ function P(props) {
   }
 
   return (
-    <div style={{ padding: '0 10px 10px 10px' }}>
+    <div>
       <div>
         <div style={{ marginBottom: '10px' }}>
           <Button type="primary"

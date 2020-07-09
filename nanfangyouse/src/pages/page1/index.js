@@ -290,7 +290,7 @@ function H(props) {
   const [columns] = useState(fkcolumns);
 
   return (
-    <div style={{ padding: '0 10px 10px 10px' }}>
+    <div>
       <div className={styles.row}>
         <Space>
           <Button type="primary" onClick={() => {
