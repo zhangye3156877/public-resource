@@ -13,13 +13,23 @@ import {
   Spin,
   Divider,
   Tabs,
-  message
+  message,
+  Space,
+  Upload
 } from 'antd';
+//import { UploadOutlined } from '@ant-design/icons';
 import { connect } from 'dva';
 import { columns3_1 } from '@/utils/data';
 import request from '@/utils/request';
 import styles from '../index.less';
 import selfStyle from './index.less';
+
+const config = {
+  
+  customRequest: (e) => {
+    console.log(e.file)
+  }
+};
 
 function P(props) {
   const [form] = Form.useForm();
@@ -28,9 +38,37 @@ function P(props) {
 
   return (
     <div>
-      <div 
-      className={`${styles.row} ${selfStyle.tableWrapper}`}>
-      <TableContext.Provider value={{
+      <div className={styles.row}>
+        <Space>
+          <Upload
+            {...config}
+          >
+            <Button
+              type="primary"
+              onClick={() => {
+                console.log(1)
+              }}
+            >
+              数据录入
+            </Button>
+
+          </Upload>
+
+        </Space>
+      </div>
+      <div
+        className={`${styles.row} ${selfStyle.tableWrapper}`}>
+        <TableContext.Provider value={{
+          columns: columns3_1,
+          dataSource: initialData,
+          setData: setInitialData
+        }}>
+          <EditTable />
+        </TableContext.Provider >
+      </div>
+      <div
+        className={`${styles.row} ${selfStyle.tableWrapper}`}>
+        <TableContext.Provider value={{
           columns: columns3_1,
           dataSource: initialData,
           setData: setInitialData
