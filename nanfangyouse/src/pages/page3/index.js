@@ -17,6 +17,7 @@ import {
   Space,
   Upload
 } from 'antd';
+import XLSX  from 'xlsx';
 //import { UploadOutlined } from '@ant-design/icons';
 import { connect } from 'dva';
 import { columns3_1 } from '@/utils/data';
@@ -24,12 +25,16 @@ import request from '@/utils/request';
 import styles from '../index.less';
 import selfStyle from './index.less';
 
-const config = {
-  
-  customRequest: (e) => {
-    console.log(e.file)
+function customRequest (e){
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const data = e.target.result;
+    const xlsxData = XLSX.read(data, {type:'binary'});
+    const value = XLSX.utils.sheet_to_json(xlsxData.Sheets[xlsxData.SheetNames[0]]);
+    console.log(value)
   }
-};
+  reader.readAsBinaryString(e.file);
+}
 
 function P(props) {
   const [form] = Form.useForm();
@@ -41,13 +46,11 @@ function P(props) {
       <div className={styles.row}>
         <Space>
           <Upload
-            {...config}
+            showUploadList={false}
+            customRequest={customRequest}
           >
             <Button
               type="primary"
-              onClick={() => {
-                console.log(1)
-              }}
             >
               数据录入
             </Button>
