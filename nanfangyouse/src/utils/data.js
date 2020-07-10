@@ -594,102 +594,127 @@ export const columns3_1 = [
   {
     title: '物料分类',
     dataIndex: 'material',
+    editable: true,
   },
   {
     title: '物料编码',
     dataIndex: 'number',
+    editable: true,
   },
   {
     title: '物料名称',
     dataIndex: 'name',
+    editable: true,
   },
   {
     title: '上期结存干量(t)',
     dataIndex: 'lastBalanceDry',
+    editable: true,
   },
   {
     title: '上期结存Cu(t)',
     dataIndex: 'lastBalanceCu',
+    editable: true,
   },
   {
     title: '上期结存Ag(kg)',
     dataIndex: 'lastBalanceAg',
+    editable: true,
   },
   {
     title: '上期结存Au(kg)',
     dataIndex: 'lastBalanceAu',
+    editable: true,
   },
   {
     title: '本期收入干量(t)',
     dataIndex: 'currentIncomeDry',
+    editable: true,
   },
   {
     title: '本期收入Cu(%)',
     dataIndex: 'currentIncomePercentageCu',
+    editable: true,
   },
   {
     title: '本期收入Cu(t)',
     dataIndex: 'currentIncomeCu',
+    editable: true,
   },
   {
     title: '本期收入Ag(g/t)',
     dataIndex: 'currentIncomeUnitageAg',
+    editable: true,
   },
   {
     title: '本期收入Ag(kg)',
     dataIndex: 'currentIncomeAg',
+    editable: true,
   },
   {
     title: '本期收入Au(g/t)',
     dataIndex: 'currentIncomeUnitageAu',
+    editable: true,
   },
   {
     title: '本期收入Au(kg)',
     dataIndex: 'currentIncomeAu',
+    editable: true,
   },
   {
     title: '本期结存 干量(t)',
     dataIndex: 'currentBalanceDry',
+    editable: true,
   },
   {
     title: '本期结存Cu(%)',
     dataIndex: 'currentBalancePercentageCu',
+    editable: true,
   },
   {
     title: '本期结存Cu(t)',
     dataIndex: 'currentBalanceCu',
+    editable: true,
   },
   {
     title: '本期结存Ag(g/t)',
     dataIndex: 'currentBalanceUnitageAg',
+    editable: true,
   },
   {
     title: '本期结存Ag(kg)',
     dataIndex: 'currentBalanceAg',
+    editable: true,
   },
   {
     title: '本期结存Au(g/t)',
     dataIndex: 'currentBalanceUnitageAu',
+    editable: true,
   },
   {
     title: '本期结存Au(kg)',
     dataIndex: 'currentBalanceAu',
+    editable: true,
   },
   {
     title: '本期使用 干量(t)',
     dataIndex: 'currentCostDry',
+    editable: true,
   },
   {
     title: '本期使用Cu(t)',
     dataIndex: 'currentCostCu',
+    editable: true,
   },
   {
     title: '本期使用Ag(kg)',
     dataIndex: 'currentCostAg',
+    editable: true,
   },
   {
     title: '本期使用Au(kg)',
     dataIndex: 'currentCostAu',
+    editable: true,
   },
 
 ]

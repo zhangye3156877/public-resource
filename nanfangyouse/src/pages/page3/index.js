@@ -26,24 +26,22 @@ import request from '@/utils/request';
 import styles from '../index.less';
 import selfStyle from './index.less';
 
-function customRequest(e) {
-  const reader = new FileReader();
-  reader.onload = function (e) {
-    const data = e.target.result;
-    const xlsxData = XLSX.read(data, { type: 'binary' });
-    const value = XLSX.utils.sheet_to_json(xlsxData.Sheets[xlsxData.SheetNames[0]]);
-    
-    console.log(value)
-
-  }
-  reader.readAsBinaryString(e.file);
-}
-
 function P(props) {
   const [form] = Form.useForm();
   const [initialData, setInitialData] = useState(null);
   const [resizeData, setResizeData] = useState(null);
-
+  function customRequest(e) {
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      const data = e.target.result;
+      const xlsxData = XLSX.read(data, { type: 'binary' });
+      const value = XLSX.utils.sheet_to_json(xlsxData.Sheets[xlsxData.SheetNames[0]]);
+      console.log(value);
+      setInitialData(value);
+    }
+    reader.readAsBinaryString(e.file);
+  }
+  
   function outputExcel() {
     let sheet1data = [{ department: "行政部", count: 2 }, { department: "前端部", count: 2 }];
     const sheet1 = XLSX.utils.json_to_sheet(sheet1data);
