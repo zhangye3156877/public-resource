@@ -32,17 +32,8 @@ function customRequest(e) {
     const data = e.target.result;
     const xlsxData = XLSX.read(data, { type: 'binary' });
     const value = XLSX.utils.sheet_to_json(xlsxData.Sheets[xlsxData.SheetNames[0]]);
-    XLSX.writeFile(data, 'aaf');
+    
     console.log(value)
-
-    let sheet1data = [{ department: "行政部", count: 2 }, { department: "前端部", count: 2 }];
-    var sheet1 = XLSX.utils.json_to_sheet(sheet1data);
-
-    /* create a new blank workbook */
-    //var wb = XLSX.utils.book_new();
-    //XLSX.utils.book_append_sheet(wb, sheet1, "部门统计");
-    //const workbookBlob = workbook2blob(wb);
-    //openDownloadDialog(workbookBlob, `部门统计.xlsx`);
 
   }
   reader.readAsBinaryString(e.file);
@@ -53,6 +44,24 @@ function P(props) {
   const [initialData, setInitialData] = useState(null);
   const [resizeData, setResizeData] = useState(null);
 
+  function outputExcel() {
+    let sheet1data = [{ department: "行政部", count: 2 }, { department: "前端部", count: 2 }];
+    const sheet1 = XLSX.utils.json_to_sheet(sheet1data);
+
+    /* create a new blank workbook */
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, sheet1, "导出");
+    const wopts = {
+      // 要生成的文件类型
+      bookType: "xlsx",
+      // // 是否生成Shared String Table，官方解释是，如果开启生成速度会下降，但在低版本IOS设备上有更好的兼容性
+      bookSST: false,
+      type: "binary"
+    };
+    XLSX.writeFile(wb, '导出.xlsx',wopts);
+    //const workbookBlob = workbook2blob(wb);
+    //openDownloadDialog(workbookBlob, `导出.xlsx`);
+  }
   return (
     <div>
       <div className={styles.row}>
@@ -66,8 +75,13 @@ function P(props) {
             >
               数据录入
             </Button>
-
           </Upload>
+          <Button
+              type="primary"
+              onClick={outputExcel}
+            >
+              数据导出
+            </Button>
 
         </Space>
       </div>
