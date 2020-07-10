@@ -56,7 +56,10 @@
     request({
       method: 'POST',
       url:'http://localhost:7002/uploadfile',
-      data: ff
+      data: ff,
+      cb: (data) => {
+      console.log(JSON.parse(data))
+    }
     })
   })
 </script>

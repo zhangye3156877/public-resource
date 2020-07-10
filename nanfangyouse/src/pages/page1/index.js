@@ -50,6 +50,7 @@ function H(props) {
       presetParameter: {
         matteTargetGradePercentage: values.matteTargetGradePercentage,
         maxType: values.maxType,
+        oxygenConcentration: values.oxygenConcentration,
         consumedAmount: values.consumedAmount,
         peaCoal: values.peaCoal,
         oxygenPeaCoalRatio: values.oxygenPeaCoalRatio,
@@ -278,17 +279,18 @@ function H(props) {
       title: '演算比例',
       dataIndex: 'calculatePercentage',
       editable: true,
+      step: 0.01
     },
-    {
-      title: '库存余量',
-      dataIndex: 'inventoryBalance',
-    },
+    // {
+    //   title: '库存余量',
+    //   dataIndex: 'inventoryBalance',
+    // },
   ];
 
   const [columns] = useState(fkcolumns);
 
   return (
-    <div style={{ padding: '0 10px 10px 10px' }}>
+    <div>
       <div className={styles.row}>
         <Space>
           <Button type="primary" onClick={() => {
@@ -519,7 +521,20 @@ function H(props) {
                       <InputNumber />
                     </Form.Item>
                   </Col>
-
+                  <Col span={6}>
+                    <Form.Item
+                      label="氧浓度(%)"
+                      name="oxygenConcentration"
+                      initialValue={85}
+                      rules={[
+                        {
+                          required: true
+                        },
+                      ]}
+                    >
+                      <InputNumber step={0.01} />
+                    </Form.Item>
+                  </Col>
                 </Row>
               </TabPane>
               <TabPane tab="元素含量" key="2" forceRender>
@@ -792,9 +807,7 @@ function H(props) {
                         <InputNumber placeholder="优先级" />
                       </Form.Item>
                     </Space>
-
                   </Col>
-
                 </Row>
               </TabPane>
               <TabPane tab="模型参数" key="3" forceRender>
@@ -810,7 +823,7 @@ function H(props) {
                         },
                       ]}
                     >
-                      <InputNumber step={0.01} />
+                      <InputNumber />
                     </Form.Item>
                   </Col>
                   <Col span={6}>
@@ -824,7 +837,7 @@ function H(props) {
                         },
                       ]}
                     >
-                      <InputNumber step={0.01} />
+                      <InputNumber />
                     </Form.Item>
                   </Col>
                   <Col span={6}>
@@ -838,7 +851,7 @@ function H(props) {
                         },
                       ]}
                     >
-                      <InputNumber step={0.01} />
+                      <InputNumber />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -854,7 +867,7 @@ function H(props) {
                         },
                       ]}
                     >
-                      <InputNumber step={0.01} />
+                      <InputNumber />
                     </Form.Item>
                   </Col>
                   <Col span={6}>
@@ -868,7 +881,7 @@ function H(props) {
                         },
                       ]}
                     >
-                      <InputNumber step={0.01} />
+                      <InputNumber />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -898,6 +911,7 @@ function H(props) {
                       style={{ width: '250px' }}
                       addonBefore="氧料比(立方米/吨)"
                       value={result.calculateParameter.oxygenMaterialRatio}
+                      disabled
                     />
                   </Col>
                   <Col span={6}>
@@ -905,6 +919,7 @@ function H(props) {
                       style={{ width: '250px' }}
                       addonBefore="总消耗(吨)"
                       value={result.calculateParameter.totalConsumedAmount}
+                      disabled
                     />
                   </Col>
                   <Col span={6}>
@@ -912,6 +927,7 @@ function H(props) {
                       style={{ width: '250px' }}
                       addonBefore="总剩余(吨)"
                       value={result.calculateParameter.totalLeftOver}
+                      disabled
                     />
                   </Col>
                   <Col span={6}>
@@ -919,6 +935,7 @@ function H(props) {
                       style={{ width: '250px' }}
                       addonBefore="目标得分"
                       value={result.calculateParameter.best_y}
+                      disabled
                     />
                   </Col>
                 </Row>
@@ -928,6 +945,7 @@ function H(props) {
                       style={{ width: '250px' }}
                       addonBefore={<span>一次风量m<sup>3</sup>/h</span>}
                       value={result.calculateParameter.paFlow}
+                      disabled
                     />
                   </Col>
                   <Col span={6}>
@@ -935,6 +953,7 @@ function H(props) {
                       style={{ width: '250px' }}
                       addonBefore="S/Cu(%)"
                       value={result.calculateParameter.SCuRatio}
+                      disabled
                     />
                   </Col>
                   <Col span={6}>
@@ -942,6 +961,7 @@ function H(props) {
                       style={{ width: '250px' }}
                       addonBefore="冰铜量(吨)"
                       value={result.calculateParameter.totalMatte}
+                      disabled
                     />
                   </Col>
                   <Col span={6}>
@@ -949,6 +969,7 @@ function H(props) {
                       style={{ width: '250px' }}
                       addonBefore="渣量(吨)"
                       value={result.calculateParameter.totalSlag}
+                      disabled
                     />
                   </Col>
                 </Row>
@@ -958,6 +979,7 @@ function H(props) {
                       style={{ width: '250px' }}
                       addonBefore="石英石(吨)"
                       value={result.calculateParameter.totalQuartz}
+                      disabled
                     />
                   </Col>
                 </Row>

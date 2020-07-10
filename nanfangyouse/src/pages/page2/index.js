@@ -8,7 +8,7 @@ import {
   InputNumber,
   Row,
   Col,
-  Space,
+  Switch,
   Table,
   Spin,
   Divider,
@@ -21,23 +21,55 @@ import { list2_1, columns1_2, columns1_3 } from '@/utils/data';
 import styles from '../index.less';
 
 const { TabPane } = Tabs;
+const { TextArea } = Input;
+
 const fkdata = [...list2_1];
 const resultElementsMixtureListColumns = [...columns1_3];
-const resultListColumns = [...columns1_2];
+const resultListColumns = columns1_2.filter((item) => {
+  return item.dataIndex !== 'inventory'
+});
 
 function P(props) {
   const { config } = props;
+  
+  const [form] = Form.useForm();
+  const [data, setData] = useState(fkdata);
+  const [result, setResult] = useState(null);
+  const [manual, setManual] = useState(false);
+  const [materialList, setMaterialList] = useState([{ name: '配方1' }, { name: '配方2' }]);
+  const [tableLoading, setTableLoading] = useState(false);
+  const [resultShow, setResultShow] = useState(false);
+
+  const setResultList = (data) => {
+    setResult({ ...result, list: [...data] })
+  }
+  function setData_(payload, type) {
+    const list = [...data];
+    list[type] = payload;
+    setData(list);
+  }
+  function setManual_(payload) {
+    setManual(payload)
+    // const newData = data.map(item => {
+    //   return item.map(i => {
+    //     const nI = i;
+    //     'cohesion' in nI && (nI.cohesion = true);
+    //     'delete' in nI && (nI.delete = true);
+    //     return nI
+    //   })
+    // })
+    // setData(newData)
+  }
   const columns = [
     {
       title: '衔接',
       dataIndex: 'cohesion',
       render: (text, record, index) => <Checkbox
         checked={text}
+        disabled={manual}
         onChange={() => {
-          const newData = [...prevCountRef.current]
-          if (newData[index].formula == 2) {
-            return message.warning('允许的衔接方向：新->旧，如果需要可以将订单1、2交换位置')
-          }
+          const newData = [...prevCountRef.current[0]];
+          
           const canCheck = newData.some((item, i) => {
             if (i === index) {
               return false
@@ -48,8 +80,37 @@ function P(props) {
             return message.warning('对于新旧订单都有的物料，其衔接在实际料斗加料中自动完成')
           }
           newData[index] = { ...record }
-          newData[index].cohesion = !text
-          setData(newData)
+          newData[index].cohesion = !text;
+          setData_(newData, 0)
+        }}
+      />
+    },
+    {
+      title: '排除',
+      dataIndex: 'delete',
+      render: (text, record, index) => <Checkbox
+        checked={text}
+        disabled={manual}
+        onChange={() => {
+          const newData = [...prevCountRef.current[1]];
+          newData[index] = { ...record }
+          newData[index].delete = !text
+          console.log(newData)
+          setData_(newData, 1)
+        }}
+      />
+    },
+    {
+      title: '手选',
+      dataIndex: 'manual',
+      render: (text, record, index) => <Checkbox
+        checked={text}
+        disabled={!manual}
+        onChange={() => {
+          const newData = record.formula == 1 ? [...prevCountRef.current[0]] : [...prevCountRef.current[1]];
+          newData[index] = { ...record }
+          newData[index].manual = !text
+          setData_(newData, record.formula == 1 ? 0: 1)
         }}
       />
     },
@@ -128,39 +189,25 @@ function P(props) {
       dataIndex: 'Au',
     },
     {
-      title: '库存/吨',
-      dataIndex: 'inventory',
-    },
-    {
       title: '演算比例',
       dataIndex: 'calculatePercentage',
-      //editable: true,
+      editable: true,
+      step: .01
     },
     {
-      title: '库存余量',
+      title: '',
       dataIndex: 'inventoryBalance',
       editable: true,
     },
     {
       title: '生产时间',
-      dataIndex: 'ProductionTime',
+      dataIndex: 'productionTime',
     },
   ];
-  const [form] = Form.useForm();
-  const [data, setData] = useState(fkdata);
-  const [result, setResult] = useState(null);
-  const [materialList, setMaterialList] = useState([{ name: '配方1' }, { name: '配方2' }]);
-  const [tableLoading, setTableLoading] = useState(false);
-  const [resultShow, setResultShow] = useState(false);
-
-  const setResultList = (data) => {
-    //console.log(data)
-    setResult({ ...result, list: [...data] })
-  }
-
   let prevCountRef = useRef([...data]);
   useEffect(() => {
-    prevCountRef.current = [...data];
+    const n = JSON.parse(JSON.stringify(data));
+    prevCountRef.current = n;
   }, [data])
 
   function getInfo() {
@@ -186,6 +233,7 @@ function P(props) {
         form.setFieldsValue({
           formula1: res.oxygenMaterialRatio.formula1,
           formula2: res.oxygenMaterialRatio.formula2,
+          'formula*': res.oxygenMaterialRatio['formula*']
         })
         setMaterialList(materialList);
         setTableLoading(false)
@@ -193,7 +241,11 @@ function P(props) {
     })
   }
   function onFinish(values) {
-    const list = data
+    const list = data.map(item => {
+      return item.filter(i => {
+        return !('delete' in i && i.delete === true)
+      })
+    })
     console.log(list)
     const payload = {
       list,
@@ -201,6 +253,7 @@ function P(props) {
       presetParameter: {
         matteTargetGradePercentage: values.matteTargetGradePercentage,
         maxType: values.maxType,
+        oxygenConcentration: values.oxygenConcentration,
         consumedAmount: values.consumedAmount,
         peaCoal: values.peaCoal,
         oxygenPeaCoalRatio: values.oxygenPeaCoalRatio,
@@ -220,6 +273,24 @@ function P(props) {
     console.log(payload)
     setResult(null)
     setResultShow(true)
+    if (manual){
+      const list = [...data.flat()].filter((item) => item.manual);
+      const result_ = {
+        list,
+        calculateParameter: {
+          oxygenMaterialRatio: '',
+          totalConsumedAmount: '',
+          paFlow: '',
+          SCuRatio: '',
+          totalMatte: '',
+          totalSlag: '',
+          totalQuartz: ''
+        },
+        elementsMixtureList: [],
+        recommended: ''
+      }
+      return setResult(result_)
+    }
     request({
       method: 'POST',
       host: config.host,
@@ -248,7 +319,7 @@ function P(props) {
   }
 
   return (
-    <div style={{ padding: '0 10px 10px 10px' }}>
+    <div>
       <div>
         <div style={{ marginBottom: '10px' }}>
           <Button type="primary"
@@ -258,14 +329,49 @@ function P(props) {
             获取订单
         </Button>
         </div>
+        <div style={{ display: 'flex', alignItems: 'center' ,margin: '10px 0'}}>
+          <span style={{fontSize: '14px', marginRight: '10px'}}>自动</span>
+          <Switch checked={manual} onChange={setManual_} />
+          <span style={{fontSize: '14px', marginLeft: '10px'}}>手动</span>
+        </div>
         <Spin spinning={tableLoading}>
+          <div>
           <TableContext.Provider value={{
-            columns,
-            dataSource: data,
-            setData
+            columns: (() => {
+              const c = columns.slice(0, 1).concat(columns.slice(2));
+              c[c.length - 2] = {
+                title: '希望继续消耗的库存',
+                dataIndex: c[c.length - 2].dataIndex
+              };
+              console.log(c)
+              return c;
+            })(),
+            dataSource: data[0],
+            setData: (payload) => {
+              setData_(payload, 0)
+            }
           }}>
             <EditTable />
           </TableContext.Provider >
+          </div>
+          <div style={{marginTop: '20px'}}>
+          <TableContext.Provider value={{
+            columns: (() => {
+              const c = columns.slice(1, 2).concat(columns.slice(2));
+              c[c.length - 2] = {
+                title: '配方2生产后理论剩余',
+                dataIndex: c[c.length - 2].dataIndex
+              };
+              return c
+            })(),
+            dataSource: data[1],
+            setData: (payload) => {
+              setData_(payload, 1)
+            }
+          }}>
+            <EditTable />
+          </TableContext.Provider >
+          </div>
           <Table
             className={styles.block}
             rowKey={'name'}
@@ -283,15 +389,6 @@ function P(props) {
           labelCol={{ span: 12 }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
-        // onValuesChange={(key) => {
-        //   const k = Object.keys(key)[0];
-        //   if (key.formula1 || key.formula2) {
-        //     console.log(form.getFieldValue(k))
-        //     form.setFieldsValue({
-        //       [k]: form.getFieldValue(k)
-        //     })
-        //   }
-        // }}
         >
           <div>
             <Tabs defaultActiveKey="1" type="card">
@@ -308,7 +405,7 @@ function P(props) {
                         },
                       ]}
                     >
-                      <InputNumber step={0.01} />
+                      <InputNumber step={0.01} disabled/>
                     </Form.Item>
                   </Col>
                   <Col span={6}>
@@ -322,7 +419,7 @@ function P(props) {
                         },
                       ]}
                     >
-                      <InputNumber step={0.01} />
+                      <InputNumber step={0.01} disabled/>
                     </Form.Item>
                   </Col>
                   <Col span={6}>
@@ -336,7 +433,7 @@ function P(props) {
                         },
                       ]}
                     >
-                      <InputNumber step={0.01} />
+                      <InputNumber step={0.01} disabled/>
                     </Form.Item>
                   </Col>
                 </Row>
@@ -352,7 +449,7 @@ function P(props) {
                         },
                       ]}
                     >
-                      <InputNumber step={0.01} />
+                      <InputNumber step={0.01} disabled/>
                     </Form.Item>
                   </Col>
                   <Col span={6}>
@@ -366,7 +463,7 @@ function P(props) {
                         },
                       ]}
                     >
-                      <InputNumber step={0.01} />
+                      <InputNumber step={0.01} disabled/>
                     </Form.Item>
                   </Col>
                   <Col span={6}>
@@ -380,7 +477,7 @@ function P(props) {
                         },
                       ]}
                     >
-                      <InputNumber step={0.01} />
+                      <InputNumber step={0.01} disabled/>
                     </Form.Item>
                   </Col>
                   <Col span={6}>
@@ -394,7 +491,7 @@ function P(props) {
                         },
                       ]}
                     >
-                      <InputNumber step={0.01} />
+                      <InputNumber step={0.01} disabled/>
                     </Form.Item>
                   </Col>
                 </Row>
@@ -410,7 +507,7 @@ function P(props) {
                         },
                       ]}
                     >
-                      <InputNumber step={0.01} />
+                      <InputNumber step={0.01} disabled/>
                     </Form.Item>
                   </Col>
                   <Col span={6}>
@@ -424,7 +521,7 @@ function P(props) {
                         },
                       ]}
                     >
-                      <InputNumber step={0.01} />
+                      <InputNumber step={0.01} disabled/>
                     </Form.Item>
                   </Col>
                   <Col span={6}>
@@ -438,7 +535,7 @@ function P(props) {
                         },
                       ]}
                     >
-                      <InputNumber step={0.01} />
+                      <InputNumber step={0.01} disabled/>
                     </Form.Item>
                   </Col>
                   <Col span={6}>
@@ -452,7 +549,7 @@ function P(props) {
                         },
                       ]}
                     >
-                      <InputNumber step={0.01} />
+                      <InputNumber step={0.01} disabled/>
                     </Form.Item>
                   </Col>
                 </Row>
@@ -468,7 +565,21 @@ function P(props) {
                         },
                       ]}
                     >
-                      <InputNumber />
+                      <InputNumber disabled/>
+                    </Form.Item>
+                  </Col>
+                  <Col span={6}>
+                    <Form.Item
+                      label="氧浓度(%)"
+                      name="oxygenConcentration"
+                      initialValue={85}
+                      rules={[
+                        {
+                          required: true
+                        },
+                      ]}
+                    >
+                      <InputNumber step={0.01} disabled/>
                     </Form.Item>
                   </Col>
                 </Row>
@@ -481,18 +592,24 @@ function P(props) {
                     <Form.Item
                       label="配方1"
                       name="formula1"
-                    //value={formula[0]}
                     >
-                      <Input />
+                      <Input disabled />
                     </Form.Item>
                   </Col>
                   <Col span={6}>
                     <Form.Item
                       label="配方2"
                       name="formula2"
-                    //value={formula[1]}
                     >
-                      <Input />
+                      <Input disabled />
+                    </Form.Item>
+                  </Col>
+                  <Col span={6}>
+                    <Form.Item
+                      label="配方*"
+                      name="formula*"
+                    >
+                      <Input disabled/>
                     </Form.Item>
                   </Col>
                 </Row>
@@ -501,7 +618,7 @@ function P(props) {
           </div>
           <div>
             <Button htmlType="submit" type="primary" style={{ width: '200px' }}>
-              推荐
+              {manual ? '确定手选内容' : '推荐'}
             </Button>
           </div>
         </Form>
@@ -515,9 +632,9 @@ function P(props) {
                 <Spin size="large" />
               </div> : <div>
                   <div>
-                    <p>推荐衔接结构</p>
-                    <Input
-                      style={{ width: '250px' }}
+                    <p style={{fontSize: '18px'}}>结果说明</p>
+                    <TextArea
+                      autoSize
                       value={result.recommended}
                     />
                   </div>
@@ -528,52 +645,58 @@ function P(props) {
                         <Input
                           style={{ width: '250px' }}
                           addonBefore={<span>氧料比(Nm<sup>3</sup>/t)</span>}
-                          value={result.calculateParameter.oxygenMaterialRatio}
+                          value={result.calculateParameter?.oxygenMaterialRatio}
+                          disabled
                         />
                       </Col>
                       <Col span={6}>
                         <Input
                           style={{ width: '250px' }}
                           addonBefore="总消耗(吨)"
-                          value={result.calculateParameter.totalConsumedAmount}
+                          value={result.calculateParameter?.totalConsumedAmount}
+                          disabled
                         />
                       </Col>
                       <Col span={6}>
                         <Input
                           style={{ width: '250px' }}
                           addonBefore="总剩余(吨)"
-                          value={result.calculateParameter.totalLeftOver}
+                          value={result.calculateParameter?.totalLeftOver}
+                          disabled
                         />
                       </Col>
-
                     </Row>
                     <Row className={styles.row}>
                       <Col span={6}>
                         <Input
                           style={{ width: '250px' }}
                           addonBefore={<span>一次风量m<sup>3</sup>/h</span>}
-                          value={result.calculateParameter.paFlow}
+                          value={result.calculateParameter?.paFlow}
+                          disabled
                         />
                       </Col>
                       <Col span={6}>
                         <Input
                           style={{ width: '250px' }}
                           addonBefore="S/Cu(%)"
-                          value={result.calculateParameter.SCuRatio}
+                          value={result.calculateParameter?.SCuRatio}
+                          disabled
                         />
                       </Col>
                       <Col span={6}>
                         <Input
                           style={{ width: '250px' }}
                           addonBefore="冰铜量(吨)"
-                          value={result.calculateParameter.totalMatte}
+                          value={result.calculateParameter?.totalMatte}
+                          disabled
                         />
                       </Col>
                       <Col span={6}>
                         <Input
                           style={{ width: '250px' }}
                           addonBefore="渣量(吨)"
-                          value={result.calculateParameter.totalSlag}
+                          value={result.calculateParameter?.totalSlag}
+                          disabled
                         />
                       </Col>
                     </Row>
@@ -582,7 +705,8 @@ function P(props) {
                         <Input
                           style={{ width: '250px' }}
                           addonBefore="石英石(吨)"
-                          value={result.calculateParameter.totalQuartz}
+                          value={result.calculateParameter?.totalQuartz}
+                          disabled
                         />
                       </Col>
                     </Row>
