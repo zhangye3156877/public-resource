@@ -43,8 +43,7 @@ function P(props) {
   }
   
   function outputExcel() {
-    let sheet1data = [{ department: "行政部", count: 2 }, { department: "前端部", count: 2 }];
-    const sheet1 = XLSX.utils.json_to_sheet(sheet1data);
+    const sheet1 = XLSX.utils.json_to_sheet(initialData);
 
     /* create a new blank workbook */
     const wb = XLSX.utils.book_new();
