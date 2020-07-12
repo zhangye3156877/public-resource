@@ -584,6 +584,66 @@ class MainController extends Controller {
     }
     ctx.body = JSON.stringify(data);
   }
+  async correctData() {
+    const {ctx} = this;
+    const list =[
+      {
+        material: '物料1',
+        number: 10001,
+        name: '铜渣',
+        lastBalanceDry: 1,
+        lastBalanceCu: 2,
+        lastBalanceAg: 3,
+        lastBalanceAu: 4,
+        currentIncomeDry: 5,
+        currentIncomePercentageCu: 6,
+        currentIncomeCu: 7,
+        currentIncomeUnitageAg: 9,
+        currentIncomeAg: 10,
+        currentIncomeUnitageAu: 11,
+        currentIncomeAu: 12,
+        currentBalanceDry: 13,
+        currentBalancePercentageCu: 14,
+        currentBalanceCu: 15,
+        currentBalanceUnitageAg: 16,
+        currentBalanceAg: 17,
+        currentBalanceUnitageAu: 18,
+        currentBalanceAu: 19,
+        currentCostDry: 20,
+        currentCostCu: 21,
+        currentCostAg: 22,
+        currentCostAu: 23
+      },
+      {
+        material: '物料2',
+        number: 10002,
+        name: '银',
+        lastBalanceDry: 1,
+        lastBalanceCu: 2,
+        lastBalanceAg: 3,
+        lastBalanceAu: 4,
+        currentIncomeDry: 5,
+        currentIncomePercentageCu: 6,
+        currentIncomeCu: 7,
+        currentIncomeUnitageAg: 9,
+        currentIncomeAg: 10,
+        currentIncomeUnitageAu: 11,
+        currentIncomeAu: 12,
+        currentBalanceDry: 13,
+        currentBalancePercentageCu: 14,
+        currentBalanceCu: 15,
+        currentBalanceUnitageAg: 16,
+        currentBalanceAg: 17,
+        currentBalanceUnitageAu: 18,
+        currentBalanceAu: 19,
+        currentCostDry: 20,
+        currentCostCu: 21,
+        currentCostAg: 22,
+        currentCostAu: 23
+      }
+    ]
+    ctx.body = JSON.stringify(list);
+  }
 }
 
 module.exports = MainController;

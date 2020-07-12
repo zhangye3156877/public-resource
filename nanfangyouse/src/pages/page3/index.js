@@ -20,16 +20,18 @@ import {
 import XLSX from 'xlsx';
 //import { UploadOutlined } from '@ant-design/icons';
 import { connect } from 'dva';
-import {workbook2blob, openDownloadDialog} from '@/utils/fn';
+//import {workbook2blob, openDownloadDialog} from '@/utils/fn';
 import { columns3_1 } from '@/utils/data';
 import request from '@/utils/request';
 import styles from '../index.less';
 import selfStyle from './index.less';
 
 function P(props) {
+  const { config, dispatch } = props;
   const [form] = Form.useForm();
   const [initialData, setInitialData] = useState(null);
   const [resizeData, setResizeData] = useState(null);
+  // 导入excel
   function customRequest(e) {
     const reader = new FileReader();
     reader.onload = function (e) {
@@ -41,23 +43,30 @@ function P(props) {
     }
     reader.readAsBinaryString(e.file);
   }
-  
+  // 导出excel
   function outputExcel() {
     const sheet1 = XLSX.utils.json_to_sheet(initialData);
-
-    /* create a new blank workbook */
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, sheet1, "导出");
     const wopts = {
-      // 要生成的文件类型
       bookType: "xlsx",
-      // // 是否生成Shared String Table，官方解释是，如果开启生成速度会下降，但在低版本IOS设备上有更好的兼容性
       bookSST: false,
       type: "binary"
     };
     XLSX.writeFile(wb, '导出.xlsx',wopts);
-    //const workbookBlob = workbook2blob(wb);
-    //openDownloadDialog(workbookBlob, `导出.xlsx`);
+  }
+  // 数据矫正
+  function correctData() {
+    request({
+      method: 'POST',
+      host: config.host,
+      port: config.port,
+      url: 'correct_data',
+      payload: {},
+      cb: (res) => {
+        setResizeData(res)
+      }
+    })
   }
   return (
     <div>
@@ -73,6 +82,12 @@ function P(props) {
               数据录入
             </Button>
           </Upload>
+          <Button
+              type="primary"
+              onClick={correctData}
+            >
+              数据矫正
+            </Button>
           <Button
               type="primary"
               onClick={outputExcel}
@@ -96,8 +111,8 @@ function P(props) {
         className={`${styles.row} ${selfStyle.tableWrapper}`}>
         <TableContext.Provider value={{
           columns: columns3_1,
-          dataSource: initialData,
-          setData: setInitialData
+          dataSource: resizeData,
+          setData: setResizeData
         }}>
           <EditTable />
         </TableContext.Provider >
