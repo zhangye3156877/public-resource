@@ -8,11 +8,8 @@ import {
   InputNumber,
   Row,
   Col,
-  Switch,
   Table,
   Spin,
-  Divider,
-  Tabs,
   message,
   Space,
   Upload
@@ -26,20 +23,159 @@ import request from '@/utils/request';
 import styles from '../index.less';
 import selfStyle from './index.less';
 
+function renderDiffData(value) {
+  const colors = ['#fff', '#3f8600', '#cf1322'];
+  if (value === 0) {
+    return <span style={{ color: '#fff' }}>0</span>
+  } else if (value > 0) {
+    return <span style={{ color: '#3f8600' }}>{'+' + value}</span>
+  } else {
+    return <span style={{ color: '#cf1322' }}>{'-' + value}</span>
+  }
+}
+
+const columns3_2 = [
+  {
+    title: '物料分类',
+    dataIndex: 'material',
+  },
+  {
+    title: '物料编码',
+    dataIndex: 'number',
+    //editable: true,
+  },
+  {
+    title: '物料名称',
+    dataIndex: 'name',
+  },
+  {
+    title: '上期结存干量(t)',
+    dataIndex: 'lastBalanceDry',
+    render: renderDiffData,
+  },
+  {
+    title: '上期结存Cu(t)',
+    dataIndex: 'lastBalanceCu',
+    render: renderDiffData,
+  },
+  {
+    title: '上期结存Ag(kg)',
+    dataIndex: 'lastBalanceAg',
+    render: renderDiffData,
+  },
+  {
+    title: '上期结存Au(kg)',
+    dataIndex: 'lastBalanceAu',
+    render: renderDiffData,
+  },
+  {
+    title: '本期收入干量(t)',
+    dataIndex: 'currentIncomeDry',
+    render: renderDiffData,
+  },
+  {
+    title: '本期收入Cu(%)',
+    dataIndex: 'currentIncomePercentageCu',
+    render: renderDiffData,
+  },
+  {
+    title: '本期收入Cu(t)',
+    dataIndex: 'currentIncomeCu',
+    render: renderDiffData,
+  },
+  {
+    title: '本期收入Ag(g/t)',
+    dataIndex: 'currentIncomeUnitageAg',
+    render: renderDiffData,
+  },
+  {
+    title: '本期收入Ag(kg)',
+    dataIndex: 'currentIncomeAg',
+    render: renderDiffData,
+  },
+  {
+    title: '本期收入Au(g/t)',
+    dataIndex: 'currentIncomeUnitageAu',
+    render: renderDiffData,
+  },
+  {
+    title: '本期收入Au(kg)',
+    dataIndex: 'currentIncomeAu',
+    render: renderDiffData,
+  },
+  {
+    title: '本期结存 干量(t)',
+    dataIndex: 'currentBalanceDry',
+    render: renderDiffData,
+  },
+  {
+    title: '本期结存Cu(%)',
+    dataIndex: 'currentBalancePercentageCu',
+    render: renderDiffData,
+  },
+  {
+    title: '本期结存Cu(t)',
+    dataIndex: 'currentBalanceCu',
+    render: renderDiffData,
+  },
+  {
+    title: '本期结存Ag(g/t)',
+    dataIndex: 'currentBalanceUnitageAg',
+    render: renderDiffData,
+  },
+  {
+    title: '本期结存Ag(kg)',
+    dataIndex: 'currentBalanceAg',
+    render: renderDiffData,
+  },
+  {
+    title: '本期结存Au(g/t)',
+    dataIndex: 'currentBalanceUnitageAu',
+    render: renderDiffData,
+  },
+  {
+    title: '本期结存Au(kg)',
+    dataIndex: 'currentBalanceAu',
+    render: renderDiffData,
+  },
+  {
+    title: '本期使用 干量(t)',
+    dataIndex: 'currentCostDry',
+    render: renderDiffData,
+  },
+  {
+    title: '本期使用Cu(t)',
+    dataIndex: 'currentCostCu',
+    render: renderDiffData,
+  },
+  {
+    title: '本期使用Ag(kg)',
+    dataIndex: 'currentCostAg',
+    render: renderDiffData,
+  },
+  {
+    title: '本期使用Au(kg)',
+    dataIndex: 'currentCostAu',
+    render: renderDiffData,
+  },
+
+]
+
 function P(props) {
   const { config, dispatch } = props;
   const [form] = Form.useForm();
   const [initialData, setInitialData] = useState(null);
   const [resizeData, setResizeData] = useState(null);
-  const [materialOptions,setMaterialOptions] = useState(null);
+  const [materialOptions, setMaterialOptions] = useState(null);
+  const [showDiff, setShowDiff] = useState(false);
 
-  function setInitialDataParameter(key, value){
+  function setInitialDataParameter(key, value) {
     const newArr = [...initialData];
     newArr[0][key] = value;
     setInitialData(newArr);
   }
-  function setResizeDataParameter(key, value){
-    const newObj = {...resizeData};
+  function setResizeDataParameter(key, value) {
+    const newObj = { ...resizeData };
     newObj.parameter[key] = value;
     setResizeData(newObj);
   }
@@ -127,6 +263,14 @@ function P(props) {
             </Button>
           <Button
             type="primary"
+            onClick={() => {
+              setShowDiff(true)
+            }}
+          >
+            数据对比
+            </Button>
+          <Button
+            type="primary"
             onClick={outputExcel}
           >
             数据导出
@@ -144,7 +288,7 @@ function P(props) {
         }}>
           <EditTable />
         </TableContext.Provider >
-        <Row className={styles.row} style={{marginTop: '20px'}}>
+        <Row className={styles.row} style={{ marginTop: '20px' }}>
           <Col span={6}>
             <Input
               style={{ width: '250px' }}
@@ -187,7 +331,7 @@ function P(props) {
         }}>
           <EditTable />
         </TableContext.Provider >
-        <Row className={styles.row} style={{marginTop: '20px'}}>
+        <Row className={styles.row} style={{ marginTop: '20px' }}>
           <Col span={6}>
             <Input
               style={{ width: '250px' }}
@@ -220,6 +364,58 @@ function P(props) {
           </Col>
         </Row>
       </div>
+      {showDiff && <div className={`${styles.row} ${selfStyle.tableWrapper}`}>
+        <Table
+          key="number"
+          columns={columns3_2}
+          dataSource={(() => {
+            resizeData.map((item, index) => {
+              const a1 = Object.entries(item);
+              const a2 = Object.entries(initialData[index]);
+              for(let [k1,k2] of a2) {
+
+              }
+              return {
+
+              }
+            })
+          })()}
+          pagination={false}
+          bordered
+        />
+        <Row className={styles.row} style={{ marginTop: '20px' }}>
+          <Col span={6}>
+            <Input
+              style={{ width: '250px' }}
+              addonBefore="金回收率(%)"
+              value={initialData && initialData[0].recoveryAu}
+              onChange={(e) => {
+                setInitialDataParameter('recoveryAu', e.target.value)
+              }}
+            />
+          </Col>
+          <Col span={6}>
+            <Input
+              style={{ width: '250px' }}
+              addonBefore="银回收率(%)"
+              value={initialData && initialData[0].recoveryAg}
+              onChange={(e) => {
+                setInitialDataParameter('recoveryAg', e.target.value)
+              }}
+            />
+          </Col>
+          <Col span={6}>
+            <Input
+              style={{ width: '250px' }}
+              addonBefore="铜回收率(%)"
+              value={initialData && initialData[0].recoveryCu}
+              onChange={(e) => {
+                setInitialDataParameter('recoveryCu', e.target.value)
+              }}
+            />
+          </Col>
+        </Row>
+      </div>}
     </div>
   )
 }

@@ -72,7 +72,6 @@ const EditableCell = ({
       ff = <Select onChange={save}>
         {materialOptions?.map(item => <Select.Option key={item} value={item}>{item}</Select.Option>)}
       </Select>;
-      console.log(materialOptions)
     } else if (formType === 'text') {
       ff = <Input
         style={{minWidth: '150px'}}
