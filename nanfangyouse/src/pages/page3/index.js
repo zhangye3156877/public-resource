@@ -31,6 +31,13 @@ function P(props) {
   const [form] = Form.useForm();
   const [initialData, setInitialData] = useState(null);
   const [resizeData, setResizeData] = useState(null);
+  function setResizeData_(data) {
+    const list = [...data];
+    setResizeData({
+      ...resizeData,
+      list
+    })
+  }
   // 导入excel
   function customRequest(e) {
     const reader = new FileReader();
@@ -53,16 +60,25 @@ function P(props) {
       bookSST: false,
       type: "binary"
     };
-    XLSX.writeFile(wb, '导出.xlsx',wopts);
+    XLSX.writeFile(wb, '导出.xlsx', wopts);
   }
   // 数据矫正
   function correctData() {
+    const payload = {
+      list: initialData,
+      parameter: {
+        recoveryAu: 1,
+        recoveryAg: 2,
+        recoveryCu: 3
+      }
+    }
+    console.log(payload)
     request({
       method: 'POST',
       host: config.host,
       port: config.port,
       url: 'correct_data',
-      payload: {},
+      payload,
       cb: (res) => {
         setResizeData(res)
       }
@@ -83,16 +99,16 @@ function P(props) {
             </Button>
           </Upload>
           <Button
-              type="primary"
-              onClick={correctData}
-            >
-              数据矫正
+            type="primary"
+            onClick={correctData}
+          >
+            数据矫正
             </Button>
           <Button
-              type="primary"
-              onClick={outputExcel}
-            >
-              数据导出
+            type="primary"
+            onClick={outputExcel}
+          >
+            数据导出
             </Button>
 
         </Space>
@@ -106,16 +122,68 @@ function P(props) {
         }}>
           <EditTable />
         </TableContext.Provider >
+        <Row className={styles.row} style={{marginTop: '20px'}}>
+          <Col span={6}>
+            <Input
+              style={{ width: '250px' }}
+              addonBefore="金回收率(%)"
+              value={initialData && initialData[0].recoveryAu}
+              disabled
+            />
+          </Col>
+          <Col span={6}>
+            <Input
+              style={{ width: '250px' }}
+              addonBefore="银回收率(%)"
+              value={initialData && initialData[0].recoveryAg}
+              disabled
+            />
+          </Col>
+          <Col span={6}>
+            <Input
+              style={{ width: '250px' }}
+              addonBefore="铜回收率(%)"
+              value={initialData && initialData[0].recoveryCu}
+              disabled
+            />
+          </Col>
+        </Row>
       </div>
       <div
         className={`${styles.row} ${selfStyle.tableWrapper}`}>
         <TableContext.Provider value={{
           columns: columns3_1,
-          dataSource: resizeData,
-          setData: setResizeData
+          dataSource: resizeData && resizeData.list,
+          setData: setResizeData_
         }}>
           <EditTable />
         </TableContext.Provider >
+        <Row className={styles.row} style={{marginTop: '20px'}}>
+          <Col span={6}>
+            <Input
+              style={{ width: '250px' }}
+              addonBefore="金回收率(%)"
+              value={resizeData && resizeData.parameter.recoveryAu}
+              disabled
+            />
+          </Col>
+          <Col span={6}>
+            <Input
+              style={{ width: '250px' }}
+              addonBefore="银回收率(%)"
+              value={resizeData && resizeData.parameter.recoveryAg}
+              disabled
+            />
+          </Col>
+          <Col span={6}>
+            <Input
+              style={{ width: '250px' }}
+              addonBefore="铜回收率(%)"
+              value={resizeData && resizeData.parameter.recoveryCu}
+              disabled
+            />
+          </Col>
+        </Row>
       </div>
     </div>
   )

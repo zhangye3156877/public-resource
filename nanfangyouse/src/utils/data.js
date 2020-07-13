@@ -594,7 +594,7 @@ export const columns3_1 = [
   {
     title: '物料分类',
     dataIndex: 'material',
-    //editable: true,
+    editable: true,
   },
   {
     title: '物料编码',
@@ -604,7 +604,7 @@ export const columns3_1 = [
   {
     title: '物料名称',
     dataIndex: 'name',
-    //editable: true,
+    editable: true,
   },
   {
     title: '上期结存干量(t)',

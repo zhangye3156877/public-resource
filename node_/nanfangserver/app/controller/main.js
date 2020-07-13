@@ -642,7 +642,16 @@ class MainController extends Controller {
         currentCostAu: 23
       }
     ]
-    ctx.body = JSON.stringify(list);
+    const parameter = {
+      recoveryAu: 11,
+      recoveryAg: 22,
+      recoveryCu: 33
+    }
+    const data = {
+      list,
+      parameter
+    }
+    ctx.body = JSON.stringify(data);
   }
 }
 
