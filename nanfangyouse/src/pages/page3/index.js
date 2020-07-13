@@ -31,6 +31,8 @@ function P(props) {
   const [form] = Form.useForm();
   const [initialData, setInitialData] = useState(null);
   const [resizeData, setResizeData] = useState(null);
+  const [materialOptions,setMaterialOptions] = useState(null);
+
   function setInitialDataParameter(key, value){
     const newArr = [...initialData];
     newArr[0][key] = value;
@@ -55,8 +57,13 @@ function P(props) {
       const data = e.target.result;
       const xlsxData = XLSX.read(data, { type: 'binary' });
       const value = XLSX.utils.sheet_to_json(xlsxData.Sheets[xlsxData.SheetNames[0]]);
-      console.log(value);
+      const optionsList = Array(value.length);
+      value.forEach((item, index) => {
+        optionsList[index] = item.material;
+      })
       setInitialData(value);
+      setMaterialOptions(Array.from(new Set(optionsList)));
+      console.log(materialOptions, value)
     }
     reader.readAsBinaryString(e.file);
   }
@@ -132,6 +139,7 @@ function P(props) {
         <TableContext.Provider value={{
           columns: columns3_1,
           dataSource: initialData,
+          materialOptions: materialOptions,
           setData: setInitialData
         }}>
           <EditTable />
@@ -174,6 +182,7 @@ function P(props) {
         <TableContext.Provider value={{
           columns: columns3_1,
           dataSource: resizeData && resizeData.list,
+          materialOptions: materialOptions,
           setData: setResizeData_
         }}>
           <EditTable />

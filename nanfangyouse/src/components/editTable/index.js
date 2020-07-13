@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
-import { Table, Form, Input, InputNumber } from 'antd';
+import { Table, Form, Input, InputNumber,Select } from 'antd';
 
 export const TableContext = React.createContext({
   columns: [],
@@ -29,6 +29,7 @@ const EditableCell = ({
   handleSave,
   step,
   formType,
+  materialOptions,
   ...restProps
 }) => {
 
@@ -37,7 +38,7 @@ const EditableCell = ({
   const form = useContext(EditableContext);
   useEffect(() => {
     if (editing) {
-      inputRef.current.focus();
+      return inputRef.current?.focus?.();
     }
   }, [editing]);
 
@@ -68,7 +69,10 @@ const EditableCell = ({
   if (editable) {
     let ff;
     if (formType === 'select') {
-      ff = null;
+      ff = <Select onChange={save}>
+        {materialOptions?.map(item => <Select.Option key={item} value={item}>{item}</Select.Option>)}
+      </Select>;
+      console.log(materialOptions)
     } else if (formType === 'text') {
       ff = <Input
         style={{minWidth: '150px'}}
@@ -114,7 +118,7 @@ const EditableCell = ({
 };
 
 function EditTable(props) {
-  const { columns, dataSource, setData } = useContext(TableContext)
+  const { columns, dataSource, setData, materialOptions} = useContext(TableContext)
 
   const components = {
     body: {
@@ -137,6 +141,7 @@ function EditTable(props) {
         title: col.title,
         step: col.step,
         formType: col.formType,
+        materialOptions,
         handleSave: row => {
           const newData = [...dataSource];
           const index = newData.findIndex(item => row.number === item.number);
