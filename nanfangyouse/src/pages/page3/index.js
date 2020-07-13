@@ -31,6 +31,11 @@ function P(props) {
   const [form] = Form.useForm();
   const [initialData, setInitialData] = useState(null);
   const [resizeData, setResizeData] = useState(null);
+  function setInitialDataParameter(key, value){
+    const newArr = [...initialData];
+    newArr[0][key] = value;
+    setInitialData(newArr);
+  }
   function setResizeData_(data) {
     const list = [...data];
     setResizeData({
@@ -67,9 +72,9 @@ function P(props) {
     const payload = {
       list: initialData,
       parameter: {
-        recoveryAu: 1,
-        recoveryAg: 2,
-        recoveryCu: 3
+        recoveryAu: Number(initialData[0].recoveryAu),
+        recoveryAg: Number(initialData[0].recoveryAg),
+        recoveryCu: Number(initialData[0].recoveryCu)
       }
     }
     console.log(payload)
@@ -128,7 +133,9 @@ function P(props) {
               style={{ width: '250px' }}
               addonBefore="金回收率(%)"
               value={initialData && initialData[0].recoveryAu}
-              disabled
+              onChange={(e) => {
+                setInitialDataParameter('recoveryAu', e.target.value)
+              }}
             />
           </Col>
           <Col span={6}>
@@ -136,7 +143,9 @@ function P(props) {
               style={{ width: '250px' }}
               addonBefore="银回收率(%)"
               value={initialData && initialData[0].recoveryAg}
-              disabled
+              onChange={(e) => {
+                setInitialDataParameter('recoveryAg', e.target.value)
+              }}
             />
           </Col>
           <Col span={6}>
@@ -144,7 +153,9 @@ function P(props) {
               style={{ width: '250px' }}
               addonBefore="铜回收率(%)"
               value={initialData && initialData[0].recoveryCu}
-              disabled
+              onChange={(e) => {
+                setInitialDataParameter('recoveryCu', e.target.value)
+              }}
             />
           </Col>
         </Row>
@@ -164,7 +175,9 @@ function P(props) {
               style={{ width: '250px' }}
               addonBefore="金回收率(%)"
               value={resizeData && resizeData.parameter.recoveryAu}
-              disabled
+              onChange={() => {
+
+              }}
             />
           </Col>
           <Col span={6}>
@@ -172,7 +185,6 @@ function P(props) {
               style={{ width: '250px' }}
               addonBefore="银回收率(%)"
               value={resizeData && resizeData.parameter.recoveryAg}
-              disabled
             />
           </Col>
           <Col span={6}>
@@ -180,7 +192,6 @@ function P(props) {
               style={{ width: '250px' }}
               addonBefore="铜回收率(%)"
               value={resizeData && resizeData.parameter.recoveryCu}
-              disabled
             />
           </Col>
         </Row>
