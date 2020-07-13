@@ -4,7 +4,7 @@ import { Table, Form, Input, InputNumber } from 'antd';
 export const TableContext = React.createContext({
   columns: [],
   dataSource: [],
-  setData: () => {}
+  setData: () => { }
 })
 
 const EditableContext = React.createContext();
@@ -28,9 +28,10 @@ const EditableCell = ({
   record,
   handleSave,
   step,
+  formType,
   ...restProps
 }) => {
-  
+
   const [editing, setEditing] = useState(false);
   const inputRef = useRef();
   const form = useContext(EditableContext);
@@ -44,7 +45,7 @@ const EditableCell = ({
     if (record.required === false) {
       return
     }
-    
+
     setEditing(!editing);
     form.setFieldsValue({
       [dataIndex]: record[dataIndex],
@@ -54,6 +55,7 @@ const EditableCell = ({
   const save = async e => {
     try {
       const values = await form.validateFields();
+      console.log(values)
       toggleEdit();
       handleSave({ ...record, ...values });
     } catch (errInfo) {
@@ -62,37 +64,50 @@ const EditableCell = ({
   };
 
   let childNode = children;
-  
+
   if (editable) {
-    
-      childNode = editing ? (
-        <Form.Item
-          style={{
-            margin: 0,
-          }}
-          name={dataIndex}
-          rules={[
-            {
-              required: true
-            },
-          ]}
+    let ff;
+    if (formType === 'select') {
+      ff = null;
+    } else if (formType === 'text') {
+      ff = <Input
+        style={{minWidth: '150px'}}
+        ref={inputRef}
+        onPressEnter={save}
+        onBlur={save}
+      />
+    } else {
+      ff = <InputNumber
+        ref={inputRef}
+        onPressEnter={save}
+        onBlur={save}
+        step={step || 1}
+      />
+    }
+
+    childNode = editing ? (
+      <Form.Item
+        style={{
+          margin: 0,
+        }}
+        name={dataIndex}
+        rules={[
+          {
+            required: true
+          },
+        ]}
+      >
+        {ff}
+      </Form.Item>
+    ) : (
+        <div
+          onClick={toggleEdit}
+          style={{ minHeight: '20px' }}
         >
-          <InputNumber
-            ref={inputRef}
-            onPressEnter={save}
-            onBlur={save}
-            step={step || 1}
-          />
-        </Form.Item>
-      ) : (
-          <div
-            onClick={toggleEdit}
-            style={{minHeight:'20px'}}
-          >
-            {children}
-          </div>
-        );
-    
+          {children}
+        </div>
+      );
+
   }
 
   return <td {...restProps}>{childNode}</td>;
@@ -108,7 +123,7 @@ function EditTable(props) {
     },
   }
   const columns_ = columns.map(col => {
-    
+
     if (!col.editable) {
       return col
     }
@@ -121,10 +136,11 @@ function EditTable(props) {
         dataIndex: col.dataIndex,
         title: col.title,
         step: col.step,
+        formType: col.formType,
         handleSave: row => {
           const newData = [...dataSource];
           const index = newData.findIndex(item => row.number === item.number);
-          newData[index] = {...row};
+          newData[index] = { ...row };
           //row.index !== undefined && (newData[row.index] = { ...row })
           setData(newData)
         },
