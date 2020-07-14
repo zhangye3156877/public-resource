@@ -408,7 +408,7 @@ function P(props) {
         <Row className={styles.row} style={{ marginTop: '20px' }}>
           <Col span={6}>
             <Input
-              style={{ width: '250px', color: renderDiffData(resizeData?.parameter.recoveryAu -  initialData?.[0]?.recoveryAu, false)[1]}}
+              style={{ width: '250px'}}
               addonBefore="金回收率(%)"
               value={renderDiffData(resizeData?.parameter.recoveryAu -  initialData?.[0]?.recoveryAu, false)[0]}
               // onChange={(e) => {
@@ -420,7 +420,7 @@ function P(props) {
             <Input
               style={{ width: '250px' }}
               addonBefore="银回收率(%)"
-              value={(resizeData?.parameter.recoveryAu -  initialData?.[0]?.recoveryAg)}
+              value={renderDiffData(resizeData?.parameter.recoveryAg -  initialData?.[0]?.recoveryAg, false)[0]}
               // onChange={(e) => {
               //   setInitialDataParameter('recoveryAg', e.target.value)
               // }}
@@ -430,7 +430,7 @@ function P(props) {
             <Input
               style={{ width: '250px' }}
               addonBefore="铜回收率(%)"
-              value={(resizeData?.parameter.recoveryAu -  initialData?.[0]?.recoveryCu)}
+              value={renderDiffData(resizeData?.parameter.recoveryCu -  initialData?.[0]?.recoveryCu, false)[0]}
               // onChange={(e) => {
               //   setInitialDataParameter('recoveryCu', e.target.value)
               // }}
