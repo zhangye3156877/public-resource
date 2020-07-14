@@ -607,7 +607,7 @@ class MainController extends Controller {
         currentBalanceCu: 15,
         currentBalanceUnitageAg: 16,
         currentBalanceAg: 17,
-        currentBalanceUnitageAu: 18,
+        currentBalanceUnitageAu: '180',
         currentBalanceAu: 19,
         currentCostDry: 20,
         currentCostCu: 21,

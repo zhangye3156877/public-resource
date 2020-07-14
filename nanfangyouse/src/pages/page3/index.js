@@ -384,21 +384,22 @@ function P(props) {
           key="number"
           columns={columns3_2}
           dataSource={(() => {
-            return resizeData.list.map((item, index) => {
+            return resizeData.list.map((item) => {
+              const id = item.number;
               const obj = {key: `k${item.number}`}
-              const a1 = Object.entries(item);
-              const a2 = Object.entries(initialData[index]);
-              const base = a2.length > a1.length ? a2 : a1;
-              for (let i = 0; i < base.length; i++) {
-                const key = base[i][0];
-                if (key === 'material' || key === 'number' || key === 'name') {
-                  obj[key] = base[i][1];
+              const item2 = initialData.find(item => item.number === id);
+    
+              for (let i in item) {
+          
+                if (i === 'material' || i === 'number' || i === 'name') {
+                  obj[i] = item[i];
                 } else {
-                  const k2 = a2?.[i]?.[1] ?? 0;
-                  const k1 = a1?.[i]?.[1] ?? 0;
-                  obj[key] = k2 - k1;
+                  const k2 = item2[i] | 0;
+                  const k1 = item[i] | 0;
+                  obj[i] = k1 - k2;
                 }
               }
+              console.log(obj, initialData, resizeData)
               return obj;
             })
           })()}
