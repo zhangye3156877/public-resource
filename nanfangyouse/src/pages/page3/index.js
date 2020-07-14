@@ -23,14 +23,28 @@ import request from '@/utils/request';
 import styles from '../index.less';
 import selfStyle from './index.less';
 
-function renderDiffData(value) {
-  const colors = ['#fff', '#3f8600', '#cf1322'];
+function renderDiffData(value, jsx = true) {
+  if (value === undefined || value === null || Number.isNaN(value)){
+    if (jsx){
+      return null;
+    }
+    return [null, null];
+  }
   if (value === 0) {
-    return <span style={{ color: '#fff' }}>0</span>
+    if (jsx){
+      return <span>0</span>
+    }
+    return [0, null];
   } else if (value > 0) {
-    return <span style={{ color: '#3f8600' }}>{'+' + value}</span>
+    if (jsx){
+      return <span style={{ color: '#3f8600' }}>{'+' + value}</span>
+    }
+    return ['+' + value, '#3f8600'];
   } else {
-    return <span style={{ color: '#cf1322' }}>{'-' + value}</span>
+    if (jsx){
+      return <span style={{ color: '#cf1322' }}>{value}</span>
+    }
+    return [value, '#cf1322'];
   }
 }
 
@@ -241,6 +255,7 @@ function P(props) {
       }
     })
   }
+
   return (
     <div>
       <div className={styles.row}>
@@ -369,15 +384,22 @@ function P(props) {
           key="number"
           columns={columns3_2}
           dataSource={(() => {
-            resizeData.map((item, index) => {
+            return resizeData.list.map((item, index) => {
+              const obj = {key: `k${item.number}`}
               const a1 = Object.entries(item);
               const a2 = Object.entries(initialData[index]);
-              for(let [k1,k2] of a2) {
-
+              const base = a2.length > a1.length ? a2 : a1;
+              for (let i = 0; i < base.length; i++) {
+                const key = base[i][0];
+                if (key === 'material' || key === 'number' || key === 'name') {
+                  obj[key] = base[i][1];
+                } else {
+                  const k2 = a2?.[i]?.[1] ?? 0;
+                  const k1 = a1?.[i]?.[1] ?? 0;
+                  obj[key] = k2 - k1;
+                }
               }
-              return {
-
-              }
+              return obj;
             })
           })()}
           pagination={false}
@@ -386,32 +408,32 @@ function P(props) {
         <Row className={styles.row} style={{ marginTop: '20px' }}>
           <Col span={6}>
             <Input
-              style={{ width: '250px' }}
+              style={{ width: '250px', color: renderDiffData(resizeData?.parameter.recoveryAu -  initialData?.[0]?.recoveryAu, false)[1]}}
               addonBefore="金回收率(%)"
-              value={initialData && initialData[0].recoveryAu}
-              onChange={(e) => {
-                setInitialDataParameter('recoveryAu', e.target.value)
-              }}
+              value={renderDiffData(resizeData?.parameter.recoveryAu -  initialData?.[0]?.recoveryAu, false)[0]}
+              // onChange={(e) => {
+              //   setInitialDataParameter('recoveryAu', e.target.value)
+              // }}
             />
           </Col>
           <Col span={6}>
             <Input
               style={{ width: '250px' }}
               addonBefore="银回收率(%)"
-              value={initialData && initialData[0].recoveryAg}
-              onChange={(e) => {
-                setInitialDataParameter('recoveryAg', e.target.value)
-              }}
+              value={(resizeData?.parameter.recoveryAu -  initialData?.[0]?.recoveryAg)}
+              // onChange={(e) => {
+              //   setInitialDataParameter('recoveryAg', e.target.value)
+              // }}
             />
           </Col>
           <Col span={6}>
             <Input
               style={{ width: '250px' }}
               addonBefore="铜回收率(%)"
-              value={initialData && initialData[0].recoveryCu}
-              onChange={(e) => {
-                setInitialDataParameter('recoveryCu', e.target.value)
-              }}
+              value={(resizeData?.parameter.recoveryAu -  initialData?.[0]?.recoveryCu)}
+              // onChange={(e) => {
+              //   setInitialDataParameter('recoveryCu', e.target.value)
+              // }}
             />
           </Col>
         </Row>
