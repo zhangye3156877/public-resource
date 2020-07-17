@@ -390,7 +390,6 @@ function P(props) {
               const item2 = initialData.find(item => item.number === id);
     
               for (let i in item) {
-          
                 if (i === 'material' || i === 'number' || i === 'name') {
                   obj[i] = item[i];
                 } else {
@@ -399,7 +398,6 @@ function P(props) {
                   obj[i] = k1 - k2;
                 }
               }
-              console.log(obj, initialData, resizeData)
               return obj;
             })
           })()}
