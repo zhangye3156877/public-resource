@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React from 'react';
 import { Tabs, Divider, Card } from 'antd';
 import Page1 from '@/pages/page1';
 import Page2 from '@/pages/page2';
-import Page3 from '@/pages/page3';
-//import styles from './index.css';
+// import Page3 from '@/pages/page3';
+// import styles from './index.css';
 
 const { TabPane } = Tabs;
 export default function() {
@@ -29,11 +29,11 @@ export default function() {
             <Page2 />
           </Card>
         </TabPane>
-        <TabPane tab="金属平衡" key="3">
+        {/* <TabPane tab="金属平衡" key="3">
           <Card>
             <Page3 />
           </Card>
-        </TabPane>
+        </TabPane> */}
       </Tabs>
     </div>
   )

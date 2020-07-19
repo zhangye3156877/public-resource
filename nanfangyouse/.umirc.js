@@ -2,7 +2,7 @@
 // ref: https://umijs.org/config/
 export default {
   treeShaking: true,
-  history: 'hash',
+  // history: 'hash',
   publicPath: './',
   hash: true,
   routes: [
@@ -10,8 +10,8 @@ export default {
       path: '/',
       component: '../layouts/index',
       routes: [
-        {path: '/', component: './index'},
-        // {path: '/test', component: './test/test'},
+        {path: '/peiliao', component: './main/peiliao'},
+        {path: '/pingheng', component: './main/pingheng'},
       ]
     },
   ],
@@ -39,9 +39,12 @@ export default {
       },
     }],
   ],
-  // 下面是webpack配置
-  devtool:'source-map',
+  //devtool:'source-map',
   alias:{
     '@': require('path').resolve(__dirname, 'src'),
+  },
+  exportStatic: { 
+    htmlSuffix: true,
+    dynamicRoot: true
   }
 }
